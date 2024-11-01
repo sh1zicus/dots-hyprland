@@ -25,20 +25,56 @@ function isLanguageMatch(abbreviation, word) {
     return false;
 }
 
-export const MicMuteIndicator = () => Widget.Revealer({
-    transition: 'slide_left',
-    transitionDuration: userOptions.animations.durationSmall,
-    revealChild: false,
-    setup: (self) => self.hook(Audio, (self) => {
-        self.revealChild = Audio.microphone?.stream?.isMuted;
+export const MicIndicator = () => Widget.Button({
+    onClicked: () => {
+        if (Audio.microphone)
+            Audio.microphone.isMuted = !Audio.microphone.isMuted;
+    },
+    child: Widget.Box({
+        children: [
+            Widget.Stack({
+                transition: 'slide_up_down',
+                transitionDuration: userOptions.asyncGet().animations.durationSmall,
+                children: {
+                    'true': MaterialIcon('mic_off', 'norm'),
+                    'false': MaterialIcon('mic', 'norm'),
+                },
+                setup: (self) => self.hook(Audio, (stack) => {
+                    if (!Audio.microphone) return;
+                    stack.shown = String(Audio.microphone.isMuted);
+                }),
+            }),
+        ],
     }),
-    child: MaterialIcon('mic_off', 'norm'),
+});
+
+export const SpeakerIndicator = () => Widget.Button({
+    onClicked: () => {
+        if (Audio.speaker)
+            Audio.speaker.isMuted = !Audio.speaker.isMuted;
+    },
+    child: Widget.Box({
+        children: [
+            Widget.Stack({
+                transition: 'slide_up_down',
+                transitionDuration: userOptions.asyncGet().animations.durationSmall,
+                children: {
+                    'true': MaterialIcon('volume_off', 'norm'),
+                    'false': MaterialIcon('volume_up', 'norm'),
+                },
+                setup: (self) => self.hook(Audio, (stack) => {
+                    if (!Audio.speaker) return;
+                    stack.shown = String(Audio.speaker.isMuted);
+                }),
+            }),
+        ],
+    }),
 });
 
 export const NotificationIndicator = (notifCenterName = 'sideright') => {
     const widget = Widget.Revealer({
         transition: 'slide_left',
-        transitionDuration: userOptions.animations.durationSmall,
+        transitionDuration: userOptions.asyncGet().animations.durationSmall,
         revealChild: false,
         setup: (self) => self
             .hook(Notifications, (self, id) => {
@@ -84,7 +120,7 @@ export const NotificationIndicator = (notifCenterName = 'sideright') => {
 
 export const BluetoothIndicator = () => Widget.Stack({
     transition: 'slide_up_down',
-    transitionDuration: userOptions.animations.durationSmall,
+    transitionDuration: userOptions.asyncGet().animations.durationSmall,
     children: {
         'false': Widget.Label({ className: 'txt-norm icon-material', label: 'bluetooth_disabled' }),
         'true': Widget.Label({ className: 'txt-norm icon-material', label: 'bluetooth' }),
@@ -124,7 +160,7 @@ const BluetoothDevices = () => Widget.Box({
 
 const NetworkWiredIndicator = () => Widget.Stack({
     transition: 'slide_up_down',
-    transitionDuration: userOptions.animations.durationSmall,
+    transitionDuration: userOptions.asyncGet().animations.durationSmall,
     children: {
         'fallback': SimpleNetworkIndicator(),
         'unknown': Widget.Label({ className: 'txt-norm icon-material', label: 'wifi_off' }),
@@ -156,7 +192,7 @@ const SimpleNetworkIndicator = () => Widget.Icon({
 
 const NetworkWifiIndicator = () => Widget.Stack({
     transition: 'slide_up_down',
-    transitionDuration: userOptions.animations.durationSmall,
+    transitionDuration: userOptions.asyncGet().animations.durationSmall,
     children: {
         'disabled': Widget.Label({ className: 'txt-norm icon-material', label: 'wifi_off' }),
         'disconnected': Widget.Label({ className: 'txt-norm icon-material', label: 'signal_wifi_off' }),
@@ -182,7 +218,7 @@ const NetworkWifiIndicator = () => Widget.Stack({
 
 export const NetworkIndicator = () => Widget.Stack({
     transition: 'slide_up_down',
-    transitionDuration: userOptions.animations.durationSmall,
+    transitionDuration: userOptions.asyncGet().animations.durationSmall,
     children: {
         'fallback': SimpleNetworkIndicator(),
         'wifi': NetworkWifiIndicator(),
@@ -215,15 +251,6 @@ const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
             initLangs = [...new Set(initLangs)];
             languageStackArray = Array.from({ length: initLangs.length }, (_, i) => {
                 const lang = languages.find(lang => lang.layout == initLangs[i]);
-                // if (!lang) return [
-                //     initLangs[i],
-                //     Widget.Label({ label: initLangs[i] })
-                // ];
-                // return [
-                //     lang.layout,
-                //     Widget.Label({ label: (useFlag ? lang.flag : lang.layout) })
-                // ];
-                // Object
                 if (!lang) return {
                     [initLangs[i]]: Widget.Label({ label: initLangs[i] })
                 };
@@ -235,7 +262,7 @@ const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
         updateCurrentKeyboards();
         const widgetRevealer = Widget.Revealer({
             transition: 'slide_left',
-            transitionDuration: userOptions.animations.durationSmall,
+            transitionDuration: userOptions.asyncGet().animations.durationSmall,
             revealChild: languageStackArray.length > 1,
         });
         const widgetKids = {
@@ -246,7 +273,7 @@ const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
         }
         const widgetContent = Widget.Stack({
             transition: 'slide_up_down',
-            transitionDuration: userOptions.animations.durationSmall,
+            transitionDuration: userOptions.asyncGet().animations.durationSmall,
             children: widgetKids,
             setup: (self) => self.hook(Hyprland, (stack, kbName, layoutName) => {
                 if (!kbName) {
@@ -272,7 +299,7 @@ const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
 
 const OptionalKeyboardLayout = async () => {
     try {
-        return await HyprlandXkbKeyboardLayout({ useFlag: userOptions.appearance.keyboardUseFlag });
+        return await HyprlandXkbKeyboardLayout({ useFlag: userOptions.asyncGet().appearance.keyboardUseFlag });
     } catch {
         return null;
     }
@@ -293,7 +320,8 @@ export const StatusIcons = (props = {}, monitor = 0) => Widget.Box({
     child: Widget.Box({
         className: 'spacing-h-15',
         children: [
-            MicMuteIndicator(),
+            MicIndicator(),
+            SpeakerIndicator(),
             optionalKeyboardLayoutInstances[monitor],
             NotificationIndicator(),
             NetworkIndicator(),

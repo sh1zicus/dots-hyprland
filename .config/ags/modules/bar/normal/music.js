@@ -19,11 +19,10 @@ const CUSTOM_MODULE_SCROLLDOWN_SCRIPT = `${GLib.get_user_cache_dir()}/ags/user/s
 function trimTrackTitle(title) {
     if (!title) return '';
     const cleanPatterns = [
-        /【[^】]*】/,        // Touhou n weeb stuff
-        " [FREE DOWNLOAD]", // F-777
+        /【[^】]*】/,
+        " [FREE DOWNLOAD]",
     ];
-    cleanPatterns.forEach((expr) => title = title.replace(expr, ''));
-    return title;
+    return cleanPatterns.reduce((str, pattern) => str.replace(pattern, ''), title);
 }
 
 const BarGroup = ({ child }) => Box({
@@ -42,59 +41,58 @@ const BarResource = (name, icon, command, circprogClassName = 'bar-batt-circprog
         vpack: 'center',
         hpack: 'center',
     });
-    const resourceProgress = Box({
-        homogeneous: true,
-        children: [Overlay({
-            child: Box({
-                vpack: 'center',
-                className: `${iconClassName}`,
-                homogeneous: true,
-                children: [
-                    MaterialIcon(icon, 'small'),
-                ],
-            }),
-            overlays: [resourceCircProg]
-        })]
-    });
     const resourceLabel = Label({
         className: `txt-smallie ${textClassName}`,
     });
     const widget = Button({
-        onClicked: () => Utils.execAsync(['bash', '-c', `${userOptions.apps.taskManager}`]).catch(print),
+        onClicked: () => Utils.execAsync(['bash', '-c', `${userOptions.asyncGet().apps.taskManager}`]).catch(print),
         child: Box({
             className: `spacing-h-4 ${textClassName}`,
             children: [
-                resourceProgress,
+                Box({
+                    homogeneous: true,
+                    children: [Overlay({
+                        child: Box({
+                            vpack: 'center',
+                            className: `${iconClassName}`,
+                            homogeneous: true,
+                            children: [MaterialIcon(icon, 'small')],
+                        }),
+                        overlays: [resourceCircProg]
+                    })]
+                }),
                 resourceLabel,
             ],
-            setup: (self) => self.poll(5000, () => execAsync(['bash', '-c', command])
-                .then((output) => {
-                    resourceCircProg.css = `font-size: ${Number(output)}px;`;
-                    resourceLabel.label = `${Math.round(Number(output))}%`;
-                    widget.tooltipText = `${name}: ${Math.round(Number(output))}%`;
-                }).catch(print))
-            ,
+            setup: (self) => self.poll(5000, () => {
+                execAsync(['bash', '-c', command])
+                    .then((output) => {
+                        const value = Math.round(Number(output));
+                        resourceCircProg.css = `font-size: ${value}px;`;
+                        resourceLabel.label = `${value}%`;
+                        widget.tooltipText = `${name}: ${value}%`;
+                    }).catch(print);
+            }),
         })
     });
     return widget;
 }
 
-const TrackProgress = () => {
-    const _updateProgress = (circprog) => {
-        const mpris = Mpris.getPlayer('');
-        if (!mpris) return;
-        // Set circular progress value
-        circprog.css = `font-size: ${Math.max(mpris.position / mpris.length * 100, 0)}px;`
-    }
-    return AnimatedCircProg({
-        className: 'bar-music-circprog',
-        vpack: 'center', hpack: 'center',
-        extraSetup: (self) => self
-            .hook(Mpris, _updateProgress)
-            .poll(3000, _updateProgress)
-        ,
-    })
-}
+const TrackProgress = () => AnimatedCircProg({
+    className: 'bar-music-circprog',
+    vpack: 'center', 
+    hpack: 'center',
+    extraSetup: (self) => self
+        .hook(Mpris, () => {
+            const mpris = Mpris.getPlayer('');
+            if (!mpris) return;
+            self.css = `font-size: ${Math.max(mpris.position / mpris.length * 100, 0)}px;`;
+        })
+        .poll(3000, self => {
+            const mpris = Mpris.getPlayer('');
+            if (!mpris) return;
+            self.css = `font-size: ${Math.max(mpris.position / mpris.length * 100, 0)}px;`;
+        }),
+});
 
 const switchToRelativeWorkspace = async (self, num) => {
     try {
@@ -106,8 +104,7 @@ const switchToRelativeWorkspace = async (self, num) => {
 }
 
 export default () => {
-    // TODO: use cairo to make button bounce smaller on click, if that's possible
-    const playingState = Box({ // Wrap a box cuz overlay can't have margins itself
+    const playingState = Box({
         homogeneous: true,
         children: [Overlay({
             child: Box({
@@ -118,46 +115,42 @@ export default () => {
                     vpack: 'center',
                     className: 'bar-music-playstate-txt',
                     justification: 'center',
-                    setup: (self) => self.hook(Mpris, label => {
+                    setup: (self) => self.hook(Mpris, () => {
                         const mpris = Mpris.getPlayer('');
-                        label.label = `${mpris !== null && mpris.playBackStatus == 'Playing' ? 'pause' : 'play_arrow'}`;
+                        self.label = mpris?.playBackStatus === 'Playing' ? 'pause' : 'play_arrow';
                     }),
                 })],
-                setup: (self) => self.hook(Mpris, label => {
+                setup: (self) => self.hook(Mpris, () => {
                     const mpris = Mpris.getPlayer('');
                     if (!mpris) return;
-                    label.toggleClassName('bar-music-playstate-playing', mpris !== null && mpris.playBackStatus == 'Playing');
-                    label.toggleClassName('bar-music-playstate', mpris !== null || mpris.playBackStatus == 'Paused');
+                    self.toggleClassName('bar-music-playstate-playing', mpris.playBackStatus === 'Playing');
+                    self.toggleClassName('bar-music-playstate', true);
                 }),
             }),
-            overlays: [
-                TrackProgress(),
-            ]
+            overlays: [TrackProgress()]
         })]
     });
+
     const trackTitle = Label({
         hexpand: true,
         className: 'txt-smallie bar-music-txt',
         truncate: 'end',
-        maxWidthChars: 1, // Doesn't matter, just needs to be non negative
-        setup: (self) => self.hook(Mpris, label => {
+        maxWidthChars: 1,
+        setup: (self) => self.hook(Mpris, () => {
             const mpris = Mpris.getPlayer('');
-            if (mpris)
-                label.label = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(', ')}`;
-            else
-                label.label = getString('No media');
+            self.label = mpris ? 
+                `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(', ')}` :
+                getString('No media');
         }),
-    })
+    });
+
     const musicStuff = Box({
         className: 'spacing-h-10',
         hexpand: true,
-        children: [
-            playingState,
-            trackTitle,
-        ]
-    })
+        children: [playingState, trackTitle]
+    });
+
     const SystemResourcesOrCustomModule = () => {
-        // Check if $XDG_CACHE_HOME/ags/user/scripts/custom-module-poll.sh exists
         if (GLib.file_test(CUSTOM_MODULE_CONTENT_SCRIPT, GLib.FileTest.EXISTS)) {
             const interval = Number(Utils.readFile(CUSTOM_MODULE_CONTENT_INTERVAL_FILE)) || 5000;
             return BarGroup({
@@ -167,10 +160,9 @@ export default () => {
                         useMarkup: true,
                         setup: (self) => Utils.timeout(1, () => {
                             self.label = exec(CUSTOM_MODULE_CONTENT_SCRIPT);
-                            self.poll(interval, (self) => {
-                                const content = exec(CUSTOM_MODULE_CONTENT_SCRIPT);
-                                self.label = content;
-                            })
+                            self.poll(interval, () => {
+                                self.label = exec(CUSTOM_MODULE_CONTENT_SCRIPT);
+                            });
                         })
                     }),
                     onPrimaryClickRelease: () => execAsync(CUSTOM_MODULE_LEFTCLICK_SCRIPT).catch(print),
@@ -180,33 +172,38 @@ export default () => {
                     onScrollDown: () => execAsync(CUSTOM_MODULE_SCROLLDOWN_SCRIPT).catch(print),
                 })
             });
-        } else return BarGroup({
+        }
+
+        return BarGroup({
             child: Box({
                 children: [
-                    BarResource(getString('RAM Usage'), 'memory', `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
+                    BarResource(getString('RAM Usage'), 'memory', 
+                        `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
                         'bar-ram-circprog', 'bar-ram-txt', 'bar-ram-icon'),
                     Revealer({
                         revealChild: true,
                         transition: 'slide_left',
-                        transitionDuration: userOptions.animations.durationLarge,
+                        transitionDuration: userOptions.asyncGet().animations.durationLarge,
                         child: Box({
                             className: 'spacing-h-10 margin-left-10',
                             children: [
-                                BarResource(getString('Swap Usage'), 'swap_horiz', `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
+                                BarResource(getString('Swap Usage'), 'swap_horiz',
+                                    `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
                                     'bar-swap-circprog', 'bar-swap-txt', 'bar-swap-icon'),
-                                BarResource(getString('CPU Usage'), 'settings_motion_mode', `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
+                                BarResource(getString('CPU Usage'), 'settings_motion_mode',
+                                    `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
                                     'bar-cpu-circprog', 'bar-cpu-txt', 'bar-cpu-icon'),
                             ]
                         }),
-                        setup: (self) => self.hook(Mpris, label => {
-                            const mpris = Mpris.getPlayer('');
-                            self.revealChild = (!mpris);
+                        setup: (self) => self.hook(Mpris, () => {
+                            self.revealChild = !Mpris.getPlayer('');
                         }),
                     })
                 ],
             })
         });
-    }
+    };
+
     return EventBox({
         onScrollUp: (self) => switchToRelativeWorkspace(self, -1),
         onScrollDown: (self) => switchToRelativeWorkspace(self, +1),
@@ -219,9 +216,9 @@ export default () => {
                     onPrimaryClick: () => showMusicControls.setValue(!showMusicControls.value),
                     onSecondaryClick: () => execAsync(['bash', '-c', 'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"` &']).catch(print),
                     onMiddleClick: () => execAsync('playerctl play-pause').catch(print),
-                    setup: (self) => self.on('button-press-event', (self, event) => {
-                        if (event.get_button()[1] === 8) // Side button
-                            execAsync('playerctl previous').catch(print)
+                    setup: (self) => self.on('button-press-event', (_, event) => {
+                        if (event.get_button()[1] === 8)
+                            execAsync('playerctl previous').catch(print);
                     }),
                 })
             ]
