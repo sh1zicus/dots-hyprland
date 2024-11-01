@@ -7,7 +7,7 @@
 
 ![](https://img.shields.io/github/last-commit/s0mesh1t/dots-hyprland?&style=for-the-badge&color=FFB1C8&logoColor=D9E0EE&labelColor=292324)
 ![](https://img.shields.io/github/stars/s0mesh1t/dots-hyprland?style=for-the-badge&logo=andela&color=FFB686&logoColor=D9E0EE&labelColor=292324)
-[![](https://img.shields.io/github/repo-size/end-4/dots-hyprland?color=CAC992&label=SIZE&logo=googledrive&style=for-the-badge&logoColor=D9E0EE&labelColor=292324)](https://github.com/s0mesh1t/hyprland)
+[![](https://img.shields.io/github/repo-size/s0mesh1t/dots-hyprland?color=CAC992&label=SIZE&logo=googledrive&style=for-the-badge&logoColor=D9E0EE&labelColor=292324)](https://github.com/s0mesh1t/hyprland)
 ![](https://img.shields.io/badge/issues-skill-green?style=for-the-badge&color=CCE8E9&logoColor=D9E0EE&labelColor=292324) 
 </a>
 
@@ -43,7 +43,7 @@
      <details> 
        <summary>Here's an image, just in case:</summary>
     
-       ![image](https://github.com/end-4/dots-hyprland/assets/97237370/4c3d27b4-9ac5-4e55-9cae-c5c1f497890f)
+       ![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/4c3d27b4-9ac5-4e55-9cae-c5c1f497890f)
 
      </details>
 
@@ -78,16 +78,13 @@
 ### Main branch (*illogical-impulse*)
 
 **AI, on-screen indicators**
-![image](https://github.com/end-4/dots-hyprland/assets/97237370/5e081770-0f1e-45c4-ad9c-3d19f488cd85)
+![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/5e081770-0f1e-45c4-ad9c-3d19f488cd85)
 
 **Fancy notifications, music controls, system, calendar**
-![image](https://github.com/end-4/dots-hyprland/assets/97237370/406b72b6-fa38-4f0d-a6c4-4d7d5d5ddcb7)
-<!-- ![image](https://github.com/end-4/dots-hyprland/assets/97237370/90c13b64-cde3-4363-9716-718d35845d95) -->
-<!-- ![image](https://github.com/end-4/dots-hyprland/assets/97237370/9e7adedd-fae8-4cc8-9c81-d7ad489d7559) -->
+![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/406b72b6-fa38-4f0d-a6c4-4d7d5d5ddcb7)
 
 **Easy window management**
-<!--! ![image](https://github.com/end-4/dots-hyprland/assets/97237370/354431f6-8939-487f-9292-0bac71cf9ca8) -->
-![image](https://github.com/end-4/dots-hyprland/assets/97237370/14e9725c-789f-4412-87b6-cce9504db109)
+![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/14e9725c-789f-4412-87b6-cce9504db109)
 
 <div align="center">
     <h2>• thank you •</h2>
