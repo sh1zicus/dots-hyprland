@@ -12,7 +12,7 @@ import { distroID, isArchDistro, isDebianDistro, hasFlatpak } from '../../.miscu
 
 const scripts = [
     {
-        icon: 'desktop-symbolic',
+        icon: 'screen-resolution-symbolic',
         name: getString('Change screen resolution'),
         command: `bash ${App.configDir}/modules/sideleft/tools/changeres.sh`,
         enabled: true,
