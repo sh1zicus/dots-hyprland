@@ -19,7 +19,7 @@ const configOptions = {
         'proxyUrl': null, // Can be "socks5://127.0.0.1:9050" or "http://127.0.0.1:8080" for example. Leave it blank if you don't need it.
     },
     'animations': {
-        'choreographyDelay': 35,
+        'choreographyDelay': 25,
         'durationSmall': 110,
         'durationLarge': 180,
     },
@@ -40,7 +40,7 @@ const configOptions = {
         'imageViewer': "loupe",
         'network': "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center wifi",
         'settings': "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center",
-        'taskManager': "gnome-usage",
+        'taskManager': "foot -e btop",
         'terminal': "foot", // This is only for shell actions
     },
     'battery': {
@@ -179,8 +179,8 @@ const configOptions = {
             "light": "Adwaita",
         },
         substitutions: {
-            'code-url-handler': "visual-studio-code",
-            'Code': "visual-studio-code",
+            'code-url-handler': "code",
+            'Code': "code",
             'GitHub Desktop': "github-desktop",
             'Minecraft* 1.20.1': "minecraft",
             'gnome-tweaks': "org.gnome.tweaks",
