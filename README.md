@@ -1,14 +1,16 @@
 <div align="center">
-    <h1>【 end_4's Hyprland dotfiles 】</h1>
-    <h3></h3>
+    <h1>【 SH1ZICUS HYPRLAND DOTFILES 】</h1>
+    <h3>
+    <p align="center">
+      <img width="40%" src="https://raw.githubusercontent.com/Mangeshrex/dotfiles/main/etc/cat.gif">
+    </p>
 </div>
 
 <div align="center"> 
 
 ![](https://img.shields.io/github/last-commit/sh1zicus/dots-hyprland?&style=for-the-badge&color=FFB1C8&logoColor=D9E0EE&labelColor=292324)
-![](https://img.shields.io/github/stars/sh1zicus/dots-hyprland?style=for-the-badge&logo=andela&color=FFB686&logoColor=D9E0EE&labelColor=292324)
 [![](https://img.shields.io/github/repo-size/sh1zicus/dots-hyprland?color=CAC992&label=SIZE&logo=googledrive&style=for-the-badge&logoColor=D9E0EE&labelColor=292324)](https://github.com/sh1zicus/hyprland)
-![](https://img.shields.io/badge/issues-skill-green?style=for-the-badge&color=CCE8E9&logoColor=D9E0EE&labelColor=292324) 
+![](https://img.shields.io/github/stars/sh1zicus/dots-hyprland?style=for-the-badge&logo=andela&color=FFB686&logoColor=D9E0EE&labelColor=292324)
 </a>
 
 </div>
