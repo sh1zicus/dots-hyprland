@@ -1,6 +1,5 @@
 <div align="center">
     <h1>【 SH1ZICUS HYPRLAND DOTFILES 】</h1>
-    <h3>
     <p align="center">
       <img width="40%" src="https://raw.githubusercontent.com/Mangeshrex/dotfiles/main/etc/cat.gif">
     </p>
