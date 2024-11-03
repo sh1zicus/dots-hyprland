@@ -297,7 +297,7 @@ done
 printf "\e[36m[$0]: Finished. See the \"Import Manually\" folder and grab anything you need.\e[0m\n"
 printf "\n"
 printf "\e[36mIf you are new to Hyprland, please read\n"
-printf "https://s0mesh1t.github.io/dots-hyprland-wiki/en/i-i/01setup/#post-installation\n"
+printf "https://sh1zicus.github.io/dots-hyprland-wiki/en/i-i/01setup/#post-installation\n"
 printf "for hints on launching Hyprland.\e[0m\n"
 printf "\n"
 printf "\e[36mIf you are already running Hyprland,\e[0m\n"

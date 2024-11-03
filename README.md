@@ -5,9 +5,9 @@
 
 <div align="center"> 
 
-![](https://img.shields.io/github/last-commit/s0mesh1t/dots-hyprland?&style=for-the-badge&color=FFB1C8&logoColor=D9E0EE&labelColor=292324)
-![](https://img.shields.io/github/stars/s0mesh1t/dots-hyprland?style=for-the-badge&logo=andela&color=FFB686&logoColor=D9E0EE&labelColor=292324)
-[![](https://img.shields.io/github/repo-size/s0mesh1t/dots-hyprland?color=CAC992&label=SIZE&logo=googledrive&style=for-the-badge&logoColor=D9E0EE&labelColor=292324)](https://github.com/s0mesh1t/hyprland)
+![](https://img.shields.io/github/last-commit/sh1zicus/dots-hyprland?&style=for-the-badge&color=FFB1C8&logoColor=D9E0EE&labelColor=292324)
+![](https://img.shields.io/github/stars/sh1zicus/dots-hyprland?style=for-the-badge&logo=andela&color=FFB686&logoColor=D9E0EE&labelColor=292324)
+[![](https://img.shields.io/github/repo-size/sh1zicus/dots-hyprland?color=CAC992&label=SIZE&logo=googledrive&style=for-the-badge&logoColor=D9E0EE&labelColor=292324)](https://github.com/sh1zicus/hyprland)
 ![](https://img.shields.io/badge/issues-skill-green?style=for-the-badge&color=CCE8E9&logoColor=D9E0EE&labelColor=292324) 
 </a>
 
@@ -33,17 +33,17 @@
     
    - **Automatic**, but guided and transparent, installation for Arch(-based) Linux:
    ```bash
-   bash <(curl -s "https://s0mesh1t.github.io/dots-hyprland-wiki/setup.sh")
+   bash <(curl -s "https://sh1zicus.github.io/dots-hyprland-wiki/setup.sh")
    ```
    - **Manual** installation, other distros and more:
-     - See the [Wiki](https://s0mesh1t.github.io/dots-hyprland-wiki/en/i-i/01setup/)
+     - See the [Wiki](https://sh1zicus.github.io/dots-hyprland-wiki/en/i-i/01setup/)
      - (_Available in: English, Vietnamese, and Simplified Chinese. Translations are welcome._)
     
    - **Default keybinds**: Parts similar to Windows and GNOME. Hit Super+/ for a list.
      <details> 
        <summary>Here's an image, just in case:</summary>
     
-       ![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/4c3d27b4-9ac5-4e55-9cae-c5c1f497890f)
+       ![image](https://github.com/sh1zicus/dots-hyprland/assets/97237370/4c3d27b4-9ac5-4e55-9cae-c5c1f497890f)
 
      </details>
 
@@ -66,8 +66,8 @@
 <details> 
   <summary>Help improve these dotfiles!</summary>
     
-   - Join the [discussions](https://github.com/s0mesh1t/dots-hyprland/discussions)
-   - If you'd like to suggest fixes or a new widget, feel free to [open an issue](https://github.com/s0mesh1t/dots-hyprland/issues/new/choose)
+   - Join the [discussions](https://github.com/sh1zicus/dots-hyprland/discussions)
+   - If you'd like to suggest fixes or a new widget, feel free to [open an issue](https://github.com/sh1zicus/dots-hyprland/issues/new/choose)
 </details>
 
 <div align="center">
@@ -78,13 +78,13 @@
 ### Main branch (*illogical-impulse*)
 
 **AI, on-screen indicators**
-![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/5e081770-0f1e-45c4-ad9c-3d19f488cd85)
+![image](https://github.com/sh1zicus/dots-hyprland/assets/97237370/5e081770-0f1e-45c4-ad9c-3d19f488cd85)
 
 **Fancy notifications, music controls, system, calendar**
-![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/406b72b6-fa38-4f0d-a6c4-4d7d5d5ddcb7)
+![image](https://github.com/sh1zicus/dots-hyprland/assets/97237370/406b72b6-fa38-4f0d-a6c4-4d7d5d5ddcb7)
 
 **Easy window management**
-![image](https://github.com/s0mesh1t/dots-hyprland/assets/97237370/14e9725c-789f-4412-87b6-cce9504db109)
+![image](https://github.com/sh1zicus/dots-hyprland/assets/97237370/14e9725c-789f-4412-87b6-cce9504db109)
 
 <div align="center">
     <h2>• thank you •</h2>
@@ -104,7 +104,7 @@
     <h3></h3>
 </div>
 
-[![Stargazers over time](https://starchart.cc/s0mesh1t/dots-hyprland.svg?background=%230d1117&axis=%23e6edf3&line=%234759e7)](https://starchart.cc/s0mesh1t/dots-hyprland)
+[![Stargazers over time](https://starchart.cc/sh1zicus/dots-hyprland.svg?background=%230d1117&axis=%23e6edf3&line=%234759e7)](https://starchart.cc/sh1zicus/dots-hyprland)
 
 <div align="center">
     <h2>• inspirations •</h2>
