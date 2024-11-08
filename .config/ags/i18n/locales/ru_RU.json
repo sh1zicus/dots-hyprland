@@ -27,7 +27,6 @@
     "The model's temperature value.\n  Precise = 0\n  Balanced = 0.5\n  Creative = 1": "Значение температуры модели.\n  Точный = 0\n  Сбалансированный = 0.5\n  Творческий = 1",
     "An API key is required\nYou can grab one <u>here</u>, then enter it below": "Требуется API ключ\nВы можете получить его <u>здесь</u>, затем введите его ниже",
     "Tells the model:\n- It's a Linux sidebar assistant\n- Be brief and use bullet points": "Сообщает модели:\n- Это помощник боковой панели Linux\n- Будь кратким и используй маркированные списки",
-    "Powered by waifu.im + other APIs": "Работает на waifu.im + других API",
     "Type tags for a random pic.\nNSFW content will not be returned unless\nyou explicitly request such a tag.\n\nDisclaimer: Not affiliated with the providers\nnor responsible for any of their content.": "Введите теги для случайного изображения.\nКонтент для взрослых не будет показан, если\nвы явно не запросите такой тег.\n\nОтказ от ответственности: Не связан с провайдерами\nи не несет ответственности за их контент.",
     "Tags →": "Теги →",
     "Invalid command.": "Неверная команда.",

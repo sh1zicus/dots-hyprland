@@ -27,7 +27,6 @@
     "The model's temperature value.\n  Precise = 0\n  Balanced = 0.5\n  Creative = 1": "模型的 temperature 值。\n  精确 = 0\n  平衡 = 0.5\n  创意 = 1",
     "An API key is required\nYou can grab one <u>here</u>, then enter it below": "需要 API 密钥\n您可以在<u>这里</u>获取一个，然后在下面输入",
     "Tells the model:\n- It's a Linux sidebar assistant\n- Be brief and use bullet points": "告诉模型：\n- 它是一个 Linux 侧边栏助手\n- 保持简洁并使用项目符号",
-    "Powered by waifu.im + other APIs": "由 waifu.im + 其他 API 提供支持",
     "Type tags for a random pic.\nNSFW content will not be returned unless\nyou explicitly request such a tag.\n\nDisclaimer: Not affiliated with the providers\nnor responsible for any of their content.": "输入标签以获取随机图片。\n除非您明确请求，否则不会返回 NSFW 内容。\n\n免责声明：与提供商无关联\n我也不对他们的任何内容负责。",
     "Tags →": "标签 →",
     "Invalid command.": "无效命令。",

@@ -605,13 +605,6 @@ $skeleton-accent: mix($secondary, $onSecondary, 50%);
     min-width: 0.136rem;
 }
 
-.sidebar-chat-indicator-waifu {
-    @include element_decel;
-    @include full-rounding;
-    min-width: 0.136rem;
-    background-color: $onBackground;
-}
-
 .sidebar-chat-name {
     @include titlefont;
     @include small-rounding;
@@ -799,48 +792,6 @@ $skeleton-accent: mix($secondary, $onSecondary, 50%);
 
 .sidebar-pin-enabled:active {
     background-color: mix($primary, $hovercolor, 40%);
-}
-
-.sidebar-waifu-heading {
-    @include titlefont;
-    padding: 0.341rem;
-    margin-left: -0.136rem;
-    padding-left: 0.818rem;
-}
-
-.sidebar-waifu-txt {
-    @include mainfont;
-}
-
-.sidebar-waifu-image {
-    @include normal-rounding;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.sidebar-waifu-image-actions {
-    @include element_decel;
-    padding: 0.313rem;
-}
-
-$waifu_image_overlay_transparency: 0.7;
-
-.sidebar-waifu-image-action {
-    @include full-rounding;
-    min-width: 1.875rem;
-    min-height: 1.875rem;
-    background-color: rgba(0, 0, 0, $waifu_image_overlay_transparency ); // Fixed cuz on image
-    color: rgba(255, 255, 255, $waifu_image_overlay_transparency);
-}
-
-.sidebar-waifu-image-action:hover,
-.sidebar-waifu-image-action:focus {
-    background-color: rgba(30, 30, 30, $waifu_image_overlay_transparency);
-}
-
-.sidebar-waifu-image-action:active {
-    background-color: rgba(60, 60, 60, $waifu_image_overlay_transparency);
 }
 
 .sidebar-volmixer-stream {
