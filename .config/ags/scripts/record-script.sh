@@ -1,25 +1,34 @@
 #!/usr/bin/env bash
 
 getdate() {
-    date '+%Y-%m-%d_%H.%M.%S'
+    date '+%Y%m%d_%H%M%S'
 }
 getaudiooutput() {
-    pactl list sources | grep 'Name' | grep 'monitor' | cut -d ' ' -f2
+    pactl list short sources | grep monitor | head -n1 | cut -f1
 }
 getactivemonitor() {
     hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .name'
 }
 
-mkdir -p "$(xdg-user-dir VIDEOS)"
-cd "$(xdg-user-dir VIDEOS)" || exit
-if pgrep wf-recorder > /dev/null; then
-    notify-send "Recording Stopped" "Stopped" -a 'record-script.sh' &
-    pkill wf-recorder &
+videos_dir="$(xdg-user-dir VIDEOS)"
+mkdir -p "$videos_dir"
+cd "$videos_dir" || exit
+
+if pidof wf-recorder > /dev/null; then
+    notify-send "Запись остановлена" -a 'record-script.sh' &
+    killall -SIGINT wf-recorder &
 else
-    notify-send "Starting recording" 'recording_'"$(getdate)"'.mp4' -a 'record-script.sh'
+    output_file="./rec_$(getdate).mp4"
+    notify-send "Начало записи" "$output_file" -a 'record-script.sh'
     if [[ "$1" == "--fullscreen" ]]; then
-        wf-recorder -o $(getactivemonitor) --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --audio="$(getaudiooutput)" & disown
+        wf-recorder -c h264_vaapi -d /dev/dri/renderD128 \
+            -o "$(getactivemonitor)" \
+            -f "$output_file" \
+            --audio="$(getaudiooutput)" & disown
     else
-        wf-recorder --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --geometry "$(slurp)" --audio="$(getaudiooutput)" & disown
+        wf-recorder -c h264_vaapi -d /dev/dri/renderD128 \
+            -g "$(slurp)" \
+            -f "$output_file" \
+            --audio="$(getaudiooutput)" & disown
     fi
 fi
