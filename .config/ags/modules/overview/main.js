@@ -14,7 +14,7 @@ export default (id = '') => PopupWindow({
     keymode: 'on-demand',
     visible: false,
     anchor: ['top', 'bottom', 'left', 'right'],
-    layer: 'overlay',
+    layer: 'top',
     child: Widget.Box({
         vertical: true,
         children: [
