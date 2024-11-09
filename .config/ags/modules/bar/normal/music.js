@@ -153,23 +153,31 @@ export default () => {
     const SystemResourcesOrCustomModule = () => {
         if (GLib.file_test(CUSTOM_MODULE_CONTENT_SCRIPT, GLib.FileTest.EXISTS)) {
             const interval = Number(Utils.readFile(CUSTOM_MODULE_CONTENT_INTERVAL_FILE)) || 5000;
+            let cachedLabel = '';
+            
+            const updateLabel = async (label) => {
+                const newContent = await Utils.execAsync([CUSTOM_MODULE_CONTENT_SCRIPT]);
+                if (newContent !== cachedLabel) {
+                    cachedLabel = newContent;
+                    label.label = newContent;
+                }
+            };
+
             return BarGroup({
                 child: Button({
                     child: Label({
                         className: 'txt-smallie txt-onSurfaceVariant',
                         useMarkup: true,
-                        setup: (self) => Utils.timeout(1, () => {
-                            self.label = exec(CUSTOM_MODULE_CONTENT_SCRIPT);
-                            self.poll(interval, () => {
-                                self.label = exec(CUSTOM_MODULE_CONTENT_SCRIPT);
-                            });
-                        })
+                        setup: (self) => {
+                            updateLabel(self);
+                            self.poll(interval, () => updateLabel(self));
+                        }
                     }),
-                    onPrimaryClickRelease: () => execAsync(CUSTOM_MODULE_LEFTCLICK_SCRIPT).catch(print),
-                    onSecondaryClickRelease: () => execAsync(CUSTOM_MODULE_RIGHTCLICK_SCRIPT).catch(print),
-                    onMiddleClickRelease: () => execAsync(CUSTOM_MODULE_MIDDLECLICK_SCRIPT).catch(print),
-                    onScrollUp: () => execAsync(CUSTOM_MODULE_SCROLLUP_SCRIPT).catch(print),
-                    onScrollDown: () => execAsync(CUSTOM_MODULE_SCROLLDOWN_SCRIPT).catch(print),
+                    onPrimaryClickRelease: () => Utils.execAsync(CUSTOM_MODULE_LEFTCLICK_SCRIPT),
+                    onSecondaryClickRelease: () => Utils.execAsync(CUSTOM_MODULE_RIGHTCLICK_SCRIPT),
+                    onMiddleClickRelease: () => Utils.execAsync(CUSTOM_MODULE_MIDDLECLICK_SCRIPT),
+                    onScrollUp: () => Utils.execAsync(CUSTOM_MODULE_SCROLLUP_SCRIPT),
+                    onScrollDown: () => Utils.execAsync(CUSTOM_MODULE_SCROLLDOWN_SCRIPT),
                 })
             });
         }
