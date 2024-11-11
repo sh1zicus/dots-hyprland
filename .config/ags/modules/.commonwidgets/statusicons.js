@@ -357,6 +357,7 @@ export const StatusIcons = (props = {}, monitor = 0) => Widget.Box({
                     SpeakerIndicator(),
                     NetworkIndicator(),
                     BluetoothIndicator(),
+                    NotificationIndicator(),
                     Widget.Label({
                         className: 'bar-time txt-smallie bar-time-module',
                         label: time.bind(),
@@ -364,7 +365,6 @@ export const StatusIcons = (props = {}, monitor = 0) => Widget.Box({
                     }),
                 ]
             }),
-            NotificationIndicator(),
             BluetoothDevices(),
         ]
     })
