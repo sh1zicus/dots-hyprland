@@ -10,13 +10,13 @@ import { Tray } from "./tray.js";
 const { GLib } = imports.gi;
 import { Variable } from 'resource:///com/github/Aylur/ags/variable.js';
 
-// Константы для громкости
+// Volume constants
 const VOLUME_STEP = 0.02;
 const VOLUME_SMALL_STEP = 0.01;
 const VOLUME_LARGE_STEP = 0.05;
 const VOLUME_THRESHOLD = 0.15;
 
-// Определяем форматы времени напрямую
+// Define time formats directly
 const timeFormat = '%H:%M';
 const dateFormat = '%A, %d %B %Y';
 
@@ -55,7 +55,7 @@ export default (monitor = 0) => {
         }),
     }, monitor);
 
-    // Создаем общий обработчик кликов
+    // Create common click handler
     const handleClicks = (child) => Widget.EventBox({
         onHover: () => barStatusIcons.toggleClassName('bar-statusicons-hover', true),
         onHoverLost: () => barStatusIcons.toggleClassName('bar-statusicons-hover', false),
@@ -75,7 +75,7 @@ export default (monitor = 0) => {
         children: [barStatusIcons],
     }));
 
-    // Создаем обработчик прокрутки
+    // Create scroll handler
     const handleScroll = (direction) => {
         if (!Audio.speaker) return;
         const step = Audio.speaker.volume <= VOLUME_THRESHOLD ? VOLUME_SMALL_STEP : VOLUME_LARGE_STEP;
