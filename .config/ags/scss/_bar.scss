@@ -305,7 +305,7 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-corner-spacing {
-    min-width: $rounding_large;
+    min-width: 0.882rem;
     min-height: $rounding_large;
 }
 
@@ -345,7 +345,7 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-space-area-rightmost>box {
-    padding-right: 2.386rem;
+    padding-right: 1.364rem;
 }
 
 .bar-systray {
