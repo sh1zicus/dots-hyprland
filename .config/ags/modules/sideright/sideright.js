@@ -26,7 +26,7 @@ import { getDistroIcon } from '../.miscutils/system.js';
 import { MaterialIcon } from '../.commonwidgets/materialicon.js';
 import { ExpandingIconTabContainer } from '../.commonwidgets/tabcontainer.js';
 import { checkKeybind } from '../.widgetutils/keybind.js';
-import { WWO_CODE, WEATHER_SYMBOL } from '../.commondata/weather.js';
+import { WWO_CODE, WEATHER_SYMBOL, NIGHT_WEATHER_SYMBOL } from '../.commondata/weather.js';
 import GLib from 'gi://GLib';
 
 const centerWidgets = [

@@ -236,7 +236,6 @@ export default () => Widget.EventBox({
     child: Widget.Box({
         className: 'spacing-h-4',
         children: [
-            BarGroup({ child: BarClock() }),
             BatteryModule(),
         ]
     })

@@ -2,14 +2,31 @@ import App from 'resource:///com/github/Aylur/ags/app.js';
 import Audio from 'resource:///com/github/Aylur/ags/service/audio.js';
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
-
 import { MaterialIcon } from './materialicon.js';
 import Bluetooth from 'resource:///com/github/Aylur/ags/service/bluetooth.js';
 import Network from 'resource:///com/github/Aylur/ags/service/network.js';
 import Notifications from 'resource:///com/github/Aylur/ags/service/notifications.js';
 import { languages } from './statusicons_languages.js';
+const { GLib } = imports.gi;
+import { Variable } from 'resource:///com/github/Aylur/ags/variable.js';
 
-// A guessing func to try to support langs not listed in data/languages.js
+// Define time formats
+const timeFormat = '%H:%M';
+const dateFormat = '%A, %d %B %Y';
+
+const time = new Variable('', {
+    poll: [1000,
+        () => GLib.DateTime.new_now_local().format(timeFormat),
+    ],
+});
+
+const date = new Variable('', {
+    poll: [1000,
+        () => GLib.DateTime.new_now_local().format(dateFormat),
+    ],
+});
+
+// A guessing function to try to support languages not listed in data/languages.js
 function isLanguageMatch(abbreviation, word) {
     const lowerAbbreviation = abbreviation.toLowerCase();
     const lowerWord = word.toLowerCase();
@@ -252,10 +269,10 @@ const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
             languageStackArray = Array.from({ length: initLangs.length }, (_, i) => {
                 const lang = languages.find(lang => lang.layout == initLangs[i]);
                 if (!lang) return {
-                    [initLangs[i]]: Widget.Label({ label: initLangs[i] })
+                    [initLangs[i]]: Widget.Label({ label: initLangs[i].toUpperCase() })
                 };
                 return {
-                    [lang.layout]: Widget.Label({ label: (useFlag ? lang.flag : lang.layout) })
+                    [lang.layout]: Widget.Label({ label: (useFlag ? lang.flag : lang.layout.toUpperCase()) })
                 };
             });
         };
@@ -315,20 +332,40 @@ const createKeyboardLayoutInstances = async () => {
 };
 const optionalKeyboardLayoutInstances = await createKeyboardLayoutInstances()
 
+const BarClock = () => Widget.Box({
+    vpack: 'center',
+    className: 'spacing-h-4 bar-clock-box',
+    children: [
+        Widget.Label({
+            className: 'bar-time',
+            label: time.bind(),
+            tooltipText: date.bind(),
+        }),
+    ],
+});
+
 export const StatusIcons = (props = {}, monitor = 0) => Widget.Box({
     ...props,
     child: Widget.Box({
         className: 'spacing-h-15',
         children: [
-            MicIndicator(),
-            SpeakerIndicator(),
-            optionalKeyboardLayoutInstances[monitor],
-            NotificationIndicator(),
-            NetworkIndicator(),
             Widget.Box({
-                className: 'spacing-h-5',
-                children: [BluetoothIndicator(), BluetoothDevices()]
-            })
+                className: 'spacing-h-10',
+                children: [
+                    optionalKeyboardLayoutInstances[monitor],
+                    MicIndicator(),
+                    SpeakerIndicator(),
+                    NetworkIndicator(),
+                    BluetoothIndicator(),
+                    Widget.Label({
+                        className: 'bar-time txt-smallie bar-time-module',
+                        label: time.bind(),
+                        tooltipText: date.bind(),
+                    }),
+                ]
+            }),
+            NotificationIndicator(),
+            BluetoothDevices(),
         ]
     })
 });
