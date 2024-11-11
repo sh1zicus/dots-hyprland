@@ -409,5 +409,15 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-time-module {
     margin-left: 0.5rem;
+    margin-right: 1rem;
     color: $timeOnLayer1;
+}
+
+.status-icons-group {
+    padding-left: 0.273rem;
+    padding-right: 1rem;
+}
+
+.time-with-margin {
+    margin-left: 0.5rem;
 }
