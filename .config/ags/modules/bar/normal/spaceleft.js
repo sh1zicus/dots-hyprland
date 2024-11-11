@@ -2,6 +2,8 @@ import App from 'resource:///com/github/Aylur/ags/app.js';
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import Brightness from '../../../services/brightness.js';
 import Indicator from '../../../services/indicator.js';
+import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
 
 // Кэшируем часто используемые значения
 const BRIGHTNESS_STEP = 0.05;
@@ -11,38 +13,80 @@ const WindowTitle = async () => {
     try {
         const Hyprland = (await import('resource:///com/github/Aylur/ags/service/hyprland.js')).default;
         
-        // Создаем общие стили для лейблов
+        const findAppIcon = (appClass) => {
+            if (!appClass) return 'application-default';
+            
+            // Поиск .desktop файла
+            const desktopEntry = `${appClass.toLowerCase()}.desktop`;
+            const desktopPaths = [
+                '/usr/share/applications/',
+                '/usr/local/share/applications/',
+                `${GLib.get_home_dir()}/.local/share/applications/`,
+            ];
+            
+            for (const path of desktopPaths) {
+                const file = Gio.File.new_for_path(`${path}${desktopEntry}`);
+                if (file.query_exists(null)) {
+                    const keyFile = new GLib.KeyFile();
+                    try {
+                        keyFile.load_from_file(file.get_path(), GLib.KeyFileFlags.NONE);
+                        const icon = keyFile.get_string('Desktop Entry', 'Icon');
+                        if (icon) return icon;
+                    } catch (e) { }
+                }
+            }
+            
+            return appClass.toLowerCase();
+        };
+
         const commonLabelProps = {
             xalign: 0,
             truncate: 'end',
-            maxWidthChars: 1,
         };
+
+        const appIcon = Widget.Icon({
+            className: 'app-icon',
+            size: 16,
+            setup: (self) => self.hook(Hyprland.active.client, () => {
+                const classname = Hyprland.active.client.class;
+                if (!classname) {
+                    self.visible = false;
+                    return;
+                }
+                
+                self.icon = findAppIcon(classname);
+                self.visible = true;
+            }),
+        });
 
         const topLabel = Widget.Label({
             ...commonLabelProps,
-            className: 'txt-smaller bar-wintitle-topdesc txt',
-            setup: (self) => self.hook(Hyprland.active.client, label => {
-                label.label = Hyprland.active.client.class || DEFAULT_WORKSPACE_LABEL;
+            className: 'txt-smaller bar-wintitle-topdesc',
+            setup: (self) => self.hook(Hyprland.active.client, () => {
+                self.label = Hyprland.active.client.class || DEFAULT_WORKSPACE_LABEL;
             }),
         });
 
         const bottomLabel = Widget.Label({
-            ...commonLabelProps, 
+            ...commonLabelProps,
             className: 'txt-smallie bar-wintitle-txt',
-            setup: (self) => self.hook(Hyprland.active.client, label => {
-                label.label = Hyprland.active.client.title || `Workspace ${Hyprland.active.workspace.id}`;
+            setup: (self) => self.hook(Hyprland.active.client, () => {
+                self.label = Hyprland.active.client.title || `Workspace ${Hyprland.active.workspace.id}`;
             }),
         });
 
-        return Widget.Scrollable({
-            hexpand: true,
-            vexpand: true,
-            hscroll: 'automatic',
-            vscroll: 'never',
-            child: Widget.Box({
-                vertical: true,
-                children: [topLabel, bottomLabel]
-            })
+        return Widget.Box({
+            children: [
+                appIcon,
+                Widget.Box({ className: 'bar-wintitle-icon-spacer' }),
+                Widget.Box({
+                    vertical: true,
+                    children: [
+                        topLabel,
+                        bottomLabel
+                    ]
+                })
+            ]
         });
     } catch {
         return null;
