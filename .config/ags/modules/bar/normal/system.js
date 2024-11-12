@@ -1,4 +1,3 @@
-// This is for the right pills of the bar.
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
 const { Box, Label, Button, Overlay, Revealer, Scrollable, Stack, EventBox } = Widget;
@@ -9,13 +8,11 @@ import { MaterialIcon } from '../../.commonwidgets/materialicon.js';
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { WWO_CODE, WEATHER_SYMBOL, NIGHT_WEATHER_SYMBOL } from '../../.commondata/weather.js';
 
-// Кэшируем часто используемые значения
 const options = userOptions.asyncGet();
 const WEATHER_CACHE_FOLDER = `${GLib.get_user_cache_dir()}/ags/weather`;
 const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + '/wttr.in.txt';
 Utils.exec(`mkdir -p ${WEATHER_CACHE_FOLDER}`);
 
-// Мемоизация функции обновления прогресса батареи
 const batteryProgressCache = new Map();
 const BarBatteryProgress = () => {
     const _updateProgress = (circprog) => {
@@ -40,7 +37,6 @@ const BarBatteryProgress = () => {
     })
 }
 
-// Оптимизированные переменные времени
 const timeFormat = options.time.format;
 const dateFormat = options.time.dateFormatLong;
 
@@ -77,7 +73,6 @@ const BarClock = () => Widget.Box({
     ],
 });
 
-// Кэшируем кнопки утилит
 const utilButtonCache = new Map();
 const UtilButton = ({ name, icon, onClicked }) => {
     const key = `${name}-${icon}`;
