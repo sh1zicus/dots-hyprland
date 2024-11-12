@@ -200,25 +200,30 @@ const BarGroup = ({ child }) => Widget.Box({
     ]
 });
 
-const BatteryModule = () => Stack({
-    transition: 'slide_up_down',
-    transitionDuration: userOptions.asyncGet().animations.durationLarge,
-    children: {
-        'laptop': Box({
-            className: 'spacing-h-4', children: [
-                BarGroup({ child: Utilities() }),
-                BarGroup({ child: BarBattery() }),
-            ]
-        }),
-        'desktop': BarGroup({
-            child: Utilities()
-        }),
-    },
-    setup: (stack) => Utils.timeout(10, () => {
-        if (!Battery.available) stack.shown = 'desktop';
-        else stack.shown = 'laptop';
-    })
-})
+const BatteryModule = () => Box({
+    className: 'spacing-h-4',
+    children: [
+        BarGroup({ child: Utilities() }),
+        Stack({
+            transition: 'slide_up_down',
+            transitionDuration: userOptions.asyncGet().animations.durationLarge,
+            children: {
+                'laptop': BarGroup({ child: BarBattery() }),
+                'hidden': Widget.Box({}),
+            },
+            setup: (stack) => {
+                stack.hook(globalThis.devMode, () => {
+                    if (globalThis.devMode.value) {
+                        stack.shown = 'laptop';
+                    } else {
+                        if (!Battery.available) stack.shown = 'hidden';
+                        else stack.shown = 'laptop';
+                    }
+                });
+            }
+        })
+    ]
+});
 
 const switchToRelativeWorkspace = async (self, num) => {
     try {
