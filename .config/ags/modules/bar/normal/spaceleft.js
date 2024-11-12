@@ -5,7 +5,6 @@ import Indicator from '../../../services/indicator.js';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-// Кэшируем часто используемые значения
 const BRIGHTNESS_STEP = 0.05;
 const DEFAULT_WORKSPACE_LABEL = 'Desktop';
 
@@ -16,7 +15,6 @@ const WindowTitle = async () => {
         const findAppIcon = (appClass) => {
             if (!appClass) return 'application-default';
             
-            // Поиск .desktop файла
             const desktopEntry = `${appClass.toLowerCase()}.desktop`;
             const desktopPaths = [
                 '/usr/share/applications/',
@@ -96,7 +94,6 @@ const WindowTitle = async () => {
 export default async (monitor = 0) => {
     const optionalWindowTitleInstance = await WindowTitle();
     
-    // Создаем общий обработчик прокрутки
     const handleScroll = (direction) => {
         Indicator.popup(1);
         Brightness[monitor].screen_value += direction * BRIGHTNESS_STEP;
