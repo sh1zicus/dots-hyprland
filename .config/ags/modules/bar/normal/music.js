@@ -17,7 +17,7 @@ const CUSTOM_MODULE_SCROLLUP_SCRIPT = `${GLib.get_user_cache_dir()}/ags/user/scr
 const CUSTOM_MODULE_SCROLLDOWN_SCRIPT = `${GLib.get_user_cache_dir()}/ags/user/scripts/custom-module-scrolldown.sh`;
 
 function trimTrackTitle(title) {
-    if (!title) return '';
+    if (!title) return getString ('No title');
     const cleanPatterns = [
         /【[^】]*】/,
         " [FREE DOWNLOAD]",
@@ -138,8 +138,9 @@ export default () => {
         maxWidthChars: 1,
         setup: (self) => self.hook(Mpris, () => {
             const mpris = Mpris.getPlayer('');
+            const artists = mpris ? mpris.trackArtists.join(', ') : '';
             self.label = mpris ? 
-                `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(', ')}` :
+                `${trimTrackTitle(mpris.trackTitle)} ${artists ? ' • ' + artists : ''}` :
                 getString('No media');
         }),
     });
