@@ -5,14 +5,22 @@
  * * Persistence.persistNewState(newDocs, callback) where newDocs is an array of documents and callback has signature err
  */
 
-var storage = require('./storage')
-  , path = require('path')
-  , model = require('./model')
-  , async = require('async')
-  , customUtils = require('./customUtils')
-  , Index = require('./indexes')
-  ;
+// var storage = require('./storage')
+//   , path = require('path')
+//   , model = require('./model')
+//   , async = require('async')
+//   , customUtils = require('./customUtils')
+//   , Index = require('./indexes')
+//   ;
 
+import storage from './storage.js';
+import customUtils from './customUtils.js';
+import path from './../../path/index.js';
+import async from './../../async/index.js';
+import mkdirp from './../../mkdirp/index.js';
+import process from './../../process/index.js';
+import model from './model.js';
+import Index from './indexes.js';
 
 /**
  * Create a new Persistence object for database options.db
@@ -71,8 +79,7 @@ function Persistence (options) {
 Persistence.ensureDirectoryExists = function (dir, cb) {
   var callback = cb || function () {}
     ;
-
-  storage.mkdirp(dir, function (err) { return callback(err); });
+  mkdirp.mkdirpAsync (dir, 755, function (err) { return callback(err); });
 };
 
 
@@ -84,7 +91,7 @@ Persistence.ensureDirectoryExists = function (dir, cb) {
  */
 Persistence.getNWAppFilename = function (appName, relativeFilename) {
   var home;
-
+  console.log('getNWAppFilename(...)')
   switch (process.platform) {
     case 'win32':
     case 'win64':
@@ -136,6 +143,7 @@ Persistence.prototype.persistCachedDatabase = function (cb) {
 
   storage.crashSafeWriteFile(this.filename, toPersist, function (err) {
     if (err) { return callback(err); }
+    console.log('finish him');
     self.db.emit('compaction.done');
     return callback(null);
   });
@@ -197,9 +205,9 @@ Persistence.prototype.persistNewState = function (newDocs, cb) {
 
   if (toPersist.length === 0) { return callback(null); }
 
-  storage.appendFile(self.filename, toPersist, 'utf8', function (err) {
+  storage.appendFile(self.filename, toPersist, {encode: 'utf8', callback: function (err) {
     return callback(err);
-  });
+  }});
 };
 
 
@@ -269,25 +277,21 @@ Persistence.prototype.loadDatabase = function (cb) {
 
   // In-memory only datastore
   if (self.inMemoryOnly) { return callback(null); }
-
   async.waterfall([
     function (cb) {
       Persistence.ensureDirectoryExists(path.dirname(self.filename), function (err) {
         storage.ensureDatafileIntegrity(self.filename, function (err) {
-          storage.readFile(self.filename, 'utf8', function (err, rawData) {
+          storage.readFile(self.filename, {encode: 'utf8', callback: function (err, rawData) {
             if (err) { return cb(err); }
-
             try {
               var treatedData = self.treatRawData(rawData);
             } catch (e) {
               return cb(e);
             }
-
             // Recreate all indexes in the datafile
             Object.keys(treatedData.indexes).forEach(function (key) {
               self.db.indexes[key] = new Index(treatedData.indexes[key]);
             });
-
             // Fill cached database (i.e. all indexes) with data
             try {
               self.db.resetIndexes(treatedData.data);
@@ -295,15 +299,13 @@ Persistence.prototype.loadDatabase = function (cb) {
               self.db.resetIndexes();   // Rollback any index which didn't fail
               return cb(e);
             }
-
             self.db.persistence.persistCachedDatabase(cb);
-          });
+          }});
         });
       });
     }
   ], function (err) {
        if (err) { return callback(err); }
-
        self.db.executor.processBuffer();
        return callback(null);
      });
@@ -311,4 +313,4 @@ Persistence.prototype.loadDatabase = function (cb) {
 
 
 // Interface
-module.exports = Persistence;
+export default Persistence;

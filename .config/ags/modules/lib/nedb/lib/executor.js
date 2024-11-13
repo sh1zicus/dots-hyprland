@@ -2,8 +2,8 @@
  * Responsible for sequentially executing actions on the database
  */
 
-var async = require('async')
-  ;
+import async from './../../async/index.js';
+import process from './../../process/index.js';
 
 function Executor () {
   this.buffer = [];
@@ -75,4 +75,4 @@ Executor.prototype.processBuffer = function () {
 
 
 // Interface
-module.exports = Executor;
+export default Executor;

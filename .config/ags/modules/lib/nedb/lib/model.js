@@ -5,15 +5,23 @@
  * Querying, update
  */
 
-var util = require('util')
-  , _ = require('underscore')
-  , modifierFunctions = {}
+// var util = require('util')
+//   , _ = require('underscore')
+//   , modifierFunctions = {}
+//   , lastStepModifierFunctions = {}
+//   , comparisonFunctions = {}
+//   , logicalOperators = {}
+//   , arrayComparisonFunctions = {}
+//   ;
+
+import util from './../../util/index.js';
+import _ from './../../underscore/index.js';
+
+var modifierFunctions = {}
   , lastStepModifierFunctions = {}
   , comparisonFunctions = {}
   , logicalOperators = {}
   , arrayComparisonFunctions = {}
-  ;
-
 
 /**
  * Check a key, throw an error if the key is non valid
@@ -823,13 +831,16 @@ function matchQueryPart (obj, queryKey, queryValue, treatObjAsValue) {
 
 
 // Interface
-module.exports.serialize = serialize;
-module.exports.deserialize = deserialize;
-module.exports.deepCopy = deepCopy;
-module.exports.checkObject = checkObject;
-module.exports.isPrimitiveType = isPrimitiveType;
-module.exports.modify = modify;
-module.exports.getDotValue = getDotValue;
-module.exports.match = match;
-module.exports.areThingsEqual = areThingsEqual;
-module.exports.compareThings = compareThings;
+
+export default {
+  serialize,
+  deserialize,
+  deepCopy,
+  checkObject,
+  isPrimitiveType,
+  modify,
+  getDotValue,
+  match,
+  areThingsEqual,
+  compareThings
+}

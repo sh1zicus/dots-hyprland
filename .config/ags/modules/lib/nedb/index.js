@@ -1,3 +1,3 @@
-var Datastore = require('./lib/datastore');
+import Datastore from './lib/datastore.js';
 
-module.exports = Datastore;
+export default Datastore;

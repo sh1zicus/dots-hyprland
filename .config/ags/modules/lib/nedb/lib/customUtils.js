@@ -1,5 +1,5 @@
-var crypto = require('crypto')
-  ;
+import GLib from 'gi://GLib';
+import crypto from './../../crypto/index.js';
 
 /**
  * Return a random alphanumerical string of length len
@@ -9,13 +9,15 @@ var crypto = require('crypto')
  * The probability of a collision is extremely small (need 3*10^12 documents to have one chance in a million of a collision)
  * See http://en.wikipedia.org/wiki/Birthday_problem
  */
+
 function uid (len) {
-  return crypto.randomBytes(Math.ceil(Math.max(8, len * 2)))
-    .toString('base64')
-    .replace(/[+\/]/g, '')
+  const uuid =  GLib.base64_encode(crypto.randomBytes(Math.ceil(Math.max(8, len * 2))))
+    ?.replace(/[+\/]/g, '')
     .slice(0, len);
+  if (uuid === undefined) { throw Error ('failed to generate uuid, because uuid is undefined'); }
+  return uuid;
 }
 
 
 // Interface
-module.exports.uid = uid;
+export default {uid};

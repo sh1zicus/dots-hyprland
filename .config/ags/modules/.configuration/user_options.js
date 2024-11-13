@@ -292,7 +292,7 @@ const update = (file) => {
 
 update (USER_CONFIG_FOLDER + 'config.json');
 
-Utils.monitorFile (USER_CONFIG_FOLDER + 'config.json', (file, event) => {
+const monitor = Utils.monitorFile (USER_CONFIG_FOLDER + 'config.json', (file, event) => {
     if (event == 1) { update (file.get_path()); }
 });
 

@@ -1,11 +1,12 @@
 /**
  * Manage access to data, be it to find, update or remove it
  */
-var model = require('./model')
-  , _ = require('underscore')
-  ;
+// var model = require('./model')
+//   , _ = require('underscore')
+//   ;
 
-
+import model from './model.js';
+import _ from './../../underscore/index.js';
 
 /**
  * Create a new cursor for this collection
@@ -201,4 +202,4 @@ Cursor.prototype.exec = function () {
 
 
 // Interface
-module.exports = Cursor;
+export default Cursor;

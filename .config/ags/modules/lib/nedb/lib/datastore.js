@@ -1,14 +1,24 @@
-var customUtils = require('./customUtils')
-  , model = require('./model')
-  , async = require('async')
-  , Executor = require('./executor')
-  , Index = require('./indexes')
-  , util = require('util')
-  , _ = require('underscore')
-  , Persistence = require('./persistence')
-  , Cursor = require('./cursor')
-  ;
+// var customUtils = require('./customUtils')
+//   , model = require('./model')
+//   , async = require('async')
+//   , Executor = require('./executor')
+//   , Index = require('./indexes')
+//   , util = require('util')
+//   , _ = require('underscore')
+//   , Persistence = require('./persistence')
+//   , Cursor = require('./cursor')
+//   ;
 
+import customUtils from './customUtils.js';
+import model from './model.js';
+import Executor from './executor.js';
+import Index from './indexes.js';
+import Cursor from './cursor.js';
+import Persistence from './persistence.js';
+import util from './../../util/index.js';
+import EventEmitter from './../../EventMitter/index.js';
+import async from './../../async/index.js';
+import _ from './../../underscore/index.js';
 
 /**
  * Create a new collection
@@ -78,7 +88,7 @@ function Datastore (options) {
   }); }
 }
 
-util.inherits(Datastore, require('events').EventEmitter);
+util.inherits(Datastore, EventEmitter);
 
 
 /**
@@ -329,7 +339,9 @@ Datastore.prototype.getCandidates = function (query, dontExpireStaleDocs, callba
     }, function (err) {
       return callback(null, validDocs);
     });
-  }]);
+  }]).catch ((e) => {
+    console.log(e);
+  });
 };
 
 
@@ -702,4 +714,4 @@ Datastore.prototype.remove = function () {
 
 
 
-module.exports = Datastore;
+export default Datastore;

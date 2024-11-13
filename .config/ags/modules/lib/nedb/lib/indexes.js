@@ -1,8 +1,15 @@
-var BinarySearchTree = require('binary-search-tree').AVLTree
-  , model = require('./model')
-  , _ = require('underscore')
-  , util = require('util')
-  ;
+// var BinarySearchTree = require('binary-search-tree').AVLTree
+//   , model = require('./model')
+//   , _ = require('underscore')
+//   , util = require('util')
+//   ;
+
+import _ from './../../underscore/index.js';
+import util from './../../util/index.js';
+import model from './model.js';
+import bst from './../../binary-search-tree/index.js';
+
+const BinarySearchTree = bst.AVLTree;
 
 /**
  * Two indexed pointers are equal iif they point to the same place
@@ -291,4 +298,4 @@ Index.prototype.getAll = function () {
 
 
 // Interface
-module.exports = Index;
+export default Index;
