@@ -1,6 +1,8 @@
 #!/usr/bin/gjs
 imports.gi.versions.Gtk = '4.0';
-const { GObject, Gtk, Gio, GLib } = imports.gi;
+imports.gi.versions.Adw = '1';
+imports.gi.versions.Gdk = '4.0';
+const { GObject, Gtk, Gio, GLib, Adw, Gdk } = imports.gi;
 
 const CONFIG_FILE = GLib.build_filenamev([GLib.get_home_dir(), '.ags/config.json']);
 
@@ -14,18 +16,34 @@ const createSpinButton = (value, min, max, step, digits = 0) => createWidget(Gtk
     value: value || 0
 });
 
-const createSettingRow = (label, widget) => {
+const createSettingRow = (label, widget, description = '') => {
     const box = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.VERTICAL,
+        css_classes: ['settings-row']
+    });
+    
+    const headerBox = createWidget(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
         spacing: 10
     });
     
-    box.append(createWidget(Gtk.Label, {
+    headerBox.append(createWidget(Gtk.Label, {
         label: label,
         halign: Gtk.Align.START,
         hexpand: true
     }));
-    box.append(widget);
+    headerBox.append(widget);
+    
+    box.append(headerBox);
+    
+    if (description) {
+        box.append(createWidget(Gtk.Label, {
+            label: description,
+            halign: Gtk.Align.START,
+            css_classes: ['settings-description'],
+            wrap: true
+        }));
+    }
     
     return box;
 };
@@ -88,20 +106,78 @@ const saveConfig = (newValues) => {
 // Основное приложение
 const app = new Gtk.Application({ application_id: 'org.gnome.AGSTweaks' });
 
+// Добавляем стили
+const css = new Gtk.CssProvider();
+const cssData = `
+    .settings-page {
+        margin: 24px 12px;
+    }
+    
+    .settings-group {
+        margin-bottom: 24px;
+    }
+    
+    .settings-group-title {
+        margin-bottom: 12px;
+        font-weight: bold;
+    }
+    
+    .settings-row {
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 1px;
+    }
+    
+    .settings-row:hover {
+        background-color: alpha(@theme_fg_color, 0.03);
+    }
+    
+    .settings-description {
+        font-size: 0.9em;
+        color: alpha(@theme_fg_color, 0.7);
+        margin-top: 4px;
+    }
+`;
+
+css.load_from_data(cssData, -1);
+
+// Новая функция для создания группы настроек
+const createSettingsGroup = (title, rows) => {
+    const group = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.VERTICAL,
+        css_classes: ['settings-group'],
+        spacing: 8
+    });
+
+    group.append(createWidget(Gtk.Label, {
+        label: title,
+        halign: Gtk.Align.START,
+        css_classes: ['settings-group-title']
+    }));
+
+    rows.forEach(row => group.append(row));
+    return group;
+};
+
 app.connect('activate', () => {
     const config = loadConfig();
     if (!config) return;
 
+    Gtk.StyleContext.add_provider_for_display(
+        Gdk.Display.get_default(),
+        css,
+        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+    );
+
     const win = createWidget(Gtk.ApplicationWindow, {
         application: app,
         title: 'AGS Configuration',
-        default_width: 800,
-        default_height: 600
+        default_width: 900,
+        default_height: 680
     });
 
-    const notebook = new Gtk.Notebook();
-    
-    // Interface Settings
+    // Создаем все виджеты
+    // Interface widgets
     const barCorners = createSpinButton(config.appearance.barRoundCorners || 0, 0, 100, 1);
     const screenRounding = createSpinButton(config.appearance.fakeScreenRounding || 0, 0, 100, 1);
     const smokeSwitch = createWidget(Gtk.Switch, {
@@ -110,29 +186,14 @@ app.connect('activate', () => {
     });
     const smokeStrength = createSpinButton(config.appearance.layerSmokeStrength || 0.2, 0, 1, 0.1, 1);
 
-    notebook.append_page(createPage([
-        createSettingRow('Bar Round Corners', barCorners),
-        createSettingRow('Screen Rounding', screenRounding),
-        createSettingRow('Layer Smoke Effect', smokeSwitch),
-        createSettingRow('Smoke Strength', smokeStrength)
-    ]), createWidget(Gtk.Label, { label: 'Interface' }));
-
-    // Overview Settings
+    // Overview widgets
     const scale = createSpinButton(config.overview.scale || 0.18, 0, 1, 0.01, 2);
     const rows = createSpinButton(config.overview.numOfRows || 2, 1, 10, 1);
     const cols = createSpinButton(config.overview.numOfCols || 5, 1, 10, 1);
     const wsNumScale = createSpinButton(config.overview.wsNumScale || 0.09, 0, 1, 0.01, 2);
     const wsNumMarginScale = createSpinButton(config.overview.wsNumMarginScale || 0.07, 0, 1, 0.01, 2);
 
-    notebook.append_page(createPage([
-        createSettingRow('Scale', scale),
-        createSettingRow('Number of Rows', rows),
-        createSettingRow('Number of Columns', cols),
-        createSettingRow('Workspace Number Scale', wsNumScale),
-        createSettingRow('Workspace Number Margin', wsNumMarginScale)
-    ]), createWidget(Gtk.Label, { label: 'Overview' }));
-
-    // Sidebar Settings
+    // AI widgets
     const gptProviderCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
     ['openrouter', 'openai', 'anthropic'].forEach(provider => gptProviderCombo.append_text(provider));
     gptProviderCombo.set_active(['openrouter', 'openai', 'anthropic'].indexOf(config.ai?.defaultGPTProvider || 'openrouter'));
@@ -146,33 +207,20 @@ app.connect('activate', () => {
         text: config.ai?.writingCursor || " ...",
         valign: Gtk.Align.CENTER
     });
-
     const enhancementsSwitch = createWidget(Gtk.Switch, {
         active: config.ai?.enhancements || true,
         valign: Gtk.Align.CENTER
     });
-
     const historySwitch = createWidget(Gtk.Switch, {
         active: config.ai?.useHistory || true,
         valign: Gtk.Align.CENTER
     });
-
     const safetySwitch = createWidget(Gtk.Switch, {
         active: config.ai?.safety || true,
         valign: Gtk.Align.CENTER
     });
 
-    notebook.append_page(createPage([
-        createSettingRow('Default GPT Provider', gptProviderCombo),
-        createSettingRow('Search AI', searchAICombo),
-        createSettingRow('Temperature', temperatureScale),
-        createSettingRow('Writing Cursor', writingCursor),
-        createSettingRow('Enable Enhancements', enhancementsSwitch),
-        createSettingRow('Use History', historySwitch),
-        createSettingRow('Safety Mode', safetySwitch)
-    ]), createWidget(Gtk.Label, { label: 'Sidebar AI' }));
-
-    // System Settings
+    // System widgets
     const darkModeSwitch = createWidget(Gtk.Switch, {
         active: config.appearance.autoDarkMode?.enabled || false,
         valign: Gtk.Align.CENTER
@@ -195,26 +243,12 @@ app.connect('activate', () => {
         placeholder_text: "http://proxy:port"
     });
 
-    notebook.append_page(createPage([
-        createSettingRow('Auto Dark Mode', darkModeSwitch),
-        createSettingRow('Dark Mode From', darkModeFrom),
-        createSettingRow('Dark Mode To', darkModeTo),
-        createSettingRow('Keyboard Flag', keyboardFlagSwitch),
-        createSettingRow('Proxy URL', proxyUrl)
-    ]), createWidget(Gtk.Label, { label: 'System' }));
-
-    // Animation Settings
+    // Animation widgets
     const choreographyDelay = createSpinButton(config.animations.choreographyDelay || 25, 0, 1000, 5);
     const smallDuration = createSpinButton(config.animations.durationSmall || 100, 0, 1000, 10);
     const largeDuration = createSpinButton(config.animations.durationLarge || 100, 0, 1000, 10);
 
-    notebook.append_page(createPage([
-        createSettingRow('Choreography Delay', choreographyDelay),
-        createSettingRow('Small Duration', smallDuration),
-        createSettingRow('Large Duration', largeDuration)
-    ]), createWidget(Gtk.Label, { label: 'Animations' }));
-
-    // Weather Settings
+    // Weather widgets
     const cityEntry = createWidget(Gtk.Entry, {
         text: config.weather?.city || "",
         valign: Gtk.Align.CENTER
@@ -223,18 +257,114 @@ app.connect('activate', () => {
     ['C', 'F'].forEach(unit => unitCombo.append_text(unit));
     unitCombo.set_active(['C', 'F'].indexOf(config.weather?.preferredUnit || 'C'));
 
-    notebook.append_page(createPage([
-        createSettingRow('City', cityEntry),
-        createSettingRow('Temperature Unit', unitCombo)
-    ]), createWidget(Gtk.Label, { label: 'Weather' }));
+    // Создаем UI компоненты
+    const mainBox = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.HORIZONTAL
+    });
 
-    // Save Button
+    const sidebar = new Gtk.StackSidebar({
+        vexpand: true,
+        width_request: 180
+    });
+
+    const stack = new Gtk.Stack({
+        transition_type: Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
+        transition_duration: 200,
+        hexpand: true
+    });
+
+    sidebar.set_stack(stack);
+
+    // Interface Page
+    const interfacePage = createPage([
+        createSettingsGroup('Bar Settings', [
+            createSettingRow('Bar Round Corners', barCorners, 'Adjust the roundness of the bar corners'),
+            createSettingRow('Screen Rounding', screenRounding, 'Set the screen corner rounding')
+        ]),
+        createSettingsGroup('Effects', [
+            createSettingRow('Layer Smoke Effect', smokeSwitch, 'Enable smoke effect layer'),
+            createSettingRow('Smoke Strength', smokeStrength, 'Adjust the intensity of the smoke effect')
+        ])
+    ]);
+    interfacePage.css_classes = ['settings-page'];
+    stack.add_titled(interfacePage, 'interface', 'Interface');
+
+    // Overview Page
+    const overviewPage = createPage([
+        createSettingsGroup('Workspace Layout', [
+            createSettingRow('Scale', scale, 'Overall scale of the overview'),
+            createSettingRow('Number of Rows', rows, 'Number of workspace rows'),
+            createSettingRow('Number of Columns', cols, 'Number of workspace columns')
+        ]),
+        createSettingsGroup('Workspace Numbers', [
+            createSettingRow('Number Scale', wsNumScale, 'Scale of workspace numbers'),
+            createSettingRow('Number Margin', wsNumMarginScale, 'Margin around workspace numbers')
+        ])
+    ]);
+    overviewPage.css_classes = ['settings-page'];
+    stack.add_titled(overviewPage, 'overview', 'Overview');
+
+    // Sidebar AI Page
+    const aiPage = createPage([
+        createSettingsGroup('AI Providers', [
+            createSettingRow('Default GPT Provider', gptProviderCombo, 'Select your preferred GPT provider'),
+            createSettingRow('Search AI', searchAICombo, 'AI to use for search functionality'),
+            createSettingRow('Temperature', temperatureScale, 'AI response creativity (higher = more creative)')
+        ]),
+        createSettingsGroup('AI Features', [
+            createSettingRow('Writing Cursor', writingCursor, 'Cursor animation during AI typing'),
+            createSettingRow('Enable Enhancements', enhancementsSwitch, 'Enable AI response enhancements'),
+            createSettingRow('Use History', historySwitch, 'Remember conversation history'),
+            createSettingRow('Safety Mode', safetySwitch, 'Enable content filtering')
+        ])
+    ]);
+    aiPage.css_classes = ['settings-page'];
+    stack.add_titled(aiPage, 'ai', 'Sidebar AI');
+
+    // System Page
+    const systemPage = createPage([
+        createSettingsGroup('Dark Mode', [
+            createSettingRow('Auto Dark Mode', darkModeSwitch, 'Automatically switch between light and dark themes'),
+            createSettingRow('Dark Mode From', darkModeFrom, 'Start time for dark mode (HH:MM)'),
+            createSettingRow('Dark Mode To', darkModeTo, 'End time for dark mode (HH:MM)')
+        ]),
+        createSettingsGroup('System Settings', [
+            createSettingRow('Keyboard Flag', keyboardFlagSwitch, 'Show keyboard layout flag'),
+            createSettingRow('Proxy URL', proxyUrl, 'HTTP proxy for network connections')
+        ])
+    ]);
+    systemPage.css_classes = ['settings-page'];
+    stack.add_titled(systemPage, 'system', 'System');
+
+    // Animation Page
+    const animationPage = createPage([
+        createSettingsGroup('Animation Timing', [
+            createSettingRow('Choreography Delay', choreographyDelay, 'Delay between animation steps'),
+            createSettingRow('Small Duration', smallDuration, 'Duration for small animations'),
+            createSettingRow('Large Duration', largeDuration, 'Duration for large animations')
+        ])
+    ]);
+    animationPage.css_classes = ['settings-page'];
+    stack.add_titled(animationPage, 'animations', 'Animations');
+
+    // Weather Page
+    const weatherPage = createPage([
+        createSettingsGroup('Weather Settings', [
+            createSettingRow('City', cityEntry, 'Your city name for weather information'),
+            createSettingRow('Temperature Unit', unitCombo, 'Preferred temperature unit')
+        ])
+    ]);
+    weatherPage.css_classes = ['settings-page'];
+    stack.add_titled(weatherPage, 'weather', 'Weather');
+
+    // Save Button в стиле GNOME
     const saveButton = createWidget(Gtk.Button, {
         label: 'Save & Restart AGS',
+        css_classes: ['suggested-action'],
         halign: Gtk.Align.END,
-        margin_top: 10,
-        margin_end: 10,
-        margin_bottom: 10
+        margin_top: 24,
+        margin_bottom: 24,
+        margin_end: 24
     });
 
     saveButton.connect('clicked', () => {
@@ -288,15 +418,19 @@ app.connect('activate', () => {
         win.close();
     });
 
-    const mainBox = createWidget(Gtk.Box, {
-        orientation: Gtk.Orientation.VERTICAL,
-        spacing: 10
+    // Собираем интерфейс
+    const contentBox = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.VERTICAL
     });
 
-    mainBox.append(notebook);
-    mainBox.append(saveButton);
+    contentBox.append(stack);
+    contentBox.append(saveButton);
 
-    win.set_child(createWidget(Gtk.ScrolledWindow, { child: mainBox }));
+    mainBox.append(sidebar);
+    mainBox.append(new Gtk.Separator({ orientation: Gtk.Orientation.VERTICAL }));
+    mainBox.append(contentBox);
+
+    win.set_child(mainBox);
     win.present();
 });
 
