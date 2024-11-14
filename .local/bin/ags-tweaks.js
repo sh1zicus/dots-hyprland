@@ -105,11 +105,15 @@ app.connect('activate', () => {
     const scale = createSpinButton(config.overview.scale || 0.18, 0, 1, 0.01, 2);
     const rows = createSpinButton(config.overview.numOfRows || 2, 1, 10, 1);
     const cols = createSpinButton(config.overview.numOfCols || 5, 1, 10, 1);
+    const wsNumScale = createSpinButton(config.overview.wsNumScale || 0.09, 0, 1, 0.01, 2);
+    const wsNumMarginScale = createSpinButton(config.overview.wsNumMarginScale || 0.07, 0, 1, 0.01, 2);
 
     notebook.append_page(createPage([
         createSettingRow('Scale', scale),
         createSettingRow('Number of Rows', rows),
-        createSettingRow('Number of Columns', cols)
+        createSettingRow('Number of Columns', cols),
+        createSettingRow('Workspace Number Scale', wsNumScale),
+        createSettingRow('Workspace Number Margin Scale', wsNumMarginScale)
     ]), createWidget(Gtk.Label, { label: 'Overview' }));
 
     // Appearance Settings
@@ -120,22 +124,58 @@ app.connect('activate', () => {
     const smokeStrength = createSpinButton(config.appearance.layerSmokeStrength || 0.2, 0, 1, 0.1, 1);
     const barCorners = createSpinButton(config.appearance.barRoundCorners || 0, 0, 100, 1);
     const screenRounding = createSpinButton(config.appearance.fakeScreenRounding || 0, 0, 100, 1);
+    const darkModeSwitch = createWidget(Gtk.Switch, {
+        active: config.appearance.autoDarkMode?.enabled || false,
+        valign: Gtk.Align.CENTER
+    });
+    const darkModeFrom = createWidget(Gtk.Entry, {
+        text: config.appearance.autoDarkMode?.from || "18:00",
+        valign: Gtk.Align.CENTER
+    });
+    const darkModeTo = createWidget(Gtk.Entry, {
+        text: config.appearance.autoDarkMode?.to || "6:00",
+        valign: Gtk.Align.CENTER
+    });
+    const keyboardFlagSwitch = createWidget(Gtk.Switch, {
+        active: config.appearance.keyboardUseFlag || false,
+        valign: Gtk.Align.CENTER
+    });
 
     notebook.append_page(createPage([
         createSettingRow('Layer Smoke', smokeSwitch),
         createSettingRow('Smoke Strength', smokeStrength),
         createSettingRow('Bar Round Corners', barCorners),
-        createSettingRow('Screen Rounding', screenRounding)
+        createSettingRow('Screen Rounding', screenRounding),
+        createSettingRow('Auto Dark Mode', darkModeSwitch),
+        createSettingRow('Dark Mode From', darkModeFrom),
+        createSettingRow('Dark Mode To', darkModeTo),
+        createSettingRow('Keyboard Use Flag', keyboardFlagSwitch)
     ]), createWidget(Gtk.Label, { label: 'Appearance' }));
 
     // Animation Settings
+    const choreographyDelay = createSpinButton(config.animations.choreographyDelay || 25, 0, 1000, 5);
     const smallDuration = createSpinButton(config.animations.durationSmall || 100, 0, 1000, 10);
     const largeDuration = createSpinButton(config.animations.durationLarge || 100, 0, 1000, 10);
 
     notebook.append_page(createPage([
+        createSettingRow('Choreography Delay', choreographyDelay),
         createSettingRow('Small Duration', smallDuration),
         createSettingRow('Large Duration', largeDuration)
     ]), createWidget(Gtk.Label, { label: 'Animations' }));
+
+    // Weather Settings
+    const cityEntry = createWidget(Gtk.Entry, {
+        text: config.weather?.city || "",
+        valign: Gtk.Align.CENTER
+    });
+    const unitCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    ['C', 'F'].forEach(unit => unitCombo.append_text(unit));
+    unitCombo.set_active(['C', 'F'].indexOf(config.weather?.preferredUnit || 'C'));
+
+    notebook.append_page(createPage([
+        createSettingRow('City', cityEntry),
+        createSettingRow('Temperature Unit', unitCombo)
+    ]), createWidget(Gtk.Label, { label: 'Weather' }));
 
     // Save Button
     const saveButton = createWidget(Gtk.Button, {
@@ -152,21 +192,29 @@ app.connect('activate', () => {
                 scale: scale.get_value(),
                 numOfRows: rows.get_value(),
                 numOfCols: cols.get_value(),
-                wsNumScale: config.overview.wsNumScale,
-                wsNumMarginScale: config.overview.wsNumMarginScale
+                wsNumScale: wsNumScale.get_value(),
+                wsNumMarginScale: wsNumMarginScale.get_value()
             },
             appearance: {
                 layerSmoke: smokeSwitch.get_active(),
                 layerSmokeStrength: smokeStrength.get_value(),
                 barRoundCorners: barCorners.get_value(),
                 fakeScreenRounding: screenRounding.get_value(),
-                autoDarkMode: config.appearance.autoDarkMode,
-                keyboardUseFlag: config.appearance.keyboardUseFlag
+                autoDarkMode: {
+                    enabled: darkModeSwitch.get_active(),
+                    from: darkModeFrom.get_text(),
+                    to: darkModeTo.get_text()
+                },
+                keyboardUseFlag: keyboardFlagSwitch.get_active()
             },
             animations: {
-                choreographyDelay: config.animations.choreographyDelay,
+                choreographyDelay: choreographyDelay.get_value(),
                 durationSmall: smallDuration.get_value(),
                 durationLarge: largeDuration.get_value()
+            },
+            weather: {
+                city: cityEntry.get_text(),
+                preferredUnit: ['C', 'F'][unitCombo.get_active()]
             }
         });
 
