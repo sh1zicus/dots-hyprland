@@ -137,6 +137,13 @@ const cssData = `
         color: alpha(@theme_fg_color, 0.7);
         margin-top: 4px;
     }
+    
+    .footer-box {
+        background: alpha(@theme_bg_color, 0.95);
+        border-top: 1px solid alpha(@theme_fg_color, 0.15);
+        padding: 12px;
+        margin: 0;
+    }
 `;
 
 css.load_from_data(cssData, -1);
@@ -258,10 +265,6 @@ app.connect('activate', () => {
     unitCombo.set_active(['C', 'F'].indexOf(config.weather?.preferredUnit || 'C'));
 
     // Создаем UI компоненты
-    const mainBox = createWidget(Gtk.Box, {
-        orientation: Gtk.Orientation.HORIZONTAL
-    });
-
     const sidebar = new Gtk.StackSidebar({
         vexpand: true,
         width_request: 180
@@ -357,15 +360,46 @@ app.connect('activate', () => {
     weatherPage.css_classes = ['settings-page'];
     stack.add_titled(weatherPage, 'weather', 'Weather');
 
-    // Save Button в стиле GNOME
+    // Создаем футер с кнопкой
+    const footerBox = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.HORIZONTAL,
+        halign: Gtk.Align.END,
+        css_classes: ['footer-box']
+    });
+
     const saveButton = createWidget(Gtk.Button, {
         label: 'Save & Restart AGS',
         css_classes: ['suggested-action'],
-        halign: Gtk.Align.END,
-        margin_top: 24,
-        margin_bottom: 24,
-        margin_end: 24
+        margin_end: 6
     });
+
+    footerBox.append(saveButton);
+
+    // Создаем основной контейнер с прокруткой
+    const scrolledWindow = createWidget(Gtk.ScrolledWindow, {
+        vexpand: true
+    });
+    scrolledWindow.set_child(stack);
+
+    // Собираем интерфейс
+    const contentBox = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.VERTICAL,
+        hexpand: true
+    });
+
+    contentBox.append(scrolledWindow);
+    contentBox.append(footerBox);
+
+    const mainBox = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.HORIZONTAL
+    });
+
+    mainBox.append(sidebar);
+    mainBox.append(new Gtk.Separator({ orientation: Gtk.Orientation.VERTICAL }));
+    mainBox.append(contentBox);
+
+    win.set_child(mainBox);
+    win.present();
 
     saveButton.connect('clicked', () => {
         const getValues = () => ({
@@ -417,21 +451,6 @@ app.connect('activate', () => {
         saveConfig(newValues);
         win.close();
     });
-
-    // Собираем интерфейс
-    const contentBox = createWidget(Gtk.Box, {
-        orientation: Gtk.Orientation.VERTICAL
-    });
-
-    contentBox.append(stack);
-    contentBox.append(saveButton);
-
-    mainBox.append(sidebar);
-    mainBox.append(new Gtk.Separator({ orientation: Gtk.Orientation.VERTICAL }));
-    mainBox.append(contentBox);
-
-    win.set_child(mainBox);
-    win.present();
 });
 
 app.run([]); 
