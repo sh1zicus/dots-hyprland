@@ -77,6 +77,11 @@ fi
 # Copy new files
 echo -e "${CYAN}Copying new files...${RESET}"
 
+# Update AGS config.json
+echo -e "${BLUE}Updating ~/.ags/config.json...${RESET}"
+mkdir -p "$HOME/.ags"
+cp -f "$base/.config/ags/modules/.configuration/user_options.default.json" "$HOME/.ags/config.json"
+
 # Copy .config files
 for folder in "${config_folders[@]}"; do
     find "$folder" -type f -print0 | while IFS= read -r -d '' file; do
