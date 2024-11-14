@@ -151,6 +151,14 @@ const cssData = `
         padding: 8px 16px;
         margin: 6px;
     }
+
+    .save-button:disabled {
+        opacity: 0.7;
+    }
+
+    .save-button-box {
+        spacing: 8px;
+    }
 `;
 
 css.load_from_data(cssData, -1);
@@ -379,10 +387,28 @@ app.connect('activate', () => {
         css_classes: ['footer-box']
     });
 
+    // Создаем кнопку с спиннером
+    const saveButtonBox = createWidget(Gtk.Box, {
+        orientation: Gtk.Orientation.HORIZONTAL,
+        spacing: 8,
+        css_classes: ['save-button-box']
+    });
+
+    const saveButtonSpinner = createWidget(Gtk.Spinner, {
+        visible: false
+    });
+
+    const saveButtonLabel = createWidget(Gtk.Label, {
+        label: 'Save & Restart AGS'
+    });
+
+    saveButtonBox.append(saveButtonLabel);
+    saveButtonBox.append(saveButtonSpinner);
+
     const saveButton = createWidget(Gtk.Button, {
-        label: 'Save & Restart AGS',
         css_classes: ['suggested-action', 'save-button']
     });
+    saveButton.set_child(saveButtonBox);
 
     footerBox.append(saveButton);
 
@@ -413,8 +439,15 @@ app.connect('activate', () => {
     win.set_child(mainBox);
     win.present();
 
+    // Обновляем обработчик сохранения
     saveButton.connect('clicked', () => {
-        const getValues = () => ({
+        // Отключаем кнопку и показываем спиннер
+        saveButton.sensitive = false;
+        saveButtonSpinner.visible = true;
+        saveButtonSpinner.start();
+        saveButtonLabel.label = 'Applying changes...';
+
+        const newValues = {
             overview: {
                 scale: scale.get_value(),
                 numOfRows: rows.get_value(),
@@ -453,15 +486,62 @@ app.connect('activate', () => {
                 writingCursor: writingCursor.get_text(),
                 proxyUrl: proxyUrl.get_text()
             }
-        });
+        };
 
-        const newValues = getValues();
-        Object.keys(config).forEach(key => {
-            if (!newValues[key]) newValues[key] = config[key];
-        });
+        try {
+            print('Saving new values:', JSON.stringify(newValues, null, 2));
+            
+            // Сохраняем конфиг
+            const contents = JSON.stringify(newValues, null, 2);
+            const success = GLib.file_set_contents(CONFIG_FILE, contents);
+            
+            if (!success) {
+                throw new Error('Failed to save config file');
+            }
 
-        saveConfig(newValues);
-        win.close();
+            // Перезапускаем AGS
+            GLib.spawn_command_line_async('killall ags');
+            
+            // Ждем 2 секунды перед перезапуском
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
+                GLib.spawn_command_line_async('ags');
+                
+                // Возвращаем кнопку в исходное состояние через 1 секунду
+                GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+                    saveButton.sensitive = true;
+                    saveButtonSpinner.visible = false;
+                    saveButtonSpinner.stop();
+                    saveButtonLabel.label = 'Save & Restart AGS';
+                    return false;
+                });
+                
+                return false;
+            });
+
+        } catch (e) {
+            print('Error saving config:', e);
+            
+            // Показываем диалог с ошибкой
+            const dialog = new Gtk.MessageDialog({
+                transient_for: win,
+                modal: true,
+                buttons: Gtk.ButtonsType.OK,
+                message_type: Gtk.MessageType.ERROR,
+                text: 'Error saving configuration',
+                secondary_text: e.toString()
+            });
+            
+            dialog.connect('response', () => {
+                dialog.destroy();
+                // Возвращаем кнопку в исходное состояние
+                saveButton.sensitive = true;
+                saveButtonSpinner.visible = false;
+                saveButtonSpinner.stop();
+                saveButtonLabel.label = 'Save & Restart AGS';
+            });
+            
+            dialog.show();
+        }
     });
 });
 
