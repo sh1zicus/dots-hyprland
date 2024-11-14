@@ -139,10 +139,17 @@ const cssData = `
     }
     
     .footer-box {
-        background: alpha(@theme_bg_color, 0.95);
-        border-top: 1px solid alpha(@theme_fg_color, 0.15);
         padding: 12px;
         margin: 0;
+    }
+
+    .footer-separator {
+        margin: 0;
+    }
+
+    .save-button {
+        padding: 8px 16px;
+        margin: 6px;
     }
 `;
 
@@ -360,7 +367,12 @@ app.connect('activate', () => {
     weatherPage.css_classes = ['settings-page'];
     stack.add_titled(weatherPage, 'weather', 'Weather');
 
-    // Создаем футер с кнопкой
+    // Создаем футер
+    const footerSeparator = createWidget(Gtk.Separator, {
+        orientation: Gtk.Orientation.HORIZONTAL,
+        css_classes: ['footer-separator']
+    });
+
     const footerBox = createWidget(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
         halign: Gtk.Align.END,
@@ -369,8 +381,7 @@ app.connect('activate', () => {
 
     const saveButton = createWidget(Gtk.Button, {
         label: 'Save & Restart AGS',
-        css_classes: ['suggested-action'],
-        margin_end: 6
+        css_classes: ['suggested-action', 'save-button']
     });
 
     footerBox.append(saveButton);
@@ -388,6 +399,7 @@ app.connect('activate', () => {
     });
 
     contentBox.append(scrolledWindow);
+    contentBox.append(footerSeparator);  // Добавляем разделитель перед футером
     contentBox.append(footerBox);
 
     const mainBox = createWidget(Gtk.Box, {
