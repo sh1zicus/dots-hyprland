@@ -177,6 +177,54 @@ app.connect('activate', () => {
         createSettingRow('Temperature Unit', unitCombo)
     ]), createWidget(Gtk.Label, { label: 'Weather' }));
 
+    // AI Settings
+    const gptProviderCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    ['openrouter', 'openai', 'anthropic'].forEach(provider => gptProviderCombo.append_text(provider));
+    gptProviderCombo.set_active(['openrouter', 'openai', 'anthropic'].indexOf(config.ai?.defaultGPTProvider || 'openrouter'));
+
+    const searchAICombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    ['gemini', 'gpt', 'none'].forEach(ai => searchAICombo.append_text(ai));
+    searchAICombo.set_active(['gemini', 'gpt', 'none'].indexOf(config.ai?.onSearch || 'gemini'));
+
+    const temperatureScale = createSpinButton(config.ai?.defaultTemperature || 0.9, 0, 2, 0.1, 1);
+    
+    const enhancementsSwitch = createWidget(Gtk.Switch, {
+        active: config.ai?.enhancements || true,
+        valign: Gtk.Align.CENTER
+    });
+
+    const historySwitch = createWidget(Gtk.Switch, {
+        active: config.ai?.useHistory || true,
+        valign: Gtk.Align.CENTER
+    });
+
+    const safetySwitch = createWidget(Gtk.Switch, {
+        active: config.ai?.safety || true,
+        valign: Gtk.Align.CENTER
+    });
+
+    const writingCursor = createWidget(Gtk.Entry, {
+        text: config.ai?.writingCursor || " ...",
+        valign: Gtk.Align.CENTER
+    });
+
+    const proxyUrl = createWidget(Gtk.Entry, {
+        text: config.ai?.proxyUrl || "",
+        valign: Gtk.Align.CENTER,
+        placeholder_text: "http://proxy:port"
+    });
+
+    notebook.append_page(createPage([
+        createSettingRow('Default GPT Provider', gptProviderCombo),
+        createSettingRow('Search AI', searchAICombo),
+        createSettingRow('Temperature', temperatureScale),
+        createSettingRow('Enhancements', enhancementsSwitch),
+        createSettingRow('Use History', historySwitch),
+        createSettingRow('Safety', safetySwitch),
+        createSettingRow('Writing Cursor', writingCursor),
+        createSettingRow('Proxy URL', proxyUrl)
+    ]), createWidget(Gtk.Label, { label: 'AI' }));
+
     // Save Button
     const saveButton = createWidget(Gtk.Button, {
         label: 'Save & Restart AGS',
@@ -215,6 +263,16 @@ app.connect('activate', () => {
             weather: {
                 city: cityEntry.get_text(),
                 preferredUnit: ['C', 'F'][unitCombo.get_active()]
+            },
+            ai: {
+                defaultGPTProvider: ['openrouter', 'openai', 'anthropic'][gptProviderCombo.get_active()],
+                onSearch: ['gemini', 'gpt', 'none'][searchAICombo.get_active()],
+                defaultTemperature: temperatureScale.get_value(),
+                enhancements: enhancementsSwitch.get_active(),
+                useHistory: historySwitch.get_active(),
+                safety: safetySwitch.get_active(),
+                writingCursor: writingCursor.get_text(),
+                proxyUrl: proxyUrl.get_text()
             }
         });
 
