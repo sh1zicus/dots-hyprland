@@ -12,6 +12,5 @@ if command -v pacman >/dev/null 2>&1;then printf "\e[31m[$0]: pacman found, it s
 install-ags
 install-Rubik
 install-Gabarito
-install-OneUI
 install-bibata
 install-MicroTeX
