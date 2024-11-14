@@ -23,6 +23,8 @@ get_destination() {
     local file="$1"
     if [ "$(echo $file | cut -d/ -f1)" = ".config" ]; then
         printf "$XDG_CONFIG_HOME/$(echo $file | cut -d/ -f2-)"
+    elif [ "$(echo $file | cut -d/ -f1-2)" = ".local/bin" ]; then
+        printf "$XDG_BIN_HOME/$(echo $file | cut -d/ -f3-)"
     fi
 }
 
@@ -81,6 +83,14 @@ echo -e "${CYAN}Copying new files...${RESET}"
 echo -e "${BLUE}Updating ~/.ags/config.json...${RESET}"
 mkdir -p "$HOME/.ags"
 cp -f "$base/.config/ags/modules/.configuration/user_options.default.json" "$HOME/.ags/config.json"
+
+# Update local bin files
+echo -e "${BLUE}Updating ~/.local/bin files...${RESET}"
+mkdir -p "$XDG_BIN_HOME"
+if [ -d "$base/.local/bin" ]; then
+    cp -f "$base/.local/bin/"* "$XDG_BIN_HOME/"
+    chmod +x "$XDG_BIN_HOME"/*
+fi
 
 # Copy .config files
 for folder in "${config_folders[@]}"; do
