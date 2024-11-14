@@ -224,13 +224,14 @@ case $SKIP_AGS in
     t="$XDG_CONFIG_HOME/ags/user_options.js"
     if [ -f $t ];then
       echo -e "\e[34m[$0]: \"$t\" already exists.\e[0m"
-      # v cp -f .config/ags/user_options.js $t.new
       existed_ags_opt=y
     else
       echo -e "\e[33m[$0]: \"$t\" does not exist yet.\e[0m"
       v cp .config/ags/user_options.js $t
       existed_ags_opt=n
     fi
+    v mkdir -p "$HOME/.ags"
+    v cp -f .config/ags/modules/.configuration/user_options.default.json "$HOME/.ags/config.json"
     ;;
 esac
 
