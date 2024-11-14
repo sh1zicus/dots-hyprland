@@ -7,7 +7,7 @@
     "useHistory": true,
     "safety": true,
     "writingCursor": " ...",
-    "proxyUrl": null
+    "proxyUrl": ""
   },
   "animations": {
     "choreographyDelay": 25,
@@ -37,21 +37,9 @@
   "battery": {
     "low": 20,
     "critical": 10,
-    "warnLevels": [
-      20,
-      15,
-      5
-    ],
-    "warnTitles": [
-      "Low battery",
-      "Very low battery",
-      "Critical Battery"
-    ],
-    "warnMessages": [
-      "Plug in the charger",
-      "You there?",
-      "PLUG THE CHARGER ALREADY"
-    ],
+    "warnLevels": [20, 15, 5],
+    "warnTitles": ["Low battery", "Very low battery", "Critical Battery"],
+    "warnMessages": ["Plug in the charger", "You there?", "PLUG THE CHARGER ALREADY"],
     "suspendThreshold": 3
   },
   "brightness": {
@@ -92,20 +80,8 @@
   },
   "sidebar": {
     "ai": {
-      "__custom": [
-        "extraGptModels"
-      ],
-      "extraGptModels": {
-        "openrouter": {
-            "name": "Llama 3 8B",
-            "logo_name": "openrouter-symbolic",
-            "description": "A unified interface for LLMs",
-            "base_url": "https://openrouter.ai/api/v1/chat/completions",
-            "key_get_url": "https://openrouter.ai/keys",
-            "key_file": "openrouter_key.txt",
-            "model": "meta-llama/llama-3-8b-instruct:free"
-        }
-      },
+      "__custom": ["extraGptModels"],
+      "extraGptModels": {},
       "initMessages": []
     },
     "image": {
@@ -115,28 +91,16 @@
       "saveInFolderByTags": false
     },
     "pages": {
-      "order": [
-        "apis",
-        "tools"
-      ],
+      "order": ["apis", "tools"],
       "apis": {
-        "order": [
-          "gemini",
-          "gpt",
-          "translater"
-        ]
+        "order": ["gemini", "gpt"]
       }
     },
     "translater": {
-      "__custom": [
-        "languages"
-      ],
+      "__custom": ["languages"],
       "from": "auto",
       "to": "en",
-      "languages": {
-        "auto": "Auto",
-        "en": "English"
-      }
+      "languages": {}
     }
   },
   "search": {
@@ -154,9 +118,7 @@
       "webSearch": true
     },
     "engineBaseUrl": "https://www.google.com/search?q=",
-    "excludedSites": [
-      "quora.com"
-    ]
+    "excludedSites": ["quora.com"]
   },
   "time": {
     "format": "%H:%M",
@@ -166,7 +128,7 @@
     "dateFormat": "%d/%m"
   },
   "weather": {
-    "city": "Moscow",
+    "city": "Barabinsk",
     "preferredUnit": "C"
   },
   "workspaces": {
@@ -175,17 +137,11 @@
   "dock": {
     "enabled": false,
     "hiddenThickness": 5,
-    "pinnedApps": [
-      "firefox",
-      "org.gnome.Nautilus"
-    ],
+    "pinnedApps": ["firefox", "org.gnome.Nautilus"],
     "layer": "top",
     "monitorExclusivity": true,
     "searchPinnedAppIcons": false,
-    "trigger": [
-      "client-added",
-      "client-removed"
-    ],
+    "trigger": ["client-added", "client-removed"],
     "autoHide": [
       {
         "trigger": "client-added",
@@ -198,13 +154,8 @@
     ]
   },
   "icons": {
-    "__custom": [
-      "substitutions",
-      "regexSubstitutions"
-    ],
-    "searchPaths": [
-      ""
-    ],
+    "__custom": ["substitutions", "regexSubstitutions"],
+    "searchPaths": [""],
     "symbolicIconTheme": {
       "dark": "Adwaita",
       "light": "Adwaita"
@@ -258,9 +209,7 @@
     }
   },
   "bar": {
-    "modes": [
-      "normal"
-    ],
-    "wallpaper_folder": null
+    "modes": ["normal"],
+    "wallpaper_folder": ""
   }
 }
