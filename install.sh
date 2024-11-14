@@ -6,6 +6,14 @@ source ./scriptdata/functions
 source ./scriptdata/installers
 source ./scriptdata/options
 
+# Add log file setup at the beginning
+LOG_FILE="./installation_$(date +%Y%m%d_%H%M%S).log"
+exec 1> >(tee -a "$LOG_FILE") 2>&1
+
+echo "Installation started at $(date)"
+echo "System information:"
+uname -a
+
 #####################################################################################
 if ! command -v pacman >/dev/null 2>&1; then 
   printf "\e[31m[$0]: pacman not found, it seems that the system is not ArchLinux or Arch-based distros. Aborting...\e[0m\n"
@@ -299,10 +307,6 @@ printf "\e[36mIf you are new to Hyprland, please read\n"
 printf "https://sh1zicus.github.io/dots-hyprland-wiki/en/i-i/01setup/#post-installation\n"
 printf "for hints on launching Hyprland.\e[0m\n"
 printf "\n"
-printf "\e[36mIf you are already running Hyprland,\e[0m\n"
-printf "\e[36mPress \e[30m\e[46m Ctrl+Super+T \e[0m\e[36m to select a wallpaper\e[0m\n"
-printf "\e[36mPress \e[30m\e[46m Super+/ \e[0m\e[36m for a list of keybinds\e[0m\n"
-printf "\n"
 
 case $existed_ags_opt in
   y) printf "\n\e[33m[$0]: Warning: \"$XDG_CONFIG_HOME/ags/user_options.js\" already existed before and we didn't overwrite it. \e[0m\n"
@@ -317,3 +321,5 @@ case $existed_hypr_conf in
 if [[ ! -z "${warn_files[@]}" ]]; then
   printf "\n\e[31m[$0]: \!! Important \!! : Please delete \e[0m ${warn_files[*]} \e[31m manually as soon as possible, since we\'re now using AUR package or local PKGBUILD to install them for Arch(based) Linux distros, and they'll take precedence over our installation, or at least take up more space.\e[0m\n"
 fi
+
+echo "Installation completed at $(date)"
