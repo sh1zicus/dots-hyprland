@@ -101,6 +101,22 @@ app.connect('activate', () => {
 
     const notebook = new Gtk.Notebook();
     
+    // Interface Settings
+    const barCorners = createSpinButton(config.appearance.barRoundCorners || 0, 0, 100, 1);
+    const screenRounding = createSpinButton(config.appearance.fakeScreenRounding || 0, 0, 100, 1);
+    const smokeSwitch = createWidget(Gtk.Switch, {
+        active: config.appearance.layerSmoke,
+        valign: Gtk.Align.CENTER
+    });
+    const smokeStrength = createSpinButton(config.appearance.layerSmokeStrength || 0.2, 0, 1, 0.1, 1);
+
+    notebook.append_page(createPage([
+        createSettingRow('Bar Round Corners', barCorners),
+        createSettingRow('Screen Rounding', screenRounding),
+        createSettingRow('Layer Smoke Effect', smokeSwitch),
+        createSettingRow('Smoke Strength', smokeStrength)
+    ]), createWidget(Gtk.Label, { label: 'Interface' }));
+
     // Overview Settings
     const scale = createSpinButton(config.overview.scale || 0.18, 0, 1, 0.01, 2);
     const rows = createSpinButton(config.overview.numOfRows || 2, 1, 10, 1);
@@ -113,17 +129,50 @@ app.connect('activate', () => {
         createSettingRow('Number of Rows', rows),
         createSettingRow('Number of Columns', cols),
         createSettingRow('Workspace Number Scale', wsNumScale),
-        createSettingRow('Workspace Number Margin Scale', wsNumMarginScale)
+        createSettingRow('Workspace Number Margin', wsNumMarginScale)
     ]), createWidget(Gtk.Label, { label: 'Overview' }));
 
-    // Appearance Settings
-    const smokeSwitch = createWidget(Gtk.Switch, {
-        active: config.appearance.layerSmoke,
+    // Sidebar Settings
+    const gptProviderCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    ['openrouter', 'openai', 'anthropic'].forEach(provider => gptProviderCombo.append_text(provider));
+    gptProviderCombo.set_active(['openrouter', 'openai', 'anthropic'].indexOf(config.ai?.defaultGPTProvider || 'openrouter'));
+
+    const searchAICombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    ['gemini', 'gpt', 'none'].forEach(ai => searchAICombo.append_text(ai));
+    searchAICombo.set_active(['gemini', 'gpt', 'none'].indexOf(config.ai?.onSearch || 'gemini'));
+
+    const temperatureScale = createSpinButton(config.ai?.defaultTemperature || 0.9, 0, 2, 0.1, 1);
+    const writingCursor = createWidget(Gtk.Entry, {
+        text: config.ai?.writingCursor || " ...",
         valign: Gtk.Align.CENTER
     });
-    const smokeStrength = createSpinButton(config.appearance.layerSmokeStrength || 0.2, 0, 1, 0.1, 1);
-    const barCorners = createSpinButton(config.appearance.barRoundCorners || 0, 0, 100, 1);
-    const screenRounding = createSpinButton(config.appearance.fakeScreenRounding || 0, 0, 100, 1);
+
+    const enhancementsSwitch = createWidget(Gtk.Switch, {
+        active: config.ai?.enhancements || true,
+        valign: Gtk.Align.CENTER
+    });
+
+    const historySwitch = createWidget(Gtk.Switch, {
+        active: config.ai?.useHistory || true,
+        valign: Gtk.Align.CENTER
+    });
+
+    const safetySwitch = createWidget(Gtk.Switch, {
+        active: config.ai?.safety || true,
+        valign: Gtk.Align.CENTER
+    });
+
+    notebook.append_page(createPage([
+        createSettingRow('Default GPT Provider', gptProviderCombo),
+        createSettingRow('Search AI', searchAICombo),
+        createSettingRow('Temperature', temperatureScale),
+        createSettingRow('Writing Cursor', writingCursor),
+        createSettingRow('Enable Enhancements', enhancementsSwitch),
+        createSettingRow('Use History', historySwitch),
+        createSettingRow('Safety Mode', safetySwitch)
+    ]), createWidget(Gtk.Label, { label: 'Sidebar AI' }));
+
+    // System Settings
     const darkModeSwitch = createWidget(Gtk.Switch, {
         active: config.appearance.autoDarkMode?.enabled || false,
         valign: Gtk.Align.CENTER
@@ -140,17 +189,19 @@ app.connect('activate', () => {
         active: config.appearance.keyboardUseFlag || false,
         valign: Gtk.Align.CENTER
     });
+    const proxyUrl = createWidget(Gtk.Entry, {
+        text: config.ai?.proxyUrl || "",
+        valign: Gtk.Align.CENTER,
+        placeholder_text: "http://proxy:port"
+    });
 
     notebook.append_page(createPage([
-        createSettingRow('Layer Smoke', smokeSwitch),
-        createSettingRow('Smoke Strength', smokeStrength),
-        createSettingRow('Bar Round Corners', barCorners),
-        createSettingRow('Screen Rounding', screenRounding),
         createSettingRow('Auto Dark Mode', darkModeSwitch),
         createSettingRow('Dark Mode From', darkModeFrom),
         createSettingRow('Dark Mode To', darkModeTo),
-        createSettingRow('Keyboard Use Flag', keyboardFlagSwitch)
-    ]), createWidget(Gtk.Label, { label: 'Appearance' }));
+        createSettingRow('Keyboard Flag', keyboardFlagSwitch),
+        createSettingRow('Proxy URL', proxyUrl)
+    ]), createWidget(Gtk.Label, { label: 'System' }));
 
     // Animation Settings
     const choreographyDelay = createSpinButton(config.animations.choreographyDelay || 25, 0, 1000, 5);
@@ -176,54 +227,6 @@ app.connect('activate', () => {
         createSettingRow('City', cityEntry),
         createSettingRow('Temperature Unit', unitCombo)
     ]), createWidget(Gtk.Label, { label: 'Weather' }));
-
-    // AI Settings
-    const gptProviderCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
-    ['openrouter', 'openai', 'anthropic'].forEach(provider => gptProviderCombo.append_text(provider));
-    gptProviderCombo.set_active(['openrouter', 'openai', 'anthropic'].indexOf(config.ai?.defaultGPTProvider || 'openrouter'));
-
-    const searchAICombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
-    ['gemini', 'gpt', 'none'].forEach(ai => searchAICombo.append_text(ai));
-    searchAICombo.set_active(['gemini', 'gpt', 'none'].indexOf(config.ai?.onSearch || 'gemini'));
-
-    const temperatureScale = createSpinButton(config.ai?.defaultTemperature || 0.9, 0, 2, 0.1, 1);
-    
-    const enhancementsSwitch = createWidget(Gtk.Switch, {
-        active: config.ai?.enhancements || true,
-        valign: Gtk.Align.CENTER
-    });
-
-    const historySwitch = createWidget(Gtk.Switch, {
-        active: config.ai?.useHistory || true,
-        valign: Gtk.Align.CENTER
-    });
-
-    const safetySwitch = createWidget(Gtk.Switch, {
-        active: config.ai?.safety || true,
-        valign: Gtk.Align.CENTER
-    });
-
-    const writingCursor = createWidget(Gtk.Entry, {
-        text: config.ai?.writingCursor || " ...",
-        valign: Gtk.Align.CENTER
-    });
-
-    const proxyUrl = createWidget(Gtk.Entry, {
-        text: config.ai?.proxyUrl || "",
-        valign: Gtk.Align.CENTER,
-        placeholder_text: "http://proxy:port"
-    });
-
-    notebook.append_page(createPage([
-        createSettingRow('Default GPT Provider', gptProviderCombo),
-        createSettingRow('Search AI', searchAICombo),
-        createSettingRow('Temperature', temperatureScale),
-        createSettingRow('Enhancements', enhancementsSwitch),
-        createSettingRow('Use History', historySwitch),
-        createSettingRow('Safety', safetySwitch),
-        createSettingRow('Writing Cursor', writingCursor),
-        createSettingRow('Proxy URL', proxyUrl)
-    ]), createWidget(Gtk.Label, { label: 'AI' }));
 
     // Save Button
     const saveButton = createWidget(Gtk.Button, {
