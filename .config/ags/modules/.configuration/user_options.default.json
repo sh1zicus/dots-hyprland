@@ -107,14 +107,18 @@
     "pages": {
       "order": ["apis", "tools"],
       "apis": {
-        "order": ["gemini", "gpt"]
+        "order": ["gpt", "translater"]
       }
     },
     "translater": {
       "__custom": ["languages"],
       "from": "auto",
       "to": "en",
-      "languages": {}
+      "languages": {
+        "auto": "Auto",
+        "en": "English",
+        "ru": "Russian"
+      }
     }
   },
   "search": {
