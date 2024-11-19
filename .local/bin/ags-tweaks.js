@@ -279,6 +279,26 @@ app.connect('activate', () => {
     ['C', 'F'].forEach(unit => unitCombo.append_text(unit));
     unitCombo.set_active(['C', 'F'].indexOf(config.weather?.preferredUnit || 'C'));
 
+    // Translator widgets
+    const fromLangCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    const toLangCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    const languages = config.sidebar?.translater?.languages || {
+        'auto': 'Auto',
+        'en': 'English',
+        'ru': 'Russian'
+    };
+    
+    Object.entries(languages).forEach(([code, name]) => {
+        fromLangCombo.append_text(`${name} (${code})`);
+        toLangCombo.append_text(`${name} (${code})`);
+    });
+
+    const currentFromLang = config.sidebar?.translater?.from || 'auto';
+    const currentToLang = config.sidebar?.translater?.to || 'en';
+    
+    fromLangCombo.set_active(Object.keys(languages).indexOf(currentFromLang));
+    toLangCombo.set_active(Object.keys(languages).indexOf(currentToLang));
+
     // Создаем UI компоненты
     const sidebar = new Gtk.StackSidebar({
         vexpand: true,
@@ -374,6 +394,16 @@ app.connect('activate', () => {
     ]);
     weatherPage.css_classes = ['settings-page'];
     stack.add_titled(weatherPage, 'weather', 'Weather');
+
+    // Translator Page
+    const translatorPage = createPage([
+        createSettingsGroup('Translation Settings', [
+            createSettingRow('Translate From', fromLangCombo, 'Source language'),
+            createSettingRow('Translate To', toLangCombo, 'Target language')
+        ])
+    ]);
+    translatorPage.css_classes = ['settings-page'];
+    stack.add_titled(translatorPage, 'translator', 'Translator');
 
     // Создаем футер
     const footerSeparator = createWidget(Gtk.Separator, {
@@ -485,6 +515,13 @@ app.connect('activate', () => {
                 safety: safetySwitch.get_active(),
                 writingCursor: writingCursor.get_text(),
                 proxyUrl: proxyUrl.get_text()
+            },
+            sidebar: {
+                translater: {
+                    from: Object.keys(languages)[fromLangCombo.get_active()],
+                    to: Object.keys(languages)[toLangCombo.get_active()],
+                    languages: languages
+                }
             }
         };
 
