@@ -77,22 +77,23 @@ const BarResource = (name, icon, command, circprogClassName = 'bar-batt-circprog
     return widget;
 }
 
-const TrackProgress = () => AnimatedCircProg({
-    className: 'bar-music-circprog',
-    vpack: 'center', 
-    hpack: 'center',
-    extraSetup: (self) => self
-        .hook(Mpris, () => {
-            const mpris = Mpris.getPlayer('');
-            if (!mpris) return;
-            self.css = `font-size: ${Math.max(mpris.position / mpris.length * 100, 0)}px;`;
-        })
-        .poll(3000, self => {
-            const mpris = Mpris.getPlayer('');
-            if (!mpris) return;
-            self.css = `font-size: ${Math.max(mpris.position / mpris.length * 100, 0)}px;`;
-        }),
-});
+const TrackProgress = () => {
+    const _updateProgress = (circprog) => {
+        const mpris = Mpris.getPlayer('');
+        if (!mpris) return;
+        circprog.css = `font-size: ${Math.max(mpris.position / mpris.length * 100, 0)}px;`
+    }
+    return AnimatedCircProg({
+        className: 'bar-music-circprog',
+        vpack: 'center', 
+        hpack: 'center',
+        setup: (self) => {
+            self.hook(Mpris, () => _updateProgress(self), 'player-changed');
+            self.hook(Mpris, () => _updateProgress(self), 'position');
+            self.poll(3000, () => _updateProgress(self));
+        },
+    });
+}
 
 const switchToRelativeWorkspace = async (self, num) => {
     try {
@@ -136,13 +137,18 @@ export default () => {
         className: 'txt-smallie bar-music-txt',
         truncate: 'end',
         maxWidthChars: 1,
-        setup: (self) => self.hook(Mpris, () => {
-            const mpris = Mpris.getPlayer('');
-            const artists = mpris ? mpris.trackArtists.join(', ') : '';
-            self.label = mpris ? 
-                `${trimTrackTitle(mpris.trackTitle)} ${artists ? ' • ' + artists : ''}` :
-                getString('No media');
-        }),
+        setup: (self) => {
+            const update = () => {
+                const mpris = Mpris.getPlayer('');
+                if (mpris) {
+                    self.label = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(', ')}`;
+                } else {
+                    self.label = getString('No media');
+                }
+            };
+            self.hook(Mpris, update, 'player-changed');
+            self.hook(Mpris, update, 'changed');
+        },
     });
 
     const musicStuff = Box({
