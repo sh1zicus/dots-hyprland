@@ -237,16 +237,15 @@ export const ModuleReloadIcon = (props = {}) => Widget.Button({
     setup: setupCursorHover
 });
 
-export const ModuleSettingsIcon = (props = {}) => Widget.Button({
-    ...props,
-    className: 'txt-small sidebar-iconbutton',
-    tooltipText: getString('Open Settings'),
-    onClicked: async () => {
-        await execAsync(['bash', '-c', `${userOpts.apps.settings}`, '&']);
+export const ModuleSettingsIcon = ({ hpack = 'center' } = {}) => Widget.Button({
+    hpack: hpack,
+    className: 'txt-norm icon-material sidebar-iconbutton',
+    tooltipText: 'AGS Settings',
+    label: 'settings',
+    onClicked: () => {
         App.closeWindow('sideright');
-    },
-    child: MaterialIcon('settings', 'norm'),
-    setup: setupCursorHover
+        Utils.execAsync(['bash', '-c', `${GLib.get_home_dir()}/.local/bin/ags-tweaks`]);
+    }
 });
 
 export const ModulePowerIcon = (props = {}) => Widget.Button({
