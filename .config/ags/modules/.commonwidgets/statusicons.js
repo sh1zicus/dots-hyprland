@@ -430,6 +430,18 @@ const BarClock = () =>
       }),
     ],
   });
+const SimpleButton = () =>
+  Widget.Box({
+    vpack: "center",
+    className: "spacing-h-10",
+    children: [
+      Widget.Label({
+        className: "icon-material tx",
+        label: "power_settings_new",
+        //tooltipText: "date.bind()",
+      }),
+    ],
+  });
 
 export const StatusIcons = (props = {}, monitor = 0) =>
   Widget.Box({
@@ -458,5 +470,14 @@ export const StatusIcons = (props = {}, monitor = 0) =>
           ],
         }),
       ],
+    }),
+  });
+
+export const CustomIcons = (props = {}, monitor = 0) =>
+  Widget.Box({
+    //...props,
+    child: Widget.Box({
+      className: "spacing-h-15",
+      children: [SimpleButton()],
     }),
   });

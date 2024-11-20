@@ -123,8 +123,8 @@ export default (props) => {
         homogeneous: true,
         children: [Label({
             hpack: 'center',
-            className: 'txt txt-italic txt-subtext margin-5',
-            label: getString('Not all changes are saved'),
+            className: 'txt-arabic  margin-5',
+            label: getString('آحَّا'),
         })]
     })
     return Box({

@@ -99,7 +99,22 @@ const UtilButton = ({ name, icon, onClicked }) => {
   }
   return utilButtonCache.get(key);
 };
-
+const CustomButton = ({ name, label, onClicked }) => {
+  const key = `${name}-${label}`;
+  if (!utilButtonCache.has(key)) {
+    utilButtonCache.set(
+      key,
+      Button({
+        vpack: "center",
+        tooltipText: name,
+        onClicked: onClicked,
+        className: "bar-util-btn icon-awesome txt-smallie",
+        label: `${label}`,
+      }),
+    );
+  }
+  return utilButtonCache.get(key);
+};
 const Utilities = () => {
   let unsubscriber = () => {};
   let wallpaperFolder = "";
@@ -107,7 +122,7 @@ const Utilities = () => {
 
   const change_wallpaper_btn = UtilButton({
     name: getString("Change wallpaper randomly"),
-    icon: "water_drop",
+    icon: "image",
     onClicked: async () => {
       try {
         const bgFolder = wallpaperFolder;
@@ -158,6 +173,7 @@ const Utilities = () => {
       //   },
       // }),
       change_wallpaper_btn,
+      button,
     ],
   });
   unsubscriber = userOptions.subscribe((userOptions) => {
@@ -179,6 +195,13 @@ const Utilities = () => {
   return box;
 };
 
+const button = CustomButton({
+  name: getString("button"),
+  label: "🪨",
+  onClicked: async () => {
+    Utils.execAsync(`obsidian`);
+  },
+});
 const BarBattery = () =>
   Box({
     className: "spacing-h-4 bar-batt-txt",
@@ -205,7 +228,7 @@ const BarBattery = () =>
           vpack: "center",
           className: "bar-batt",
           homogeneous: true,
-          children: [MaterialIcon("battery_full", "small")],
+          // children: [MaterialIcon("battery_full", "small")],
           setup: (self) =>
             self.hook(Battery, (box) => {
               box.toggleClassName(

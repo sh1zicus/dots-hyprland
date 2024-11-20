@@ -281,7 +281,7 @@ export default () =>
             className: "sidebar-group",
             children: [sidebarOptionsStack],
           }),
-          ModuleCalendar(),
+          // ModuleCalendar(),
           WeatherWidget(),
         ],
       }),

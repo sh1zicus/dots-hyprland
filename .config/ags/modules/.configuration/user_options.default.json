@@ -228,6 +228,6 @@
   },
   "bar": {
     "modes": ["normal"],
-    "wallpaper_folder": ""
+    "wallpaper_folder": "/home/dr/Pictures/Wallpapers/"
   }
 }
