@@ -1,0 +1,50 @@
+{
+  "overview": {
+    "scale": 0.15999999999999998,
+    "numOfRows": 2,
+    "numOfCols": 5,
+    "wsNumScale": 0.09,
+    "wsNumMarginScale": 0.07
+  },
+  "appearance": {
+    "layerSmoke": true,
+    "layerSmokeStrength": 0.2,
+    "barRoundCorners": 1,
+    "fakeScreenRounding": 1,
+    "autoDarkMode": {
+      "enabled": false,
+      "from": "18:10",
+      "to": "6:10"
+    },
+    "keyboardUseFlag": false
+  },
+  "animations": {
+    "choreographyDelay": 25,
+    "durationSmall": 100,
+    "durationLarge": 200
+  },
+  "weather": {
+    "city": "Cairo",
+    "preferredUnit": "C"
+  },
+  "ai": {
+    "defaultGPTProvider": "openrouter",
+    "defaultTemperature": 0.9,
+    "enhancements": true,
+    "useHistory": true,
+    "safety": true,
+    "writingCursor": " ...",
+    "proxyUrl": ""
+  },
+  "sidebar": {
+    "translater": {
+      "from": "auto",
+      "to": "ar",
+      "languages": {
+        "auto": "Auto",
+        "en": "English",
+        "ar": "Arabic"
+      }
+    }
+  }
+}
