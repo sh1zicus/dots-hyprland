@@ -1,16 +1,11 @@
 #!/bin/bash
-# This script removes existing configs in .config and copies new ones from the current directory
-
-# Сохраняем время начала
-start_time=$(date +%s%N)
-
-source ./scriptdata/environment-variables
-
 set -euo pipefail
 cd "$(dirname "$0")"
 export base="$(pwd)"
 
-# Define colors for output
+start_time=$(date +%s%N)
+source ./scriptdata/environment-variables
+
 GREEN="\033[0;32m"
 RED="\033[0;31m"
 BLUE="\033[0;34m"
@@ -18,7 +13,6 @@ CYAN="\033[0;36m"
 YELLOW="\033[1;33m"
 RESET="\033[0m"
 
-# Define paths for update
 config_folders=(".config")
 excludes=(".config/hypr/custom" ".config/ags/user_options.js" ".config/hypr/hyprland.conf")
 
@@ -44,7 +38,7 @@ file_in_excludes() {
 echo -e "${CYAN}Starting configuration update...${RESET}"
 echo -e "${YELLOW}The following files and folders will be preserved:${RESET} ${excludes[@]}"
 
-# Preserve excluded files
+# Backup excluded files
 temp_dir="/tmp/dots_backup"
 for exc in "${excludes[@]}"; do
     if [ -e "$(get_destination "$exc")" ]; then
@@ -54,7 +48,6 @@ for exc in "${excludes[@]}"; do
     fi
 done
 
-# Remove only .config directories that are in the repository
 echo -e "${CYAN}Removing old configs...${RESET}"
 for dir in "$base/.config"/*; do
     if [ -d "$dir" ]; then
@@ -67,7 +60,6 @@ for dir in "$base/.config"/*; do
     fi
 done
 
-# Restore excluded files
 if [ -d "$temp_dir" ]; then
     echo -e "${BLUE}Restoring saved files...${RESET}"
     for exc in "${excludes[@]}"; do
@@ -79,23 +71,17 @@ if [ -d "$temp_dir" ]; then
     rm -rf "$temp_dir"
 fi
 
-# Copy new files
 echo -e "${CYAN}Copying new files...${RESET}"
 
-# Update AGS config.json
-echo -e "${BLUE}Updating ~/.ags/config.json...${RESET}"
 mkdir -p "$HOME/.ags"
 cp -f "$base/.config/ags/modules/.configuration/user_options.default.json" "$HOME/.ags/config.json"
 
-# Update local bin files
-echo -e "${BLUE}Updating ~/.local/bin files...${RESET}"
 mkdir -p "$XDG_BIN_HOME"
 if [ -d "$base/.local/bin" ]; then
     cp -f "$base/.local/bin/"* "$XDG_BIN_HOME/"
     chmod +x "$XDG_BIN_HOME"/*
 fi
 
-# Copy .config files
 for folder in "${config_folders[@]}"; do
     find "$folder" -type f -print0 | while IFS= read -r -d '' file; do
         if ! file_in_excludes "$file"; then
@@ -109,33 +95,23 @@ for folder in "${config_folders[@]}"; do
     done
 done
 
-# Reload configurations
-echo -e "${CYAN}Reloading configurations...${RESET}"
 wait
-
 clear
 
-# Check if services are running before restarting them
 nohup hyprctl reload >/dev/null 2>&1 &
 echo -e "${GREEN}Hyprland reloaded${RESET}"
 
-# Измеряем время перезапуска AGS
 echo -e "${CYAN}Restarting AGS...${RESET}"
-ags -q >/dev/null 2>&1  # Сначала завершаем AGS
+ags -q >/dev/null 2>&1
 
-# Создаём временный файл для логов
 temp_log="/tmp/ags_restart.log"
 touch "$temp_log"
-
-# Запускаем AGS и перенаправляем вывод во временный файл
 ags > "$temp_log" 2>&1 &
 
-# Ждём появления сообщения о загрузке (максимум 10 секунд)
 timeout=10
 while [ $timeout -gt 0 ]; do
     if ags_load_time=$(grep "AGS loaded in" "$temp_log" | tail -n 1 | sed 's/.*AGS loaded in \([0-9.]*\)s/\1/'); then
         if [ ! -z "$ags_load_time" ]; then
-            echo -e "${GREEN}AGS restarted in ${ags_load_time} seconds${RESET}"
             break
         fi
     fi
@@ -143,14 +119,16 @@ while [ $timeout -gt 0 ]; do
     timeout=$((timeout - 1))
 done
 
-if [ $timeout -eq 0 ]; then
+if [ $timeout -gt 0 ]; then
+    echo -e "${GREEN}AGS restarted in ${CYAN}${ags_load_time}${GREEN} seconds${RESET}"
+else
     echo -e "${RED}Timeout waiting for AGS to load${RESET}"
 fi
 
-# Удаляем временный файл
 rm -f "$temp_log"
 
-# Вычисляем общее время выполнения
 end_time=$(date +%s%N)
 execution_time=$(LC_NUMERIC=C printf "%.3f" $(echo "($end_time - $start_time) / 1000000000" | bc -l))
-echo -e "${CYAN}Done! Configuration updated in ${GREEN}${execution_time}${CYAN} seconds${RESET}"
+echo -e "\n${CYAN}✨ Configuration update completed:${RESET}"
+echo -e "${GREEN}├─${RESET} Total time: ${CYAN}${execution_time}s${RESET}"
+echo -e "${GREEN}└─${RESET} Status: ${GREEN}Done${RESET}\n"
