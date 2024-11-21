@@ -170,16 +170,16 @@ export default () => {
 
   const trackTitle = Label({
     hexpand: true,
-    className: "txt-smallie bar-music-txt",
+    className: "txt-smallie txt-arabic bar-music-txt",
     truncate: "end",
-    maxWidthChars: 1,
+    maxWidthChars: 0,
     setup: (self) => {
       const update = () => {
         const mpris = Mpris.getPlayer("");
         if (mpris) {
           self.label = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(", ")}`;
         } else {
-          self.label = getString("No media");
+          self.label = getString("آحَّا");
         }
       };
       self.hook(Mpris, update, "player-changed");
