@@ -107,7 +107,7 @@
     "pages": {
       "order": ["apis", "tools"],
       "apis": {
-        "order": ["gpt", "translater"]
+        "order": ["gemini", "gpt", "translater"]
       }
     },
     "translater": {

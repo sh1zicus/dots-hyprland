@@ -21,7 +21,7 @@ import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
 import ModulePowerProfiles from "./centermodules/powerprofiles.js";
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 import ModuleConfigure from "./centermodules/configure.js";
-import { ModuleCalendar } from "./calendar.js";
+// import { ModuleCalendar } from "./calendar.js";
 import { getDistroIcon } from "../.miscutils/system.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { ExpandingIconTabContainer } from "../.commonwidgets/tabcontainer.js";

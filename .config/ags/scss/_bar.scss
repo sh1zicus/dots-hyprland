@@ -144,6 +144,8 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-date {
+    background-color: $utilsLayer2;
+
     color: $dateOnLayer1;
 }
 
@@ -421,5 +423,9 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-wintitle-icon-spacer {
-    min-width: 0.714rem;
+    min-width: 1.0714rem;
+    //margin-left: 5px;
+}
+.app-icon {
+    margin-left: -0.5rem;
 }
