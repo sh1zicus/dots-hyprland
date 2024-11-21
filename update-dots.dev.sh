@@ -1,6 +1,9 @@
 #!/bin/bash
 # This script removes existing configs in .config and copies new ones from the current directory
 
+# Сохраняем время начала
+start_time=$(date +%s%N)
+
 source ./scriptdata/environment-variables
 
 set -euo pipefail
@@ -108,7 +111,6 @@ done
 
 # Reload configurations
 echo -e "${CYAN}Reloading configurations...${RESET}"
-# Wait for all copy operations to complete
 wait
 
 clear
@@ -117,7 +119,38 @@ clear
 nohup hyprctl reload >/dev/null 2>&1 &
 echo -e "${GREEN}Hyprland reloaded${RESET}"
 
-nohup ags -q >/dev/null 2>&1 && nohup ags >/dev/null 2>&1 &
-echo -e "${GREEN}AGS restarted${RESET}"
+# Измеряем время перезапуска AGS
+echo -e "${CYAN}Restarting AGS...${RESET}"
+ags -q >/dev/null 2>&1  # Сначала завершаем AGS
 
-echo -e "${CYAN}Done! Configuration updated.${RESET}"
+# Создаём временный файл для логов
+temp_log="/tmp/ags_restart.log"
+touch "$temp_log"
+
+# Запускаем AGS и перенаправляем вывод во временный файл
+ags > "$temp_log" 2>&1 &
+
+# Ждём появления сообщения о загрузке (максимум 10 секунд)
+timeout=10
+while [ $timeout -gt 0 ]; do
+    if ags_load_time=$(grep "AGS loaded in" "$temp_log" | tail -n 1 | sed 's/.*AGS loaded in \([0-9.]*\)s/\1/'); then
+        if [ ! -z "$ags_load_time" ]; then
+            echo -e "${GREEN}AGS restarted in ${ags_load_time} seconds${RESET}"
+            break
+        fi
+    fi
+    sleep 0.5
+    timeout=$((timeout - 1))
+done
+
+if [ $timeout -eq 0 ]; then
+    echo -e "${RED}Timeout waiting for AGS to load${RESET}"
+fi
+
+# Удаляем временный файл
+rm -f "$temp_log"
+
+# Вычисляем общее время выполнения
+end_time=$(date +%s%N)
+execution_time=$(LC_NUMERIC=C printf "%.3f" $(echo "($end_time - $start_time) / 1000000000" | bc -l))
+echo -e "${CYAN}Done! Configuration updated in ${GREEN}${execution_time}${CYAN} seconds${RESET}"
