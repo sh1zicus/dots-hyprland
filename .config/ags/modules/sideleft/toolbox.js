@@ -14,9 +14,9 @@ export default Scrollable({
     children: [
       QuickScripts(),
       ColorPicker(),
+      Name(),
       Box({ vexpand: true }),
       ModuleCalendar(),
-      // Name(),
     ],
   }),
 });
