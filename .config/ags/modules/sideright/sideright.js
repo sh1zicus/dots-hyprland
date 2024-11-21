@@ -44,11 +44,11 @@ const centerWidgets = [
     materialIcon: "volume_up",
     contentWidget: ModuleAudioControls,
   },
-  {
-    name: "Power Profiles",
-    materialIcon: "speed",
-    contentWidget: ModulePowerProfiles,
-  },
+  // {
+  //   name: "Power Profiles",
+  //   materialIcon: "speed",
+  //   contentWidget: ModulePowerProfiles,
+  // },
   {
     name: getString("Bluetooth"),
     materialIcon: "bluetooth",
