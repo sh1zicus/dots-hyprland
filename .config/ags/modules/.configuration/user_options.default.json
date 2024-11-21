@@ -6,7 +6,7 @@
     "enhancements": true,
     "useHistory": true,
     "safety": true,
-    "writingCursor": " ...",
+    "writingCursor": " ....",
     "proxyUrl": ""
   },
   "animations": {
@@ -94,6 +94,13 @@
           "key_get_url": "https://openrouter.ai/keys",
           "key_file": "openrouter_key.txt",
           "model": "meta-llama/llama-3-8b-instruct:free"
+        },
+        "openai": {
+          "name": "ChatGPT",
+          "logo_name": "openai-symbolic",
+          "description": "The Famous ChatGPT 3.5 Client",
+          "key_file": "openai_key.txt",
+          "model": "ChatGPT 3.5 Turbo"
         }
       },
       "initMessages": []
@@ -113,11 +120,20 @@
     "translater": {
       "__custom": ["languages"],
       "from": "auto",
-      "to": "en",
+      "to": "ar",
       "languages": {
         "auto": "Auto",
+        "ar": "Arabic",
         "en": "English",
-        "ru": "Russian"
+        "es": "Spanish",
+        "fr": "French",
+        "ru": "Russian",
+        "de": "German",
+        "pt": "Portuguese",
+        "it": "Italian",
+        "la": "Latin",
+        "pl": "Polish",
+        "tr": "Turkish"
       }
     }
   },
@@ -139,14 +155,14 @@
     "excludedSites": ["quora.com"]
   },
   "time": {
-    "format": "%H:%M",
+    "format": "%I:%M",
     "interval": 5000,
-    "dateFormatLong": "%A, %d/%m",
+    "dateFormatLong": "%d/%m",
     "dateInterval": 5000,
-    "dateFormat": "%d/%m"
+    "dateFormat": "%A %d/%m"
   },
   "weather": {
-    "city": "Barabinsk",
+    "city": "Cairo",
     "preferredUnit": "C"
   },
   "workspaces": {
