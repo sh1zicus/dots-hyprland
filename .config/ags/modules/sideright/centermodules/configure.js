@@ -4,7 +4,7 @@ import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
 const { Box, Button, Icon, Label, Scrollable, Slider, Stack } = Widget;
 const { execAsync, exec } = Utils;
-import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
+// import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import {
   ConfigGap,
@@ -80,7 +80,7 @@ export default (props) => {
     vexpand: true,
     child: Box({
       vertical: true,
-      className: "spacing-v-10",
+      className: "spacing-v-10 padding-top-2",
       children: [
         ConfigSection({
           name: getString("Effects"),

@@ -4,7 +4,7 @@ import QuickScripts from "./tools/quickscripts.js";
 import ColorPicker from "./tools/colorpicker.js";
 import Name from "./tools/name.js";
 import { ModuleCalendar } from "../sideright/calendar.js";
-
+import ModuleConfigure from "../sideright/centermodules/configure.js";
 export default Scrollable({
   hscroll: "never",
   vscroll: "automatic",
@@ -12,11 +12,12 @@ export default Scrollable({
     vertical: true,
     className: "spacing-v-10",
     children: [
+      // Box({ vexpand: true }),
+      // ModuleCalendar(),
+      ModuleConfigure(),
+      // Name(),
       QuickScripts(),
       ColorPicker(),
-      Name(),
-      Box({ vexpand: true }),
-      ModuleCalendar(),
     ],
   }),
 });
