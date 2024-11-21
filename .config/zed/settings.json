@@ -7,8 +7,20 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "ui_font_size": 16,
-  "buffer_font_size": 16,
+  "assistant": {
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-1.5-flash"
+    },
+    "version": "2"
+  },
+  "scroll_sensitivity": 2.3,
+  "autosave": "on_window_change",
+  "ui_font_size": 18,
+  "ui_font_fallbacks": ["Rubik", "JetBrainsMono Nerd Font", "Readex Pro"],
+  "ui_font_family": "Iosevka Nerd Font Mono",
+  "buffer_font_family": "Iosevka Nerd Font Mono",
+  "buffer_font_size": 20,
   "theme": {
     "mode": "system",
     "light": "One Light",

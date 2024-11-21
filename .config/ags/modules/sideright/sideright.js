@@ -14,6 +14,7 @@ import {
   ModulePowerIcon,
   ModuleRawInput,
   ModuleCloudflareWarp,
+  ModuleGtkModeToggle,
 } from "./quicktoggles.js";
 import ModuleNotificationList from "./centermodules/notificationlist.js";
 import ModuleAudioControls from "./centermodules/audiocontrols.js";
@@ -144,6 +145,7 @@ const togglesBox = Widget.Box({
     await ModuleInvertColors(),
     ModuleIdleInhibitor(),
     await ModuleCloudflareWarp(),
+    //await ModuleGtkModeToggle(),
   ],
 });
 
