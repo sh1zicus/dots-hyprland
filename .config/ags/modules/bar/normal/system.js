@@ -197,9 +197,9 @@ const Utilities = () => {
 
 const button = CustomButton({
   name: getString("button"),
-  label: "🪨",
+  label: " ",
   onClicked: async () => {
-    Utils.execAsync(`obsidian`);
+    Utils.execAsync(`zen-browser --new-window chatgpt.com`);
   },
 });
 const BarBattery = () =>
