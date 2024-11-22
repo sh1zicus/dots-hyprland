@@ -17,16 +17,21 @@ try {
 let optionsOkay = true;
 function overrideConfigRecursive(userOverrides, configOptions = {}, check = true) {
     for (const [key, value] of Object.entries(userOverrides)) {
-        if ((configOptions[key] === undefined && check) || key == '__custom') {
-            optionsOkay = false;
+        if (key === '__custom' || (configOptions['__custom'] instanceof Array && 
+            configOptions['__custom'].indexOf(key) >= 0)) {
+            configOptions[key] = value;
+            continue;
         }
-        else if (typeof value === 'object' && !(value instanceof Array)) {
-            if (configOptions['__custom'] instanceof Array && 
-                configOptions['__custom'].indexOf(key) >= 0) {
-                configOptions[key] = value;
-            } else {
-                overrideConfigRecursive(value, configOptions[key], check);
-            }
+
+        if (configOptions[key] === undefined && check) {
+            console.error(`Missing config option: ${key}`);
+            optionsOkay = false;
+            continue;
+        }
+
+        if (typeof value === 'object' && value !== null && !(value instanceof Array)) {
+            if (!configOptions[key]) configOptions[key] = {};
+            overrideConfigRecursive(value, configOptions[key], check);
         } else {
             configOptions[key] = value;
         }
