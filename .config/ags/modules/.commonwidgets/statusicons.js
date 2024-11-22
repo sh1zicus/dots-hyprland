@@ -354,7 +354,7 @@ const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
     updateCurrentKeyboards();
     const widgetRevealer = Widget.Revealer({
       transition: "slide_left",
-      transitionDuration: userOptions.asyncGet().animations.durationSmall,
+      transitionDuration: userOptions.asyncGet().animations.durationLarge,
       revealChild: languageStackArray.length > 1,
     });
     const widgetKids = {
@@ -450,10 +450,10 @@ export const StatusIcons = (props = {}, monitor = 0) =>
       className: "spacing-h-15",
       children: [
         Widget.Box({
-          className: "spacing-h-10 status-icons-group",
+          className: "spacing-h-15 status-icons-group",
           children: [
-            // optionalKeyboardLayoutInstances[monitor],
-            // MicIndicator(),
+            optionalKeyboardLayoutInstances[monitor],
+            MicIndicator(),
             //SpeakerIndicator(),
             BluetoothDevices(),
             NetworkIndicator(),

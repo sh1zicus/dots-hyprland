@@ -1,38 +1,35 @@
-import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
-const { execAsync, exec } = Utils;
-const { Box, EventBox, Label } = Widget;
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+import ModuleAudioControls from "./centermodules/audiocontrols.js";
+import ModuleNotificationList from "./centermodules/notificationlist.js";
+import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
 import {
-  ToggleIconBluetooth,
-  ToggleIconWifi,
-  HyprToggleIcon,
-  ModuleNightLight,
-  ModuleInvertColors,
+  ModuleCloudflareWarp,
   ModuleIdleInhibitor,
+  ModuleInvertColors,
+  ModuleNightLight,
+  ModulePowerIcon,
   ModuleReloadIcon,
   ModuleSettingsIcon,
-  ModulePowerIcon,
-  ModuleRawInput,
-  ModuleCloudflareWarp,
-  ModuleGtkModeToggle,
+  ToggleIconBluetooth,
+  ToggleIconWifi,
 } from "./quicktoggles.js";
-import ModuleNotificationList from "./centermodules/notificationlist.js";
-import ModuleAudioControls from "./centermodules/audiocontrols.js";
-import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
+const { execAsync } = Utils;
+const { Box, EventBox, Label } = Widget;
 // import ModulePowerProfiles from "./centermodules/powerprofiles.js";
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 // import ModuleConfigure from "./centermodules/configure.js";
 // import { ModuleCalendar } from "./calendar.js";
-import { getDistroIcon } from "../.miscutils/system.js";
+import GLib from "gi://GLib";
+import {
+  NIGHT_WEATHER_SYMBOL,
+  WEATHER_SYMBOL,
+  WWO_CODE,
+} from "../.commondata/weather.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { ExpandingIconTabContainer } from "../.commonwidgets/tabcontainer.js";
+import { getDistroIcon } from "../.miscutils/system.js";
 import { checkKeybind } from "../.widgetutils/keybind.js";
-import {
-  WWO_CODE,
-  WEATHER_SYMBOL,
-  NIGHT_WEATHER_SYMBOL,
-} from "../.commondata/weather.js";
-import GLib from "gi://GLib";
 
 const centerWidgets = [
   {

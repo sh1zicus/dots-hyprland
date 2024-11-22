@@ -1,14 +1,14 @@
 const { Gtk } = imports.gi;
-import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
 
+import { currentShellMode } from "../../variables.js";
+import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
+import { enableClickthrough } from "../.widgetutils/clickthrough.js";
+import Music from "./normal/music.js";
 import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
-import Music from "./normal/music.js";
 import System from "./normal/system.js";
-import { enableClickthrough } from "../.widgetutils/clickthrough.js";
-import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
-import { currentShellMode } from "../../variables.js";
 
 const NormalOptionalWorkspaces = async () => {
   try {
@@ -44,10 +44,6 @@ export const Bar = async (monitor = 0) => {
     className: "bar-bg",
     setup: (self) => {
       const styleContext = self.get_style_context();
-      const minHeight = styleContext.get_property(
-        "min-height",
-        Gtk.StateFlags.NORMAL,
-      );
       // execAsync(['bash', '-c', `hyprctl keyword monitor ,addreserved,${minHeight},0,0,0`]).catch(print);
     },
     startWidget: await WindowTitle(monitor),

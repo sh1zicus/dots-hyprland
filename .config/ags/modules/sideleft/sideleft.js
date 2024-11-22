@@ -1,17 +1,16 @@
 const { Gdk } = imports.gi;
 import App from "resource:///com/github/Aylur/ags/app.js";
-import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+import { writable } from "../../modules/.miscutils/store.js";
+import { MaterialIcon } from "../.commonwidgets/materialicon.js";
+import { TabContainer } from "../.commonwidgets/tabcontainer.js";
+import { setupCursorHover } from "../.widgetutils/cursorhover.js";
+import { checkKeybind } from "../.widgetutils/keybind.js";
+import apiWidgets, { chatEntry } from "./apiwidgets.js";
+import toolBox from "./toolbox.js";
 const { Box, Button, EventBox, Label, Revealer, Scrollable, Stack } = Widget;
 const { execAsync, exec } = Utils;
-import { MaterialIcon } from "../.commonwidgets/materialicon.js";
-import { setupCursorHover } from "../.widgetutils/cursorhover.js";
-import toolBox from "./toolbox.js";
-import apiWidgets from "./apiwidgets.js";
-import { chatEntry } from "./apiwidgets.js";
-import { TabContainer } from "../.commonwidgets/tabcontainer.js";
-import { checkKeybind } from "../.widgetutils/keybind.js";
-import { writable } from "../../modules/.miscutils/store.js";
 
 const SIDEBARTABS = {
   apis: {

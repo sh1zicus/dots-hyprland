@@ -14,6 +14,11 @@
     },
     "version": "2"
   },
+  "auto_install_extensions": {},
+  "auto_update": true,
+  "tab_size": 4,
+  "indent_guides": null,
+  "use_autoclose": true,
   "scroll_sensitivity": 2.3,
   "autosave": "on_window_change",
   "ui_font_size": 18,
@@ -24,6 +29,6 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "Catppuccin Espresso (Blur)"
+    "dark": "Nightcap (Blur)"
   }
 }
