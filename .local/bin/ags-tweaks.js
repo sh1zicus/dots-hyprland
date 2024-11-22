@@ -572,14 +572,68 @@ function createMainView(window) {
         hexpand: true
     });
 
+    // Функция для поиска текста в дочерних виджетах
+    function findTextInWidget(widget, searchText) {
+        if (!widget) return false;
+        
+        // Проверяем текст в Gtk.Label
+        if (widget instanceof Gtk.Label) {
+            return widget.label.toLowerCase().includes(searchText);
+        }
+        
+        // Проверяем текст в Adw.ActionRow
+        if (widget.constructor.name === 'AdwActionRow') {
+            return widget.title.toLowerCase().includes(searchText) || 
+                   widget.subtitle?.toLowerCase().includes(searchText);
+        }
+
+        // Рекурсивно проверяем дочерние элементы
+        if (widget.get_first_child) {
+            let child = widget.get_first_child();
+            while (child) {
+                if (findTextInWidget(child, searchText)) return true;
+                child = child.get_next_sibling();
+            }
+        }
+        
+        return false;
+    }
+
     listBox.set_filter_func((row) => {
         if (!searchEntry.text) return true;
-        const label = row.get_child().get_last_child().label.toLowerCase();
-        return label.includes(searchEntry.text.toLowerCase());
+        const searchText = searchEntry.text.toLowerCase();
+        
+        // Проверяем заголовок страницы
+        const pageTitle = row.get_child().get_last_child().label.toLowerCase();
+        if (pageTitle.includes(searchText)) return true;
+
+        // Получаем контент страницы и ищем в нем
+        const pageId = row.name;
+        const pageContent = contentStack.get_child_by_name(pageId);
+        return findTextInWidget(pageContent, searchText);
     });
 
     searchEntry.connect('search-changed', () => {
         listBox.invalidate_filter();
+        
+        // Если есть результаты поиска, выбираем первый найденный элемент
+        if (searchEntry.text) {
+            let foundRow = null;
+            let child = listBox.get_first_child();
+            while (child) {
+                if (child.visible) {
+                    foundRow = child;
+                    break;
+                }
+                child = child.get_next_sibling();
+            }
+            if (foundRow) {
+                listBox.select_row(foundRow);
+                contentStack.set_visible_child_name(foundRow.name);
+                const pageTitle = foundRow.get_child().get_last_child().get_label();
+                headerTitle.set_label(pageTitle);
+            }
+        }
     });
 
     searchButton.connect('toggled', () => {
