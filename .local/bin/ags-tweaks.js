@@ -557,7 +557,7 @@ function createMainView(window) {
     sidebarHeader.pack_end(menuButton);
 
     const searchEntry = new Gtk.SearchEntry({
-        placeholder_text: 'Search',
+        placeholder_text: 'Search Settings',
         margin_start: 12,
         margin_end: 12,
         margin_top: 6,
@@ -570,6 +570,25 @@ function createMainView(window) {
         selection_mode: Gtk.SelectionMode.SINGLE,
         css_classes: ['navigation-sidebar'],
         hexpand: true
+    });
+
+    listBox.set_filter_func((row) => {
+        if (!searchEntry.text) return true;
+        const label = row.get_child().get_last_child().label.toLowerCase();
+        return label.includes(searchEntry.text.toLowerCase());
+    });
+
+    searchEntry.connect('search-changed', () => {
+        listBox.invalidate_filter();
+    });
+
+    searchButton.connect('toggled', () => {
+        searchEntry.visible = searchButton.active;
+        if (!searchButton.active) {
+            searchEntry.text = '';
+        } else {
+            searchEntry.grab_focus();
+        }
     });
 
     const rightBox = new Gtk.Box({
@@ -643,10 +662,6 @@ function createMainView(window) {
     });
 
     listBox.select_row(listBox.get_row_at_index(0));
-
-    searchButton.connect('toggled', () => {
-        searchEntry.visible = searchButton.active;
-    });
 
     leftBox.append(sidebarHeader);
     leftBox.append(searchEntry);
