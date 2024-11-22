@@ -6,7 +6,7 @@ $rounding_small: 0.818rem;
 $rounding_mediumsmall: 0.955rem;
 $rounding_medium: 1.159rem;
 $rounding_mediumlarge: 1.364rem;
-$rounding_large: 1.705rem;
+$rounding_large: 1.1705rem;
 
 // Common rules
 @mixin small-rounding {
@@ -47,8 +47,8 @@ $rounding_large: 1.705rem;
 
 @mixin icon-material {
     // Material Design Icons
-    font-family: "Material Symbols Rounded", "MaterialSymbolsRounded", "Material Symbols Outlined",
-        "Material Symbols Sharp";
+    font-family: "Material Symbols Rounded", "MaterialSymbolsRounded",
+        "Material Symbols Outlined", "Material Symbols Sharp";
 }
 
 @mixin icon-nerd {
