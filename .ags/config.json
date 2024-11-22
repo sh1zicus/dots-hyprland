@@ -1,0 +1,21 @@
+{
+    "animations": {
+        "choreography": "complex"
+    },
+    "bar": {
+        "position": "bottom",
+        "modes": ["normal"],
+        "wallpaper_folder": "/home/archlinux/Pictures/Wallpapers/"
+    },
+    "dock": {
+        "enabled": false
+    },
+    "apps": {
+        "terminal": "kitty",
+        "taskManager": "sudo kitty btop",
+        "settings": "gnome-control-center",
+        "network": "nm-manager",
+        "bluetooth": "blueberry",
+        "imageViewer": "loupe"
+    }
+}
