@@ -1,8 +1,9 @@
 #!/usr/bin/gjs
 imports.gi.versions.Gtk = '4.0';
 imports.gi.versions.Adw = '1';
+imports.gi.versions.Gdk = '4.0';
 
-const { Gtk, Adw, Gio, GLib } = imports.gi;
+const { Gtk, Adw, Gio, GLib, Gdk } = imports.gi;
 const ByteArray = imports.byteArray;
 
 // Утилиты для работы с файлами
@@ -43,21 +44,35 @@ try {
 // Инициализируем приложение
 Adw.init();
 
-const app = new Adw.Application({
+const app = new Gtk.Application({
     application_id: 'org.gnome.AGSTweaks'
 });
 
 app.connect('activate', () => {
-    const win = new Adw.ApplicationWindow({
-        application: app,
+    const win = new Gtk.Window({
         default_width: 1000,
         default_height: 680,
         title: 'Settings'
     });
 
-    // Передаем window в createMainView
+    win.connect('close-request', () => {
+        app.quit();
+        return true;
+    });
+
+    win.connect('realize', () => {
+        const surface = win.get_surface();
+        if (surface) {
+            surface.set_type_hint(Gdk.SurfaceTypeHint.NORMAL);
+        }
+    });
+
+    win.set_application(app);
+    win.set_resizable(true);
+    win.set_decorated(true);
+
     const mainView = createMainView(win);
-    win.set_content(mainView);
+    win.set_child(mainView);
     win.present();
 });
 
