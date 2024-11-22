@@ -852,37 +852,37 @@ const pages = [
     {
         id: 'bar',
         title: 'Bar',
-        icon: 'view-dual-symbolic',
+        icon: 'view-grid-symbolic',
         content: createBarPage()
     },
     {
         id: 'animations',
         title: 'Animations',
-        icon: 'preferences-desktop-effects-symbolic',
+        icon: 'view-reveal-symbolic',
         content: createAnimationsPage()
     },
     {
         id: 'overview',
         title: 'Overview',
-        icon: 'view-grid-symbolic',
+        icon: 'view-app-grid-symbolic',
         content: createOverviewPage()
     },
     {
         id: 'dock',
         title: 'Dock',
-        icon: 'dock-symbolic',
+        icon: 'view-paged-symbolic',
         content: createDockPage()
     },
     {
         id: 'applications',
         title: 'Applications',
-        icon: 'applications-system-symbolic',
+        icon: 'application-x-executable-symbolic',
         content: createApplicationsPage()
     },
     {
         id: 'system',
         title: 'System',
-        icon: 'preferences-system-symbolic',
+        icon: 'emblem-system-symbolic',
         content: createSystemPage()
     }
 ];
