@@ -228,6 +228,7 @@
   },
   "bar": {
     "modes": ["normal"],
-    "wallpaper_folder": ""
+    "wallpaper_folder": "",
+    "position": "top"
   }
 }
