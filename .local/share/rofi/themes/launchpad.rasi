@@ -2,7 +2,7 @@
 /* Author: Newman Sanchez (https://github.com/newmanls) */
 
 * {
-    font: "Readex Pro Regular 12";
+    font: "Rubik 11";
 
     bg0:  #24242480;
     bg1:  #363636;
@@ -32,12 +32,12 @@ mainbox {
 inputbar {
   background-color: @bg2;
 
-  margin:   20px calc( 45% - 120px );
+  margin:   25px calc( 50% - 120px );
   padding:  6px 20px;
   spacing:  10px;
 
   border:         1px;
-  border-radius:  7px;
+  border-radius:  9px;
   border-color:   @bg3;
 
   children: [icon-search,entry];
@@ -59,8 +59,8 @@ entry {
 }
 
 listview {
-  margin:   48px calc( 50% - 560px );
-  spacing:  48px;
+  margin:   0px calc( 50% - 560px );
+  spacing:  40px;
   columns:  6;
   fixed-columns: true;
 }
@@ -82,10 +82,11 @@ element selected {
 }
 
 element-icon {
-  size: 4.5em;
+  size: 5em;
   horizontal-align: 0.5;
 }
 
 element-text {
+  size:2em;
   horizontal-align: 0.5;
 }
