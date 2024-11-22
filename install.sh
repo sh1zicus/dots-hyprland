@@ -267,6 +267,15 @@ case $SKIP_HYPRLAND in
     ;;
 esac
 
+# For Wallpapers
+case $SKIP_WALLPAPERS in
+  true) sleep 0;;
+  *)
+    echo -e "\e[34m[$0]: Setting up wallpapers...\e[0m"
+    v mkdir -p "$HOME/Pictures/Wallpapers"
+    v rsync -av "assets/wallpapers/Lock.jpg" "$HOME/Pictures/Wallpapers/"
+    ;;
+esac
 
 # some foldes (eg. .local/bin) should be processed separately to avoid `--delete' for rsync,
 # since the files here come from different places, not only about one program.
