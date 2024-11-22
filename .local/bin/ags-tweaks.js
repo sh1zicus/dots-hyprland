@@ -543,7 +543,91 @@ function createDockPage() {
     enabledRow.add_suffix(enabledSwitch);
     dockGroup.add(enabledRow);
 
+    const layerRow = new Adw.ActionRow({
+        title: 'Layer',
+        subtitle: 'Dock layer position'
+    });
+    const layerCombo = createComboBox();
+    layerCombo.append('top', 'Top');
+    layerCombo.append('bottom', 'Bottom');
+    layerCombo.set_active_id(config.dock?.layer ?? 'top');
+    layerCombo.connect('changed', () => {
+        if (!config.dock) config.dock = {};
+        config.dock.layer = layerCombo.get_active_id();
+    });
+    layerRow.add_suffix(layerCombo);
+    dockGroup.add(layerRow);
+
+    const monitorExclusivityRow = new Adw.ActionRow({
+        title: 'Monitor Exclusivity',
+        subtitle: 'Show dock only on primary monitor'
+    });
+    const exclusivitySwitch = new Gtk.Switch({
+        active: config.dock?.monitorExclusivity ?? true,
+        valign: Gtk.Align.CENTER
+    });
+    exclusivitySwitch.connect('notify::active', () => {
+        if (!config.dock) config.dock = {};
+        config.dock.monitorExclusivity = exclusivitySwitch.active;
+    });
+    monitorExclusivityRow.add_suffix(exclusivitySwitch);
+    dockGroup.add(monitorExclusivityRow);
+
+    const hiddenThicknessRow = new Adw.ActionRow({
+        title: 'Hidden Thickness',
+        subtitle: 'Dock thickness when hidden (px)'
+    });
+    const thicknessScale = createScale(config.dock?.hiddenThickness ?? 4, 1, 10, 0);
+    thicknessScale.connect('value-changed', () => {
+        if (!config.dock) config.dock = {};
+        config.dock.hiddenThickness = thicknessScale.get_value();
+    });
+    hiddenThicknessRow.add_suffix(thicknessScale);
+    dockGroup.add(hiddenThicknessRow);
+
+    const iconSizeRow = new Adw.ActionRow({
+        title: 'Icon Size',
+        subtitle: 'Size of dock icons (px)'
+    });
+    const iconSizeScale = createScale(config.dock?.iconSize ?? 48, 24, 64, 0);
+    iconSizeScale.connect('value-changed', () => {
+        if (!config.dock) config.dock = {};
+        config.dock.iconSize = iconSizeScale.get_value();
+    });
+    iconSizeRow.add_suffix(iconSizeScale);
+    dockGroup.add(iconSizeRow);
+
+    const appsGroup = new Adw.PreferencesGroup({ title: 'Applications' });
+
+    const searchIconsRow = new Adw.ActionRow({
+        title: 'Search Pinned Icons',
+        subtitle: 'Search for pinned application icons'
+    });
+    const searchIconsSwitch = new Gtk.Switch({
+        active: config.dock?.searchPinnedAppIcons ?? false,
+        valign: Gtk.Align.CENTER
+    });
+    searchIconsSwitch.connect('notify::active', () => {
+        if (!config.dock) config.dock = {};
+        config.dock.searchPinnedAppIcons = searchIconsSwitch.active;
+    });
+    searchIconsRow.add_suffix(searchIconsSwitch);
+    appsGroup.add(searchIconsRow);
+
+    const pinnedAppsRow = new Adw.ActionRow({
+        title: 'Pinned Applications',
+        subtitle: 'List of pinned applications (comma-separated)'
+    });
+    const pinnedAppsEntry = createEntry((config.dock?.pinnedApps ?? []).join(', '));
+    pinnedAppsEntry.connect('changed', () => {
+        if (!config.dock) config.dock = {};
+        config.dock.pinnedApps = pinnedAppsEntry.text.split(',').map(s => s.trim()).filter(s => s);
+    });
+    pinnedAppsRow.add_suffix(pinnedAppsEntry);
+    appsGroup.add(pinnedAppsRow);
+
     box.append(dockGroup);
+    box.append(appsGroup);
     return box;
 }
 
