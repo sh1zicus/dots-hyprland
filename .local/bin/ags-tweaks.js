@@ -207,6 +207,9 @@ app.connect('activate', () => {
         valign: Gtk.Align.CENTER
     });
     const smokeStrength = createSpinButton(config.appearance.layerSmokeStrength || 0.2, 0, 1, 0.1, 1);
+    const barPositionCombo = createWidget(Gtk.ComboBoxText, { valign: Gtk.Align.CENTER });
+    ['top', 'bottom'].forEach(pos => barPositionCombo.append_text(pos));
+    barPositionCombo.set_active(['top', 'bottom'].indexOf(config.bar?.position || 'top'));
 
     // Overview widgets
     const scale = createSpinButton(config.overview.scale || 0.18, 0, 1, 0.01, 2);
@@ -316,6 +319,7 @@ app.connect('activate', () => {
     // Interface Page
     const interfacePage = createPage([
         createSettingsGroup('Bar Settings', [
+            createSettingRow('Bar Position', barPositionCombo, 'Set the position of the main bar'),
             createSettingRow('Bar Round Corners', barCorners, 'Adjust the roundness of the bar corners'),
             createSettingRow('Screen Rounding', screenRounding, 'Set the screen corner rounding')
         ]),
@@ -522,6 +526,11 @@ app.connect('activate', () => {
                     to: Object.keys(languages)[toLangCombo.get_active()],
                     languages: languages
                 }
+            },
+            bar: {
+                position: ['top', 'bottom'][barPositionCombo.get_active()],
+                modes: config.bar?.modes || ['normal'],
+                wallpaper_folder: config.bar?.wallpaper_folder || ''
             }
         };
 

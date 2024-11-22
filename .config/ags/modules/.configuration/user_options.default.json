@@ -1,249 +1,250 @@
 {
-  "ai": {
-    "defaultGPTProvider": "openrouter",
-    "onSearch": "gemini",
-    "defaultTemperature": 0.9,
-    "enhancements": true,
-    "useHistory": true,
-    "safety": true,
-    "writingCursor": " ....",
-    "proxyUrl": ""
-  },
-  "animations": {
-    "choreographyDelay": 25,
-    "durationSmall": 110,
-    "durationLarge": 180
-  },
-  "appearance": {
-    "autoDarkMode": {
-      "enabled": false,
-      "from": "18:10",
-      "to": "6:10"
-    },
-    "keyboardUseFlag": false,
-    "layerSmoke": false,
-    "layerSmokeStrength": 0.2,
-    "barRoundCorners": 1,
-    "fakeScreenRounding": 1
-  },
-  "apps": {
-    "bluetooth": "blueberry",
-    "imageViewer": "loupe",
-    "network": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center wifi",
-    "settings": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center",
-    "taskManager": "foot -e btop",
-    "terminal": "foot"
-  },
-  "battery": {
-    "low": 20,
-    "critical": 10,
-    "warnLevels": [20, 15, 5],
-    "warnTitles": ["Low battery", "Very low battery", "Critical Battery"],
-    "warnMessages": [
-      "Plug in the charger",
-      "You there?",
-      "PLUG THE CHARGER ALREADY"
-    ],
-    "suspendThreshold": 3
-  },
-  "brightness": {
-    "controllers": {
-      "default": "auto"
-    }
-  },
-  "cheatsheet": {
-    "keybinds": {
-      "configPath": ""
-    }
-  },
-  "gaming": {
-    "crosshair": {
-      "size": 20,
-      "color": "rgba(113,227,32,0.9)"
-    }
-  },
-  "i18n": {
-    "langCode": "",
-    "extraLogs": false
-  },
-  "monitors": {
-    "scaleMethod": "division"
-  },
-  "music": {
-    "preferredPlayer": "plasma-browser-integration"
-  },
-  "onScreenKeyboard": {
-    "layout": "qwerty_full"
-  },
-  "overview": {
-    "scale": 0.18,
-    "numOfRows": 2,
-    "numOfCols": 5,
-    "wsNumScale": 0.09,
-    "wsNumMarginScale": 0.07
-  },
-  "sidebar": {
     "ai": {
-      "__custom": ["extraGptModels"],
-      "extraGptModels": {
-        "openrouter": {
-          "name": "Llama 3 8B",
-          "logo_name": "openrouter-symbolic",
-          "description": "A unified interface for LLMs",
-          "base_url": "https://openrouter.ai/api/v1/chat/completions",
-          "key_get_url": "https://openrouter.ai/keys",
-          "key_file": "openrouter_key.txt",
-          "model": "meta-llama/llama-3-8b-instruct:free"
+        "defaultGPTProvider": "openrouter",
+        "onSearch": "gemini",
+        "defaultTemperature": 0.9,
+        "enhancements": true,
+        "useHistory": true,
+        "safety": true,
+        "writingCursor": " ....",
+        "proxyUrl": ""
+    },
+    "animations": {
+        "choreographyDelay": 25,
+        "durationSmall": 110,
+        "durationLarge": 180
+    },
+    "appearance": {
+        "autoDarkMode": {
+            "enabled": false,
+            "from": "18:10",
+            "to": "6:10"
         },
-        "openai": {
-          "name": "ChatGPT",
-          "logo_name": "openai-symbolic",
-          "description": "The Famous ChatGPT 3.5 Client",
-          "key_file": "openai_key.txt",
-          "model": "ChatGPT 3.5 Turbo"
+        "keyboardUseFlag": false,
+        "layerSmoke": false,
+        "layerSmokeStrength": 0.2,
+        "barRoundCorners": 1,
+        "fakeScreenRounding": 1
+    },
+    "apps": {
+        "bluetooth": "blueberry",
+        "imageViewer": "loupe",
+        "network": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center wifi",
+        "settings": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center",
+        "taskManager": "foot -e btop",
+        "terminal": "foot"
+    },
+    "battery": {
+        "low": 20,
+        "critical": 10,
+        "warnLevels": [20, 15, 5],
+        "warnTitles": ["Low battery", "Very low battery", "Critical Battery"],
+        "warnMessages": [
+            "Plug in the charger",
+            "You there?",
+            "PLUG THE CHARGER ALREADY"
+        ],
+        "suspendThreshold": 3
+    },
+    "brightness": {
+        "controllers": {
+            "default": "auto"
         }
-      },
-      "initMessages": []
-    },
-    "image": {
-      "columns": 2,
-      "batchCount": 20,
-      "allowNsfw": false,
-      "saveInFolderByTags": false
-    },
-    "pages": {
-      "order": ["apis", "tools"],
-      "apis": {
-        "order": ["gemini", "gpt", "translater"]
-      }
-    },
-    "translater": {
-      "__custom": ["languages"],
-      "from": "auto",
-      "to": "ar",
-      "languages": {
-        "auto": "Auto",
-        "ar": "Arabic",
-        "en": "English",
-        "es": "Spanish",
-        "fr": "French",
-        "ru": "Russian",
-        "de": "German",
-        "pt": "Portuguese",
-        "it": "Italian",
-        "la": "Latin",
-        "pl": "Polish",
-        "tr": "Turkish"
-      }
-    }
-  },
-  "search": {
-    "watchers": [
-      "/usr/share/applications",
-      "~/.local/share/applications",
-      "/var/lib/flatpak/exports/share"
-    ],
-    "enableFeatures": {
-      "actions": true,
-      "commands": true,
-      "mathResults": true,
-      "directorySearch": true,
-      "aiSearch": true,
-      "webSearch": true
-    },
-    "engineBaseUrl": "https://www.google.com/search?q=",
-    "excludedSites": ["quora.com"]
-  },
-  "time": {
-    "format": "%I:%M",
-    "interval": 5000,
-    "dateFormatLong": "%d/%m",
-    "dateInterval": 5000,
-    "dateFormat": "%A %d/%m"
-  },
-  "weather": {
-    "city": "Cairo",
-    "preferredUnit": "C"
-  },
-  "workspaces": {
-    "shown": 10
-  },
-  "dock": {
-    "enabled": false,
-    "hiddenThickness": 5,
-    "pinnedApps": ["firefox", "org.gnome.Nautilus"],
-    "layer": "top",
-    "monitorExclusivity": true,
-    "searchPinnedAppIcons": false,
-    "trigger": ["client-added", "client-removed"],
-    "autoHide": [
-      {
-        "trigger": "client-added",
-        "interval": 500
-      },
-      {
-        "trigger": "client-removed",
-        "interval": 500
-      }
-    ]
-  },
-  "icons": {
-    "__custom": ["substitutions", "regexSubstitutions"],
-    "searchPaths": [""],
-    "symbolicIconTheme": {
-      "dark": "Adwaita",
-      "light": "Adwaita"
-    },
-    "substitutions": {
-      "code-url-handler": "code",
-      "Code": "code",
-      "GitHub Desktop": "github-desktop",
-      "Minecraft* 1.20.1": "minecraft",
-      "gnome-tweaks": "org.gnome.tweaks",
-      "pavucontrol-qt": "pavucontrol",
-      "wps": "wps-office2019-kprometheus",
-      "wpsoffice": "wps-office2019-kprometheus",
-      "": "image-missing"
-    },
-    "regexSubstitutions": [
-      {
-        "regex": {},
-        "replace": "steam_icon_$1"
-      }
-    ]
-  },
-  "keybinds": {
-    "overview": {
-      "altMoveLeft": "Ctrl+b",
-      "altMoveRight": "Ctrl+f",
-      "deleteToEnd": "Ctrl+k"
-    },
-    "sidebar": {
-      "apis": {
-        "nextTab": "Page_Down",
-        "prevTab": "Page_Up"
-      },
-      "options": {
-        "nextTab": "Page_Down",
-        "prevTab": "Page_Up"
-      },
-      "pin": "Ctrl+p",
-      "cycleTab": "Ctrl+Tab",
-      "nextTab": "Ctrl+Page_Down",
-      "prevTab": "Ctrl+Page_Up"
     },
     "cheatsheet": {
-      "keybinds": {
-        "nextTab": "Page_Down",
-        "prevTab": "Page_Up"
-      },
-      "nextTab": "Ctrl+Page_Down",
-      "prevTab": "Ctrl+Page_Up",
-      "cycleTab": "Ctrl+Tab"
+        "keybinds": {
+            "configPath": ""
+        }
+    },
+    "gaming": {
+        "crosshair": {
+            "size": 20,
+            "color": "rgba(113,227,32,0.9)"
+        }
+    },
+    "i18n": {
+        "langCode": "",
+        "extraLogs": false
+    },
+    "monitors": {
+        "scaleMethod": "division"
+    },
+    "music": {
+        "preferredPlayer": "plasma-browser-integration"
+    },
+    "onScreenKeyboard": {
+        "layout": "qwerty_full"
+    },
+    "overview": {
+        "scale": 0.18,
+        "numOfRows": 2,
+        "numOfCols": 5,
+        "wsNumScale": 0.09,
+        "wsNumMarginScale": 0.07
+    },
+    "sidebar": {
+        "ai": {
+            "__custom": ["extraGptModels"],
+            "extraGptModels": {
+                "openrouter": {
+                    "name": "Llama 3 8B",
+                    "logo_name": "openrouter-symbolic",
+                    "description": "A unified interface for LLMs",
+                    "base_url": "https://openrouter.ai/api/v1/chat/completions",
+                    "key_get_url": "https://openrouter.ai/keys",
+                    "key_file": "openrouter_key.txt",
+                    "model": "meta-llama/llama-3-8b-instruct:free"
+                },
+                "openai": {
+                    "name": "ChatGPT",
+                    "logo_name": "openai-symbolic",
+                    "description": "The Famous ChatGPT 3.5 Client",
+                    "key_file": "openai_key.txt",
+                    "model": "ChatGPT 3.5 Turbo"
+                }
+            },
+            "initMessages": []
+        },
+        "image": {
+            "columns": 2,
+            "batchCount": 20,
+            "allowNsfw": false,
+            "saveInFolderByTags": false
+        },
+        "pages": {
+            "order": ["apis", "tools"],
+            "apis": {
+                "order": ["gemini", "gpt", "translater"]
+            }
+        },
+        "translater": {
+            "__custom": ["languages"],
+            "from": "auto",
+            "to": "ar",
+            "languages": {
+                "auto": "Auto",
+                "ar": "Arabic",
+                "en": "English",
+                "es": "Spanish",
+                "fr": "French",
+                "ru": "Russian",
+                "de": "German",
+                "pt": "Portuguese",
+                "it": "Italian",
+                "la": "Latin",
+                "pl": "Polish",
+                "tr": "Turkish"
+            }
+        }
+    },
+    "search": {
+        "watchers": [
+            "/usr/share/applications",
+            "~/.local/share/applications",
+            "/var/lib/flatpak/exports/share"
+        ],
+        "enableFeatures": {
+            "actions": true,
+            "commands": true,
+            "mathResults": true,
+            "directorySearch": true,
+            "aiSearch": true,
+            "webSearch": true
+        },
+        "engineBaseUrl": "https://www.google.com/search?q=",
+        "excludedSites": ["quora.com"]
+    },
+    "time": {
+        "format": "%I:%M",
+        "interval": 5000,
+        "dateFormatLong": "%d/%m",
+        "dateInterval": 5000,
+        "dateFormat": "%A %d/%m"
+    },
+    "weather": {
+        "city": "Cairo",
+        "preferredUnit": "C"
+    },
+    "workspaces": {
+        "shown": 10
+    },
+    "dock": {
+        "enabled": false,
+        "hiddenThickness": 5,
+        "pinnedApps": ["firefox", "org.gnome.Nautilus"],
+        "layer": "top",
+        "monitorExclusivity": true,
+        "searchPinnedAppIcons": false,
+        "trigger": ["client-added", "client-removed"],
+        "autoHide": [
+            {
+                "trigger": "client-added",
+                "interval": 500
+            },
+            {
+                "trigger": "client-removed",
+                "interval": 500
+            }
+        ]
+    },
+    "icons": {
+        "__custom": ["substitutions", "regexSubstitutions"],
+        "searchPaths": [""],
+        "symbolicIconTheme": {
+            "dark": "Adwaita",
+            "light": "Adwaita"
+        },
+        "substitutions": {
+            "code-url-handler": "code",
+            "Code": "code",
+            "GitHub Desktop": "github-desktop",
+            "Minecraft* 1.20.1": "minecraft",
+            "gnome-tweaks": "org.gnome.tweaks",
+            "pavucontrol-qt": "pavucontrol",
+            "wps": "wps-office2019-kprometheus",
+            "wpsoffice": "wps-office2019-kprometheus",
+            "": "image-missing"
+        },
+        "regexSubstitutions": [
+            {
+                "regex": {},
+                "replace": "steam_icon_$1"
+            }
+        ]
+    },
+    "keybinds": {
+        "overview": {
+            "altMoveLeft": "Ctrl+b",
+            "altMoveRight": "Ctrl+f",
+            "deleteToEnd": "Ctrl+k"
+        },
+        "sidebar": {
+            "apis": {
+                "nextTab": "Page_Down",
+                "prevTab": "Page_Up"
+            },
+            "options": {
+                "nextTab": "Page_Down",
+                "prevTab": "Page_Up"
+            },
+            "pin": "Ctrl+p",
+            "cycleTab": "Ctrl+Tab",
+            "nextTab": "Ctrl+Page_Down",
+            "prevTab": "Ctrl+Page_Up"
+        },
+        "cheatsheet": {
+            "keybinds": {
+                "nextTab": "Page_Down",
+                "prevTab": "Page_Up"
+            },
+            "nextTab": "Ctrl+Page_Down",
+            "prevTab": "Ctrl+Page_Up",
+            "cycleTab": "Ctrl+Tab"
+        }
+    },
+    "bar": {
+        "modes": ["normal"],
+        "wallpaper_folder": "",
+        "position": "top"
     }
-  },
-  "bar": {
-    "modes": ["normal"],
-    "wallpaper_folder": "/home/dr/Pictures/Wallpapers/"
-  }
 }
