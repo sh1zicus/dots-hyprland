@@ -519,7 +519,7 @@ function createMainView(window) {
 
     const sidebarContainer = new Gtk.Box({
         orientation: Gtk.Orientation.HORIZONTAL,
-        width_request: 240,
+        width_request: 280,
         vexpand: true,
         hexpand: false,
         css_classes: ['sidebar-container']
