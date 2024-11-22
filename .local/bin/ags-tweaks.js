@@ -679,15 +679,16 @@ function createMainView(window) {
     pages.forEach(page => {
         const row = new Gtk.Box({
             orientation: Gtk.Orientation.HORIZONTAL,
-            spacing: 8,
-            margin_start: 6,
-            margin_end: 6,
-            margin_top: 3,
-            margin_bottom: 3
+            spacing: 12,
+            margin_start: 12,
+            margin_end: 12,
+            margin_top: 10,
+            margin_bottom: 10
         });
 
         const icon = new Gtk.Image({
-            icon_name: page.icon
+            icon_name: page.icon,
+            pixel_size: 18
         });
 
         const label = new Gtk.Label({
@@ -699,7 +700,9 @@ function createMainView(window) {
         row.append(icon);
         row.append(label);
 
-        const listBoxRow = new Gtk.ListBoxRow();
+        const listBoxRow = new Gtk.ListBoxRow({
+            css_classes: ['sidebar-row']
+        });
         listBoxRow.set_child(row);
         listBoxRow.name = page.id;
         listBox.append(listBoxRow);
