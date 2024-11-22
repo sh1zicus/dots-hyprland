@@ -63,7 +63,7 @@
         }
     },
     "i18n": {
-        "langCode": "",
+        "langCode": "Default",
         "extraLogs": false
     },
     "monitors": {
@@ -157,7 +157,7 @@
     "time": {
         "format": "%I:%M",
         "interval": 5000,
-        "dateFormatLong": "%d/%m",
+        "dateFormatLong": "%A %d/%m",
         "dateInterval": 5000,
         "dateFormat": "%A %d/%m"
     },
