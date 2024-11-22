@@ -1,8 +1,9 @@
 #!/usr/bin/gjs
 imports.gi.versions.Gtk = '4.0';
 imports.gi.versions.Adw = '1';
+imports.gi.versions.Gdk = '4.0';
 
-const { Gtk, Adw, Gio, GLib } = imports.gi;
+const { Gtk, Adw, Gio, GLib, Gdk } = imports.gi;
 const ByteArray = imports.byteArray;
 
 // Утилиты для работы с файлами
@@ -43,25 +44,46 @@ try {
 // Инициализируем приложение
 Adw.init();
 
-const app = new Adw.Application({
+const app = new Gtk.Application({
     application_id: 'org.gnome.AGSTweaks'
 });
 
 app.connect('activate', () => {
-    const win = new Adw.ApplicationWindow({
-        application: app,
+    const win = new Gtk.Window({
         default_width: 1000,
         default_height: 680,
         title: 'Settings'
     });
 
-    // Передаем window в createMainView
+    win.connect('close-request', () => {
+        app.quit();
+        return true;
+    });
+
+    win.connect('realize', () => {
+        const surface = win.get_surface();
+        if (surface) {
+            surface.set_type_hint(Gdk.SurfaceTypeHint.NORMAL);
+        }
+    });
+
+    win.set_application(app);
+    win.set_resizable(true);
+    win.set_decorated(true);
+
     const mainView = createMainView(win);
-    win.set_content(mainView);
+    win.set_child(mainView);
     win.present();
 });
 
 function createMainView(window) {
+    // Создаем внешний контейнер для всего содержимого
+    const outerBox = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        vexpand: true
+    });
+
+    // Основной контейнер с сайдбаром и контентом
     const mainBox = new Gtk.Box({
         orientation: Gtk.Orientation.HORIZONTAL,
         vexpand: true
@@ -235,11 +257,119 @@ function createMainView(window) {
     mainBox.append(sidebarContainer);
     mainBox.append(rightBox);
 
+    // Create footer
+    const footer = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        margin_top: 12,
+        margin_bottom: 12,
+        margin_start: 12,
+        margin_end: 12,
+        halign: Gtk.Align.END
+    });
+
+    // Create box for button content
+    const buttonBox = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        spacing: 6
+    });
+
+    const icon = new Gtk.Image({
+        icon_name: 'document-save-symbolic',
+        pixel_size: 16
+    });
+
+    const label = new Gtk.Label({
+        label: 'Save & Restart'
+    });
+
+    const spinner = new Gtk.Spinner({
+        visible: false
+    });
+
+    buttonBox.append(icon);
+    buttonBox.append(label);
+    buttonBox.append(spinner);
+
+    const restartButton = new Gtk.Button({
+        child: buttonBox,
+        tooltip_text: 'Save configuration and restart AGS',
+        css_classes: ['suggested-action', 'pill'],
+        width_request: 140,
+        height_request: 38
+    });
+
+    restartButton.get_style_context().add_class('accent');
+    
+    restartButton.connect('clicked', () => {
+        // Show loading state
+        restartButton.sensitive = false;
+        icon.visible = false;
+        spinner.visible = true;
+        spinner.start();
+        label.label = 'Saving...';
+
+        try {
+            writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+            
+            // Create temp log file
+            const tempLog = '/tmp/ags_restart.log';
+            GLib.spawn_command_line_async(`bash -c "killall ags && sleep 0.5 && ags > ${tempLog} 2>&1"`);
+            
+            // Check AGS load status
+            let attempts = 0;
+            const checkAgs = () => {
+                try {
+                    const logContent = readFileSync(tempLog);
+                    if (logContent && logContent.includes('AGS loaded in')) {
+                        restartButton.sensitive = true;
+                        icon.visible = true;
+                        spinner.visible = false;
+                        spinner.stop();
+                        label.label = 'Save & Restart';
+                        GLib.spawn_command_line_async(`rm -f ${tempLog}`);
+                        return GLib.SOURCE_REMOVE;
+                    }
+                    
+                    attempts++;
+                    if (attempts > 100) { // 10 seconds timeout
+                        restartButton.sensitive = true;
+                        icon.visible = true;
+                        spinner.visible = false;
+                        spinner.stop();
+                        label.label = 'Save & Restart';
+                        GLib.spawn_command_line_async(`rm -f ${tempLog}`);
+                        return GLib.SOURCE_REMOVE;
+                    }
+                    
+                    return GLib.SOURCE_CONTINUE;
+                } catch (error) {
+                    return GLib.SOURCE_CONTINUE;
+                }
+            };
+
+            // Check every 100ms
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, checkAgs);
+        } catch (error) {
+            console.error('Error saving config or restarting AGS:', error);
+            restartButton.sensitive = true;
+            icon.visible = true;
+            spinner.visible = false;
+            spinner.stop();
+            label.label = 'Save & Restart';
+        }
+    });
+
+    footer.append(restartButton);
+
+    // Add main content and footer to outer container
+    outerBox.append(mainBox);
+    outerBox.append(footer);
+
     window.connect('close-request', () => {
         app.quit();
     });
 
-    return mainBox;
+    return outerBox;
 }
 
 function createAppearancePage() {
