@@ -18,54 +18,6 @@ try {
     config = {};
 }
 
-Adw.init();
-
-const app = new Gtk.Application({
-    application_id: 'org.gnome.AGSTweaks'
-});
-
-app.connect('activate', () => {
-    const win = new Gtk.Window({
-        default_width: 1000,
-        default_height: 680,
-        title: 'Settings'
-    });
-
-    win.connect('close-request', () => {
-        app.quit();
-        return true;
-    });
-
-    win.set_application(app);
-    win.set_resizable(true);
-    win.set_decorated(true);
-
-    const mainView = createMainView(win);
-    win.set_child(mainView);
-    win.present();
-});
-
-function readFileSync(path) {
-    try {
-        let file = Gio.File.new_for_path(path);
-        const [success, contents] = file.load_contents(null);
-        if (!success) return null;
-        return ByteArray.toString(contents);
-    } catch (error) {
-        console.error('Error reading file:', error);
-        return null;
-    }
-}
-
-function writeFileSync(path, contents) {
-    try {
-        let file = Gio.File.new_for_path(path);
-        file.replace_contents(contents, null, false, Gio.FileCreateFlags.NONE, null);
-    } catch (error) {
-        console.error('Error writing file:', error);
-    }
-}
-
 const CONTROL_HEIGHT = 32;
 const CONTROL_WIDTH = {
     entry: 200,
@@ -109,290 +61,25 @@ function createSpinButton(value, min, max, step = 1) {
     }), CONTROL_WIDTH.spin);
 }
 
-function createMainView(window) {
-    const outerBox = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        vexpand: true
-    });
+function readFileSync(path) {
+    try {
+        let file = Gio.File.new_for_path(path);
+        const [success, contents] = file.load_contents(null);
+        if (!success) return null;
+        return ByteArray.toString(contents);
+    } catch (error) {
+        console.error('Error reading file:', error);
+        return null;
+    }
+}
 
-    const mainBox = new Gtk.Box({
-        orientation: Gtk.Orientation.HORIZONTAL,
-        vexpand: true
-    });
-
-    const rightBox = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        hexpand: true
-    });
-
-    const mainHeader = new Gtk.HeaderBar({
-        show_title_buttons: true,
-        css_classes: ['flat']
-    });
-
-    const headerTitle = new Gtk.Label({
-        label: 'Appearance'
-    });
-
-    mainHeader.set_title_widget(headerTitle);
-    rightBox.append(mainHeader);
-
-    const sidebarContainer = new Gtk.Box({
-        orientation: Gtk.Orientation.HORIZONTAL,
-        width_request: 240,
-        vexpand: true,
-        hexpand: false,
-        css_classes: ['sidebar-container']
-    });
-
-    const leftBox = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        vexpand: true,
-        hexpand: true
-    });
-
-    const sidebarHeader = new Gtk.HeaderBar({
-        show_title_buttons: false,
-        css_classes: ['flat'],
-        hexpand: true
-    });
-
-    const sidebarTitle = new Gtk.Label({
-        label: 'Settings',
-        hexpand: true
-    });
-
-    const searchButton = new Gtk.ToggleButton({
-        icon_name: 'system-search-symbolic',
-        css_classes: ['flat']
-    });
-
-    const menuButton = new Gtk.MenuButton({
-        icon_name: 'view-more-symbolic',
-        css_classes: ['flat']
-    });
-
-    sidebarHeader.set_title_widget(sidebarTitle);
-    sidebarHeader.pack_start(searchButton);
-    sidebarHeader.pack_end(menuButton);
-
-    const searchEntry = new Gtk.SearchEntry({
-        placeholder_text: 'Search',
-        margin_start: 12,
-        margin_end: 12,
-        margin_top: 6,
-        margin_bottom: 6,
-        visible: false,
-        hexpand: true
-    });
-
-    const listBox = new Gtk.ListBox({
-        selection_mode: Gtk.SelectionMode.SINGLE,
-        css_classes: ['navigation-sidebar'],
-        hexpand: true
-    });
-
-    const contentStack = new Gtk.Stack({
-        transition_type: Gtk.StackTransitionType.CROSSFADE,
-        hexpand: true
-    });
-
-    const pages = [
-        {
-            id: 'appearance',
-            title: 'Appearance',
-            icon: 'preferences-desktop-appearance-symbolic',
-            content: createAppearancePage()
-        },
-        {
-            id: 'animations',
-            title: 'Animations',
-            icon: 'preferences-desktop-effects-symbolic',
-            content: createAnimationsPage()
-        },
-        {
-            id: 'overview',
-            title: 'Overview',
-            icon: 'view-grid-symbolic',
-            content: createOverviewPage()
-        },
-        {
-            id: 'dock',
-            title: 'Dock',
-            icon: 'dock-symbolic',
-            content: createDockPage()
-        },
-        {
-            id: 'applications',
-            title: 'Applications',
-            icon: 'applications-system-symbolic',
-            content: createApplicationsPage()
-        },
-        {
-            id: 'system',
-            title: 'System',
-            icon: 'preferences-system-symbolic',
-            content: createSystemPage()
-        }
-    ];
-
-    pages.forEach(page => {
-        const row = new Gtk.Box({
-            orientation: Gtk.Orientation.HORIZONTAL,
-            spacing: 8,
-            margin_start: 6,
-            margin_end: 6,
-            margin_top: 3,
-            margin_bottom: 3
-        });
-
-        const icon = new Gtk.Image({
-            icon_name: page.icon
-        });
-
-        const label = new Gtk.Label({
-            label: page.title,
-            xalign: 0,
-            hexpand: true
-        });
-
-        row.append(icon);
-        row.append(label);
-
-        const listBoxRow = new Gtk.ListBoxRow();
-        listBoxRow.set_child(row);
-        listBoxRow.name = page.id;
-        listBox.append(listBoxRow);
-
-        contentStack.add_named(page.content, page.id);
-    });
-
-    listBox.connect('row-selected', (box, row) => {
-        if (row) {
-            const pageTitle = row.get_child().get_last_child().get_label();
-            headerTitle.set_label(pageTitle);
-            contentStack.set_visible_child_name(row.name);
-        }
-    });
-
-    listBox.select_row(listBox.get_row_at_index(0));
-
-    rightBox.append(contentStack);
-
-    searchButton.connect('toggled', () => {
-        searchEntry.visible = searchButton.active;
-    });
-
-    leftBox.append(sidebarHeader);
-    leftBox.append(searchEntry);
-    leftBox.append(listBox);
-
-    sidebarContainer.append(leftBox);
-
-    mainBox.append(sidebarContainer);
-    mainBox.append(rightBox);
-
-    const footer = new Gtk.Box({
-        orientation: Gtk.Orientation.HORIZONTAL,
-        margin_top: 12,
-        margin_bottom: 12,
-        margin_start: 12,
-        margin_end: 12,
-        halign: Gtk.Align.END
-    });
-
-    const buttonBox = new Gtk.Box({
-        orientation: Gtk.Orientation.HORIZONTAL,
-        spacing: 6
-    });
-
-    const icon = new Gtk.Image({
-        icon_name: 'document-save-symbolic',
-        pixel_size: 16
-    });
-
-    const label = new Gtk.Label({
-        label: 'Save & Restart'
-    });
-
-    const spinner = new Gtk.Spinner({
-        visible: false
-    });
-
-    buttonBox.append(icon);
-    buttonBox.append(label);
-    buttonBox.append(spinner);
-
-    const restartButton = new Gtk.Button({
-        child: buttonBox,
-        tooltip_text: 'Save configuration and restart AGS',
-        css_classes: ['suggested-action', 'pill'],
-        width_request: 140,
-        height_request: 38
-    });
-
-    restartButton.get_style_context().add_class('accent');
-    
-    restartButton.connect('clicked', () => {
-        restartButton.sensitive = false;
-        icon.visible = false;
-        spinner.visible = true;
-        spinner.start();
-        label.label = 'Saving...';
-
-        try {
-            GLib.file_set_contents('/tmp/ags_restart.log', '');
-            
-            writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
-            GLib.spawn_command_line_async('bash -c "killall ags && sleep 0.5 && ags > /tmp/ags_restart.log 2>&1"');
-            
-            let attempts = 0;
-            const checkAgs = () => {
-                try {
-                    const log = readFileSync('/tmp/ags_restart.log');
-                    if (log && log.includes('Service started')) {
-                        restartButton.sensitive = true;
-                        icon.visible = true;
-                        spinner.visible = false;
-                        spinner.stop();
-                        label.label = 'Save & Restart';
-                        GLib.spawn_command_line_async('rm -f /tmp/ags_restart.log');
-                        return GLib.SOURCE_REMOVE;
-                    }
-                    
-                    attempts++;
-                    if (attempts > 100) {
-                        restartButton.sensitive = true;
-                        icon.visible = true;
-                        spinner.visible = false;
-                        spinner.stop();
-                        label.label = 'Save & Restart';
-                        GLib.spawn_command_line_async('rm -f /tmp/ags_restart.log');
-                        return GLib.SOURCE_REMOVE;
-                    }
-                    
-                    return GLib.SOURCE_CONTINUE;
-                } catch (error) {
-                    return GLib.SOURCE_CONTINUE;
-                }
-            };
-
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, checkAgs);
-        } catch (error) {
-            console.error('Error saving config or restarting AGS:', error);
-            restartButton.sensitive = true;
-            icon.visible = true;
-            spinner.visible = false;
-            spinner.stop();
-            label.label = 'Save & Restart';
-        }
-    });
-
-    footer.append(restartButton);
-    outerBox.append(mainBox);
-    outerBox.append(footer);
-
-    return outerBox;
+function writeFileSync(path, contents) {
+    try {
+        let file = Gio.File.new_for_path(path);
+        file.replace_contents(contents, null, false, Gio.FileCreateFlags.NONE, null);
+    } catch (error) {
+        console.error('Error writing file:', error);
+    }
 }
 
 function createAppearancePage() {
@@ -437,6 +124,138 @@ function createAppearancePage() {
     themeGroup.add(colorRow);
 
     box.append(themeGroup);
+    return box;
+}
+
+function createBarPage() {
+    const box = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 12,
+        margin_start: 12,
+        margin_end: 12,
+        margin_top: 12
+    });
+
+    const generalGroup = new Adw.PreferencesGroup({ title: 'General' });
+    
+    const positionRow = new Adw.ActionRow({
+        title: 'Position',
+        subtitle: 'Bar position on screen'
+    });
+    const positionCombo = createComboBox();
+    positionCombo.append('top', 'Top');
+    positionCombo.append('bottom', 'Bottom');
+    positionCombo.set_active_id(config.bar?.position ?? 'top');
+    positionCombo.connect('changed', () => {
+        if (!config.bar) config.bar = {};
+        config.bar.position = positionCombo.get_active_id();
+    });
+    positionRow.add_suffix(positionCombo);
+    generalGroup.add(positionRow);
+
+    const heightRow = new Adw.ActionRow({
+        title: 'Height',
+        subtitle: 'Bar height in pixels'
+    });
+    const heightScale = createScale(config.bar?.height ?? 32, 24, 48, 0);
+    heightScale.connect('value-changed', () => {
+        if (!config.bar) config.bar = {};
+        config.bar.height = heightScale.get_value();
+    });
+    heightRow.add_suffix(heightScale);
+    generalGroup.add(heightRow);
+
+    const spacingRow = new Adw.ActionRow({
+        title: 'Spacing',
+        subtitle: 'Space between elements'
+    });
+    const spacingScale = createScale(config.bar?.spacing ?? 8, 0, 16, 0);
+    spacingScale.connect('value-changed', () => {
+        if (!config.bar) config.bar = {};
+        config.bar.spacing = spacingScale.get_value();
+    });
+    spacingRow.add_suffix(spacingScale);
+    generalGroup.add(spacingRow);
+
+    const monitorsGroup = new Adw.PreferencesGroup({ title: 'Monitors' });
+
+    const monitorBehaviorRow = new Adw.ActionRow({
+        title: 'Monitor Behavior',
+        subtitle: 'Bar display on multiple monitors'
+    });
+    const monitorCombo = createComboBox();
+    monitorCombo.append('primary', 'Primary Only');
+    monitorCombo.append('all', 'All Monitors');
+    monitorCombo.set_active_id(config.bar?.monitors ?? 'primary');
+    monitorCombo.connect('changed', () => {
+        if (!config.bar) config.bar = {};
+        config.bar.monitors = monitorCombo.get_active_id();
+    });
+    monitorBehaviorRow.add_suffix(monitorCombo);
+    monitorsGroup.add(monitorBehaviorRow);
+
+    const elementsGroup = new Adw.PreferencesGroup({ title: 'Elements' });
+
+    const elements = {
+        'Show Workspaces': 'showWorkspaces',
+        'Show Taskbar': 'showTaskbar',
+        'Show System Tray': 'showSystemTray',
+        'Show Clock': 'showClock',
+        'Show Power Menu': 'showPowerMenu',
+        'Show Media': 'showMedia',
+        'Show Network': 'showNetwork',
+        'Show Volume': 'showVolume',
+        'Show Battery': 'showBattery',
+        'Show Notifications': 'showNotifications'
+    };
+
+    Object.entries(elements).forEach(([title, key]) => {
+        const row = new Adw.ActionRow({
+            title: title
+        });
+        const toggle = new Gtk.Switch({
+            active: config.bar?.elements?.[key] ?? true,
+            valign: Gtk.Align.CENTER
+        });
+        toggle.connect('notify::active', () => {
+            if (!config.bar) config.bar = {};
+            if (!config.bar.elements) config.bar.elements = {};
+            config.bar.elements[key] = toggle.active;
+        });
+        row.add_suffix(toggle);
+        elementsGroup.add(row);
+    });
+
+    const styleGroup = new Adw.PreferencesGroup({ title: 'Style' });
+
+    const paddingRow = new Adw.ActionRow({
+        title: 'Padding',
+        subtitle: 'Bar content padding'
+    });
+    const paddingScale = createScale(config.bar?.padding ?? 8, 0, 16, 0);
+    paddingScale.connect('value-changed', () => {
+        if (!config.bar) config.bar = {};
+        config.bar.padding = paddingScale.get_value();
+    });
+    paddingRow.add_suffix(paddingScale);
+    styleGroup.add(paddingRow);
+
+    const roundnessRow = new Adw.ActionRow({
+        title: 'Roundness',
+        subtitle: 'Bar corner radius'
+    });
+    const roundnessScale = createScale(config.bar?.roundness ?? 0, 0, 16, 0);
+    roundnessScale.connect('value-changed', () => {
+        if (!config.bar) config.bar = {};
+        config.bar.roundness = roundnessScale.get_value();
+    });
+    roundnessRow.add_suffix(roundnessScale);
+    styleGroup.add(roundnessRow);
+
+    box.append(generalGroup);
+    box.append(monitorsGroup);
+    box.append(elementsGroup);
+    box.append(styleGroup);
     return box;
 }
 
@@ -686,5 +505,342 @@ function createSystemPage() {
     box.append(weatherGroup);
     return box;
 }
+
+function createMainView(window) {
+    const outerBox = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        vexpand: true
+    });
+
+    const contentBox = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        vexpand: true
+    });
+
+    const sidebarContainer = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        width_request: 240,
+        vexpand: true,
+        hexpand: false,
+        css_classes: ['sidebar-container']
+    });
+
+    const leftBox = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        vexpand: true,
+        hexpand: true
+    });
+
+    const sidebarHeader = new Gtk.HeaderBar({
+        show_title_buttons: false,
+        css_classes: ['flat'],
+        hexpand: true
+    });
+
+    const sidebarTitle = new Gtk.Label({
+        label: 'Settings',
+        hexpand: true
+    });
+
+    const searchButton = new Gtk.ToggleButton({
+        icon_name: 'system-search-symbolic',
+        css_classes: ['flat']
+    });
+
+    const menuButton = new Gtk.MenuButton({
+        icon_name: 'view-more-symbolic',
+        css_classes: ['flat']
+    });
+
+    sidebarHeader.set_title_widget(sidebarTitle);
+    sidebarHeader.pack_start(searchButton);
+    sidebarHeader.pack_end(menuButton);
+
+    const searchEntry = new Gtk.SearchEntry({
+        placeholder_text: 'Search',
+        margin_start: 12,
+        margin_end: 12,
+        margin_top: 6,
+        margin_bottom: 6,
+        visible: false,
+        hexpand: true
+    });
+
+    const listBox = new Gtk.ListBox({
+        selection_mode: Gtk.SelectionMode.SINGLE,
+        css_classes: ['navigation-sidebar'],
+        hexpand: true
+    });
+
+    const rightBox = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        hexpand: true
+    });
+
+    const mainHeader = new Gtk.HeaderBar({
+        show_title_buttons: true,
+        css_classes: ['flat']
+    });
+
+    const headerTitle = new Gtk.Label({
+        label: 'Appearance'
+    });
+
+    mainHeader.set_title_widget(headerTitle);
+
+    const contentStack = new Gtk.Stack({
+        transition_type: Gtk.StackTransitionType.CROSSFADE,
+        hexpand: true,
+        vexpand: true
+    });
+
+    const scrolledWindow = new Gtk.ScrolledWindow({
+        vexpand: true,
+        hexpand: true
+    });
+
+    scrolledWindow.set_child(contentStack);
+    rightBox.append(mainHeader);
+    rightBox.append(scrolledWindow);
+
+    pages.forEach(page => {
+        const row = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            spacing: 8,
+            margin_start: 6,
+            margin_end: 6,
+            margin_top: 3,
+            margin_bottom: 3
+        });
+
+        const icon = new Gtk.Image({
+            icon_name: page.icon
+        });
+
+        const label = new Gtk.Label({
+            label: page.title,
+            xalign: 0,
+            hexpand: true
+        });
+
+        row.append(icon);
+        row.append(label);
+
+        const listBoxRow = new Gtk.ListBoxRow();
+        listBoxRow.set_child(row);
+        listBoxRow.name = page.id;
+        listBox.append(listBoxRow);
+
+        contentStack.add_named(page.content, page.id);
+    });
+
+    listBox.connect('row-selected', (box, row) => {
+        if (row) {
+            const pageTitle = row.get_child().get_last_child().get_label();
+            headerTitle.set_label(pageTitle);
+            contentStack.set_visible_child_name(row.name);
+        }
+    });
+
+    listBox.select_row(listBox.get_row_at_index(0));
+
+    searchButton.connect('toggled', () => {
+        searchEntry.visible = searchButton.active;
+    });
+
+    leftBox.append(sidebarHeader);
+    leftBox.append(searchEntry);
+    leftBox.append(listBox);
+
+    sidebarContainer.append(leftBox);
+
+    contentBox.append(sidebarContainer);
+    contentBox.append(rightBox);
+
+    const footer = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        margin_top: 12,
+        margin_bottom: 12,
+        margin_start: 12,
+        margin_end: 12,
+        halign: Gtk.Align.END,
+        css_classes: ['toolbar'],
+        hexpand: true
+    });
+
+    const buttonBox = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        spacing: 6
+    });
+
+    const icon = new Gtk.Image({
+        icon_name: 'document-save-symbolic',
+        pixel_size: 16
+    });
+
+    const label = new Gtk.Label({
+        label: 'Save & Restart'
+    });
+
+    const spinner = new Gtk.Spinner({
+        visible: false
+    });
+
+    buttonBox.append(icon);
+    buttonBox.append(label);
+    buttonBox.append(spinner);
+
+    const restartButton = new Gtk.Button({
+        child: buttonBox,
+        tooltip_text: 'Save configuration and restart AGS',
+        css_classes: ['suggested-action', 'pill'],
+        width_request: 140,
+        height_request: 38
+    });
+
+    restartButton.get_style_context().add_class('accent');
+    
+    restartButton.connect('clicked', () => {
+        restartButton.sensitive = false;
+        icon.visible = false;
+        spinner.visible = true;
+        spinner.start();
+        label.label = 'Saving...';
+
+        try {
+            writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+            
+            const tempLog = '/tmp/ags_restart.log';
+            GLib.file_set_contents(tempLog, '');
+            
+            GLib.spawn_command_line_async('killall ags');
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, () => {
+                GLib.spawn_command_line_async(`ags > ${tempLog} 2>&1`);
+                
+                let attempts = 40;
+                const checkAgs = () => {
+                    try {
+                        const log = readFileSync(tempLog);
+                        if (log && log.includes('Service started')) {
+                            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
+                                restartButton.sensitive = true;
+                                icon.visible = true;
+                                spinner.visible = false;
+                                spinner.stop();
+                                label.label = 'Save & Restart';
+                                GLib.spawn_command_line_async(`rm -f ${tempLog}`);
+                                return GLib.SOURCE_REMOVE;
+                            });
+                            return GLib.SOURCE_REMOVE;
+                        }
+                        
+                        attempts--;
+                        if (attempts <= 0) {
+                            restartButton.sensitive = true;
+                            icon.visible = true;
+                            spinner.visible = false;
+                            spinner.stop();
+                            label.label = 'Save & Restart';
+                            GLib.spawn_command_line_async(`rm -f ${tempLog}`);
+                            return GLib.SOURCE_REMOVE;
+                        }
+                        
+                        return GLib.SOURCE_CONTINUE;
+                    } catch (error) {
+                        return GLib.SOURCE_CONTINUE;
+                    }
+                };
+
+                GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, checkAgs);
+                return GLib.SOURCE_REMOVE;
+            });
+        } catch (error) {
+            console.error('Error saving config or restarting AGS:', error);
+            restartButton.sensitive = true;
+            icon.visible = true;
+            spinner.visible = false;
+            spinner.stop();
+            label.label = 'Save & Restart';
+        }
+    });
+
+    footer.append(restartButton);
+    outerBox.append(contentBox);
+    outerBox.append(footer);
+
+    return outerBox;
+}
+
+Adw.init();
+
+const pages = [
+    {
+        id: 'appearance',
+        title: 'Appearance',
+        icon: 'preferences-desktop-appearance-symbolic',
+        content: createAppearancePage()
+    },
+    {
+        id: 'bar',
+        title: 'Bar',
+        icon: 'view-dual-symbolic',
+        content: createBarPage()
+    },
+    {
+        id: 'animations',
+        title: 'Animations',
+        icon: 'preferences-desktop-effects-symbolic',
+        content: createAnimationsPage()
+    },
+    {
+        id: 'overview',
+        title: 'Overview',
+        icon: 'view-grid-symbolic',
+        content: createOverviewPage()
+    },
+    {
+        id: 'dock',
+        title: 'Dock',
+        icon: 'dock-symbolic',
+        content: createDockPage()
+    },
+    {
+        id: 'applications',
+        title: 'Applications',
+        icon: 'applications-system-symbolic',
+        content: createApplicationsPage()
+    },
+    {
+        id: 'system',
+        title: 'System',
+        icon: 'preferences-system-symbolic',
+        content: createSystemPage()
+    }
+];
+
+const app = new Gtk.Application({
+    application_id: 'org.gnome.AGSTweaks'
+});
+
+app.connect('activate', () => {
+    const win = new Gtk.Window({
+        default_width: 1000,
+        default_height: 680,
+        title: 'Settings'
+    });
+
+    win.connect('close-request', () => {
+        app.quit();
+        return true;
+    });
+
+    win.set_application(app);
+    win.set_resizable(true);
+    win.set_decorated(true);
+
+    const mainView = createMainView(win);
+    win.set_child(mainView);
+    win.present();
+});
 
 app.run([]); 
