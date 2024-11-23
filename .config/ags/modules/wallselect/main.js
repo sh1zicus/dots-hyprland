@@ -5,19 +5,12 @@ const { GLib } = imports.gi;
 
 const WallpaperButton = (path) => {
     const preview = Widget.Box({
-        css: `
-            min-width: 150px;
-            min-height: 90px;
-            background-image: url("${path}");
-            background-size: cover;
-            background-position: center;
-            border-radius: 8px;
-        `,
+        className: 'preview-box',
+        css: `background-image: url("${path}");`,
     });
 
     return Widget.Button({
         child: preview,
-        css: 'padding: 4px; margin: 4px;',
         onClicked: () => {
             Utils.execAsync(`sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${path}"`);
             App.closeWindow('wallselect');
@@ -39,7 +32,7 @@ const WallpaperList = () => {
         hscroll: 'always',
         vscroll: 'never',
         child: contentBox,
-        css: 'min-height: 110px;',
+        className: 'scroll-box',
     });
 
     const container = Widget.EventBox({
@@ -85,7 +78,7 @@ export default () => Widget.Window({
     anchor: ['top', 'left', 'right'],
     child: Widget.Box({
         vertical: true,
-        className: 'sidebar-right',
+        className: 'wallpaper-window',
         children: [WallpaperList()],
     }),
 }); 
