@@ -1,0 +1,6 @@
+.wallpaper-grid {
+    @include normal-rounding;
+    @include group-padding;
+    background-color: $layer1;
+    color: $onLayer1;
+}
