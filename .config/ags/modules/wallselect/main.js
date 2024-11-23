@@ -30,6 +30,7 @@ const WallpaperList = () => {
         hexpand: true,
         homogeneous: false,
         spacing: 8,
+        className: 'wallpaper-list',
     });
 
     const scroll = Widget.Scrollable({
