@@ -63,7 +63,7 @@
         }
     },
     "i18n": {
-        "langCode": "Default",
+        "langCode": "",
         "extraLogs": false
     },
     "monitors": {
