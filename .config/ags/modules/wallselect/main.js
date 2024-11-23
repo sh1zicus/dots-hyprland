@@ -1,87 +1,90 @@
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
 import App from 'resource:///com/github/Aylur/ags/app.js';
-import PopupWindow from '../.widgethacks/popupwindow.js';
-import { MaterialIcon } from '../.commonwidgets/materialicon.js';
 const { GLib } = imports.gi;
 
-const WallpaperButton = (path) => Widget.Button({
-    className: 'wallpaper-button',
-    child: Widget.Overlay({
-        child: Widget.Box({
-            css: `
-                background-image: url('${path}');
-                background-size: cover;
-                background-position: center;
-                min-width: 180px;
-                min-height: 100px;
-                border-radius: 12px;
-            `,
-        }),
-        overlays: [
-            Widget.Box({
-                className: 'wallpaper-overlay',
-                homogeneous: true,
-                visible: false,
-                child: MaterialIcon('done', 'norm'),
-            }),
-        ],
-    }),
-    onClicked: async () => {
-        await Utils.execAsync(`sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${path}"`);
-        App.closeWindow('wallselect');
-    },
-});
-
-const WallpaperGrid = () => {
-    const flowBox = Widget.FlowBox({
-        className: 'wallpaper-grid',
-        minChildrenPerLine: 3,
-        maxChildrenPerLine: 6,
-        selectionMode: 'none',
-        homogeneous: true,
+const WallpaperButton = (path) => {
+    const preview = Widget.Box({
+        css: `
+            min-width: 150px;
+            min-height: 90px;
+            background-image: url("${path}");
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+        `,
     });
 
-    const loadWallpapers = async () => {
-        const wallpaperDir = `${GLib.get_home_dir()}/Pictures/Wallpapers`;
+    return Widget.Button({
+        child: preview,
+        css: 'padding: 4px; margin: 4px;',
+        onClicked: () => {
+            Utils.execAsync(`sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${path}"`);
+            App.closeWindow('wallselect');
+        },
+    });
+};
+
+const WallpaperList = () => {
+    const contentBox = Widget.Box({
+        hexpand: true,
+        homogeneous: false,
+        spacing: 8,
+    });
+
+    const scroll = Widget.Scrollable({
+        hexpand: true,
+        vexpand: false,
+        hscroll: 'always',
+        vscroll: 'never',
+        child: contentBox,
+        css: 'min-height: 110px;',
+    });
+
+    const container = Widget.EventBox({
+        onScrollUp: () => {
+            const adj = scroll.get_hadjustment();
+            const newValue = adj.get_value() - 100;
+            adj.set_value(newValue);
+        },
+        onScrollDown: () => {
+            const adj = scroll.get_hadjustment();
+            const newValue = adj.get_value() + 100;
+            adj.set_value(newValue);
+        },
+        child: Widget.Box({
+            vertical: true,
+            className: 'sidebar-module',
+            children: [scroll],
+        }),
+    });
+
+    const loadWallpapers = () => {
+        const wallpaperDir = GLib.get_home_dir() + '/Pictures/Wallpapers';
         try {
-            const files = (await Utils.execAsync(`find "${wallpaperDir}" -type f -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg"`)).split('\n');
-            files.filter(f => f).forEach(file => {
-                flowBox.add(WallpaperButton(file));
+            const files = Utils.exec(`find "${wallpaperDir}" -type f -name "*.jpg"`)
+                .split('\n')
+                .filter(f => f);
+            
+            files.forEach(file => {
+                const button = WallpaperButton(file);
+                if (button) contentBox.add(button);
             });
         } catch (e) {
-            console.error('Failed to load wallpapers:', e);
+            console.error('Error loading wallpapers:', e);
         }
     };
 
     loadWallpapers();
-    return Widget.Scrollable({
-        vexpand: true,
-        hexpand: true,
-        child: flowBox,
-    });
+    return container;
 };
 
-export default () => PopupWindow({
-    keymode: 'on-demand',
-    anchor: ['top', 'left', 'right'],
+export default () => Widget.Window({
     name: 'wallselect',
-    layer: 'overlay',
+    anchor: ['top', 'left', 'right'],
     child: Widget.Box({
-        className: 'sidebar-left',
         vertical: true,
-        children: [
-            Widget.Box({
-                className: 'sidebar-header',
-                children: [
-                    Widget.Label({
-                        className: 'txt-title',
-                        label: 'Wallpapers',
-                    }),
-                    Widget.Box({ hexpand: true }),
-                ],
-            }),
-            WallpaperGrid(),
-        ],
+        className: 'sidebar-right',
+        children: [WallpaperList()],
     }),
 }); 
