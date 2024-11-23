@@ -88,7 +88,7 @@ export const Bar = async (monitor = 0) => {
     return Widget.Window({
         monitor,
         name: `bar${monitor}`,
-        anchor: ['top', 'left', 'right'],
+        anchor: [userOptions.asyncGet().bar.position, 'left', 'right'],
         exclusivity: 'exclusive',
         visible: true,
         child: Widget.Stack({
@@ -111,19 +111,26 @@ export const BarCornerTopleft = (monitor = 0) => Widget.Window({
     monitor,
     name: `barcornertl${monitor}`,
     layer: 'top',
-    anchor: ['top', 'left'],
+    anchor: [userOptions.asyncGet().bar.position, 'left'],
     exclusivity: 'normal',
     visible: true,
-    child: RoundedCorner('topleft', { className: 'corner', }),
+    child: RoundedCorner(
+        userOptions.asyncGet().bar.position === 'top' ? 'topleft' : 'bottomleft',
+        { className: 'corner', }
+    ),
     setup: enableClickthrough,
 });
+
 export const BarCornerTopright = (monitor = 0) => Widget.Window({
     monitor,
     name: `barcornertr${monitor}`,
     layer: 'top',
-    anchor: ['top', 'right'],
+    anchor: [userOptions.asyncGet().bar.position, 'right'],
     exclusivity: 'normal',
     visible: true,
-    child: RoundedCorner('topright', { className: 'corner', }),
+    child: RoundedCorner(
+        userOptions.asyncGet().bar.position === 'top' ? 'topright' : 'bottomright',
+        { className: 'corner', }
+    ),
     setup: enableClickthrough,
 });
