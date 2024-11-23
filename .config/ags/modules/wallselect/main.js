@@ -6,6 +6,18 @@ const { Box, EventBox, Scrollable } = Widget;
 
 let cachedContent = null;
 
+// Read bar position from config
+const getBarPosition = () => {
+    try {
+        const configPath = GLib.get_home_dir() + '/.ags/config.json';
+        const config = JSON.parse(Utils.readFile(configPath));
+        return config.bar?.position || 'top';
+    } catch (error) {
+        console.error('Error reading config:', error);
+        return 'top';
+    }
+};
+
 const WallpaperButton = (path) => Widget.Button({
     child: Box({
         className: 'preview-box',
@@ -55,12 +67,11 @@ const createContent = async () => {
     }
 };
 
-// Предварительное создание контента
 createContent();
 
 export default () => Widget.Window({
     name: 'wallselect',
-    anchor: ['top', 'left', 'right'],
+    anchor: getBarPosition() === 'top' ? ['top', 'left', 'right'] : ['bottom', 'left', 'right'],
     visible: false,
     child: Box({
         vertical: true,
