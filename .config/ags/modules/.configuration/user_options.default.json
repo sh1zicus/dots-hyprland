@@ -228,7 +228,7 @@
   },
   "bar": {
     "modes": ["normal"],
-    "wallpaper_folder": "",
+    "wallpaper_folder": "~/Pictures/Wallpapers",
     "position": "top"
   }
 }
