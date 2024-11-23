@@ -1,6 +1,8 @@
-.wallpaper-grid {
-    @include normal-rounding;
-    @include group-padding;
-    background-color: $layer1;
-    color: $onLayer1;
+flowbox {
+    padding: 12px;
+}
+
+button {
+    margin: 6px;
+    padding: 0;
 }
