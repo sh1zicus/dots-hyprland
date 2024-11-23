@@ -1,16 +1,13 @@
 // Reset
-// * {
-//     all: unset;
-// }
 *:not(popover) { all: unset; }
 
 // Colors
-@import 'material'; // Material colors
-@import './colors'; // Global color definitions. Uses material colors as base.
+@import 'material';
+@import './colors';
 @import './lib_mixins';
 @import 'lib_mixins_overrides';
 @import './lib_classes';
-@import './common'; // Context menu n stuff
+@import './common';
 
 // Components
 @import './bar';
@@ -23,9 +20,10 @@
 @import './sidebars';
 @import './session';
 @import './notifications';
+@import './wallpaper';
 
 // Music is put last as it might mess stuff up with pywal
-@import './music'; // Everything related to music is here
+@import './music';
 
 // Classes for interaction
 .growingRadial {
