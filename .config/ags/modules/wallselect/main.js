@@ -76,6 +76,7 @@ const WallpaperList = () => {
 export default () => Widget.Window({
     name: 'wallselect',
     anchor: ['top', 'left', 'right'],
+    visible: false,
     child: Widget.Box({
         vertical: true,
         className: 'wallpaper-window',
