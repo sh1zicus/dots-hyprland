@@ -185,9 +185,8 @@ const WeatherWidget = () => {
                 setup: (self) => self.poll(900000, async (label) => {
                     try {
                         const temp = await Utils.execAsync(['grep', '-o', 'Temperature: [^,]*', WEATHER_CACHE_PATH]);
-                        label.label = temp.trim().split(': ')[1] || 'N/A';
+                        label.label = temp?.trim().split(': ')[1] || 'N/A';
                     } catch (error) {
-                        console.error('Weather temp error:', error);
                         label.label = 'N/A';
                     }
                 }),
@@ -197,12 +196,15 @@ const WeatherWidget = () => {
                 setup: (self) => self.poll(900000, async (label) => {
                     try {
                         const code = await Utils.execAsync(['grep', '-o', 'Weather: [^,]*', WEATHER_CACHE_PATH]);
-                        const weatherCode = code.trim().split(' ')[1];
+                        const weatherCode = code?.trim().split(' ')[1];
+                        if (!weatherCode || !WWO_CODE[weatherCode]) {
+                            label.label = 'cloud_off';
+                            return;
+                        }
                         const condition = WWO_CODE[weatherCode];
                         const isNight = GLib.DateTime.new_now_local().get_hour() >= 20 || GLib.DateTime.new_now_local().get_hour() <= 6;
-                        label.label = isNight ? NIGHT_WEATHER_SYMBOL[condition] : WEATHER_SYMBOL[condition];
+                        label.label = isNight ? NIGHT_WEATHER_SYMBOL[condition] || 'cloud_off' : WEATHER_SYMBOL[condition] || 'cloud_off';
                     } catch (error) {
-                        console.error('Weather icon error:', error);
                         label.label = 'cloud_off';
                     }
                 }),
@@ -213,10 +215,9 @@ const WeatherWidget = () => {
                 setup: (self) => self.poll(900000, async (label) => {
                     try {
                         const wind = await Utils.execAsync(['grep', '-o', 'Wind: [^,]*', WEATHER_CACHE_PATH]);
-                        const windSpeed = wind.trim().match(/\d+\s*km\/h/)[0];
-                        label.label = windSpeed || 'N/A';
+                        const windMatch = wind?.trim().match(/\d+\s*km\/h/);
+                        label.label = windMatch ? windMatch[0] : 'N/A';
                     } catch (error) {
-                        console.error('Wind error:', error);
                         label.label = 'N/A';
                     }
                 }),
