@@ -58,7 +58,7 @@ const timeRow = Box({
     children: [
         Widget.Icon({
             icon: getDistroIcon(),
-            className: "txt txt-larger",
+            className: "txt txt-massive",
         }),
         Widget.Label({
             hpack: "center",
@@ -288,7 +288,7 @@ export default () =>
                         className: "sidebar-group",
                         children: [sidebarOptionsStack],
                     }),
-                    ModuleCalendar(),
+                    //ModuleCalendar(),
                     //WeatherWidget(),
                 ],
             }),

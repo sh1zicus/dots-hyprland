@@ -83,6 +83,10 @@
     margin: 10px;
 }
 
+.txt-more-gigantic {
+    @include mainfont;
+    font-size: 3.3rem;
+}
 .txt-gigantic {
     @include mainfont;
     font-size: 3rem;

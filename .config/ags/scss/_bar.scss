@@ -326,7 +326,14 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-wintitle-txt {
-    color: $windowtitleOnLayer0;
+    /* color: $windowtitleOnLayer0; */
+    color: $secondary;
+    font-style: italic;
+    font-family: Open Sans;
+    margin-top: -0.2rem;
+    padding: 0rem 0px 0.22px 0px;
+    font-weight: 600;
+    font-size: 16px;
 }
 
 .bar-space-button {
@@ -427,5 +434,6 @@ $bar_ws_width_focus_active: 2.045rem;
     //margin-left: 5px;
 }
 .app-icon {
-    margin-left: -0.5rem;
+    margin-top: -0.35rem;
+    margin-left: -0.4rem;
 }
