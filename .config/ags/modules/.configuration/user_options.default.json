@@ -139,7 +139,7 @@
         "excludedSites": ["quora.com"]
     },
     "time": {
-        "format": "%H:%M",
+        "format": "%I:%M",
         "interval": 5000,
         "dateFormatLong": "%A, %d/%m",
         "dateInterval": 5000,

@@ -189,7 +189,7 @@ const BarBattery = () =>
                     vpack: "center",
                     className: "bar-batt",
                     homogeneous: true,
-                    children: [MaterialIcon("battery_full", "small")],
+                    children: [MaterialIcon("", "small")],
                     setup: (self) =>
                         self.hook(Battery, (box) => {
                             box.toggleClassName(
@@ -197,10 +197,7 @@ const BarBattery = () =>
                                 Battery.percent <=
                                     userOptions.asyncGet().battery.low,
                             );
-                            box.toggleClassName(
-                                "bar-batt-full",
-                                Battery.charged,
-                            );
+                            box.toggleClassName("favorite", Battery.charged);
                         }),
                 }),
                 overlays: [BarBatteryProgress()],
