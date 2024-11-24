@@ -1,9 +1,7 @@
 "use strict";
 // Import
 import Gdk from 'gi://Gdk';
-import GLib from 'gi://GLib';
 import App from 'resource:///com/github/Aylur/ags/app.js'
-import * as Utils from 'resource:///com/github/Aylur/ags/utils.js'
 import Wallselect from './modules/wallselect/main.js';
 // Stuff
 import userOptions from './modules/.configuration/user_options.js';
@@ -64,7 +62,7 @@ const Windows = () => [
     Wallselect(),
 ];
 
-const CLOSE_ANIM_TIME = 210; // Longer than actual anim time to make sure widgets animate fully
+const CLOSE_ANIM_TIME = 180; // Longer than actual anim time to make sure widgets animate fully
 const closeWindowDelays = {}; // For animations
 for (let i = 0; i < (Gdk.Display.get_default()?.get_n_monitors() || 1); i++) {
     closeWindowDelays[`osk${i}`] = CLOSE_ANIM_TIME;
