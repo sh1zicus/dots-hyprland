@@ -113,7 +113,7 @@ const createContent = async () => {
         loadMoreWallpapers();
 
         const scroll = Scrollable({
-            hexpand: false,
+            hexpand: true,
             vexpand: false,
             hscroll: "always",
             vscroll: "never",
@@ -154,8 +154,8 @@ export default () =>
         name: "wallselect",
         anchor:
             getBarPosition() === "top"
-                ? ["top", "left", "right"]
-                : ["bottom", "left", "right"],
+                ? ["bottom", "left", "right"]
+                : ["top", "left", "right"],
         visible: false,
         child: Box({
             vertical: true,

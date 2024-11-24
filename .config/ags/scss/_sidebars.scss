@@ -11,7 +11,7 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
     @include elevation-border;
     @include elevation2;
     border-radius: $rounding_large - $elevation_margin + 0.068rem;
-    min-width: 27.818rem;
+    min-width: 20.818rem;
     background-color: $background;
     padding: 1.023rem;
 }
@@ -21,7 +21,7 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
     @include elevation-border;
     @include elevation2;
     border-radius: $rounding_large - $elevation_margin + 0.068rem;
-    min-width: 27.818rem;
+    min-width: 20.818rem;
     background-color: $background;
     padding: 1.023rem;
 }
