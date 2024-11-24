@@ -1,13 +1,13 @@
+import GLib from "gi://GLib";
+import Gio from "gi://Gio";
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Brightness from "../../../services/brightness.js";
 import Indicator from "../../../services/indicator.js";
-import GLib from "gi://GLib";
-import Gio from "gi://Gio";
 
 const BRIGHTNESS_STEP = 0.05;
 const DEFAULT_WORKSPACE_LABEL = "Desktop";
-const MAX_TITLE_LENGTH = 40; // Max number of characters for the bottom title
+const MAX_TITLE_LENGTH = 25; // Max number of characters for the bottom title
 
 const WindowTitle = async () => {
     try {
