@@ -94,21 +94,9 @@ const Utilities = () => {
     let status = true;
 
     const change_wallpaper_btn = UtilButton({
-        name: getString('Change wallpaper randomly'), 
+        name: getString('Change wallpaper'), 
         icon: 'image', 
-        onClicked: (async () => {
-            try {
-                const bgFolder = wallpaperFolder
-                    .replace('$HOME', GLib.get_home_dir())
-                    .replace(/^~/, GLib.get_home_dir());
-                if (!bgFolder) return;
-                const bgFiles = (await Utils.execAsync(`find "${bgFolder}" -type f -iname '*.png' -o -iname '*.jpg'`)).split('\n');
-                if (!bgFiles[0]) return;
-                const bgFile = bgFiles[Math.floor(Math.random() * bgFiles.length)];
-                await Utils.execAsync(`sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${bgFile}"`);
-            }
-            catch (e) { console.error(e); }
-        })
+        onClicked: () => App.toggleWindow('wallselect'),
     });
 
     const box = Box({

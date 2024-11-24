@@ -4,6 +4,7 @@ import Gdk from 'gi://Gdk';
 import GLib from 'gi://GLib';
 import App from 'resource:///com/github/Aylur/ags/app.js'
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js'
+import Wallselect from './modules/wallselect/main.js';
 // Stuff
 import userOptions from './modules/.configuration/user_options.js';
 import { firstRunWelcome, startBatteryWarningService } from './services/messages.js';
@@ -60,6 +61,7 @@ const Windows = () => [
         forMonitors(BarCornerTopleft),
         forMonitors(BarCornerTopright),
     ] : []),
+    Wallselect(),
 ];
 
 const CLOSE_ANIM_TIME = 210; // Longer than actual anim time to make sure widgets animate fully
