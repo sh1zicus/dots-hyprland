@@ -225,7 +225,7 @@ const BatteryModule = () =>
         className: "spacing-h-4",
         children: [
             BarGroup({ child: BarClock() }),
-            BarGroup({ child: Utilities() }),
+            //BarGroup({ child: Utilities() }),
             Stack({
                 transition: "slide_up_down",
                 transitionDuration:
