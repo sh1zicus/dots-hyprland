@@ -8,3 +8,10 @@
 2024/11/24 (15:24:24) | WARNING: NVML: Failed to get maximum GPU power draw, defaulting to 225W: Not Supported
 2024/11/24 (15:24:24) | WARNING: NVML: Failed to get GPU power usage: Not Supported
 2024/11/24 (15:24:24) | WARNING: Intel GPU: Failed to initialize PMU
+
+2024/11/24 (18:31:00) | ===> btop++ v.1.4.0
+2024/11/24 (18:31:00) | WARNING: NVML: Failed to get maximum GPU power draw, defaulting to 225W: Not Supported
+2024/11/24 (18:31:00) | WARNING: NVML: Failed to get GPU power usage: Not Supported
+2024/11/24 (18:31:00) | WARNING: Intel GPU: Failed to initialize PMU
+2024/11/24 (18:31:06) | ERROR: Couldn't determine terminal size of "STDOUT_FILENO"!
+2024/11/24 (18:31:06) | ERROR: Couldn't determine terminal size of "/dev/tty"!
