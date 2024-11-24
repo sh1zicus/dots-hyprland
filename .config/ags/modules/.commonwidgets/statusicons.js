@@ -477,20 +477,20 @@ export const StatusIcons = (props = {}, monitor = 0) =>
                 Widget.Box({
                     className: "spacing-h-10 status-icons-group",
                     children: [
-                        optionalKeyboardLayoutInstances[monitor],
+                        // optionalKeyboardLayoutInstances[monitor],
                         NotificationIndicator(),
-                        MicIndicator(),
+                        // MicIndicator(),
                         //SpeakerIndicator(),
-                        BluetoothDevices(),
+                        // BluetoothDevices(),
                         BluetoothIndicator(),
                         NetworkIndicator(),
                         // Widget.Box({
-                        //   //className: "time-with-margin",
-                        //   child: Widget.Label({
-                        //     className: "bar-time txt-smallie",
-                        //     label: time.bind(),
-                        //     tooltipText: date.bind(),
-                        //   }),
+                        //     //className: "time-with-margin",
+                        //     child: Widget.Label({
+                        //         className: "bar-time txt-smallie",
+                        //         label: time.bind(),
+                        //         tooltipText: date.bind(),
+                        //     }),
                         // }),
                     ],
                 }),

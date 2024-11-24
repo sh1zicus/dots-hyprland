@@ -5,6 +5,9 @@ const { GLib } = imports.gi;
 const { Box, EventBox, Scrollable, Label } = Widget;
 
 let cachedContent = null;
+let wallpaperPaths = [];
+let visiblePaths = [];
+let isLoading = false;
 
 // Read bar position from config
 const getBarPosition = () => {
@@ -44,6 +47,44 @@ const getWallpaperPaths = async (directory) => {
     }
 };
 
+// Debounced scroll event handler
+const debouncedScroll = (scroll, delay = 150) => {
+    let timeoutId;
+    return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            const adj = scroll.get_hadjustment();
+            const scrollValue = adj.get_value();
+            // Trigger load more if needed (e.g., near the end of the current list)
+            if (scrollValue + adj.get_page_size() >= adj.get_upper()) {
+                loadMoreWallpapers();
+            }
+        }, delay);
+    };
+};
+
+// Lazy load more wallpapers
+const loadMoreWallpapers = () => {
+    if (isLoading || visiblePaths.length === wallpaperPaths.length) return;
+    isLoading = true;
+
+    const loadChunk = 20; // Load 20 wallpapers at a time
+    const newPaths = wallpaperPaths.slice(
+        visiblePaths.length,
+        visiblePaths.length + loadChunk,
+    );
+    visiblePaths = [...visiblePaths, ...newPaths];
+
+    cachedContent = EventBox({
+        child: Box({
+            className: "wallpaper-list",
+            children: visiblePaths.map(WallpaperButton),
+        }),
+    });
+
+    isLoading = false;
+};
+
 const createContent = async () => {
     if (cachedContent) return cachedContent;
 
@@ -53,10 +94,9 @@ const createContent = async () => {
         "Wallpapers",
     ]);
     try {
-        const paths = await getWallpaperPaths(wallpaperDir);
+        wallpaperPaths = await getWallpaperPaths(wallpaperDir);
 
-        if (paths.length === 0) {
-            // Show fallback UI when no wallpapers are found
+        if (wallpaperPaths.length === 0) {
             return Box({
                 className: "wallpaper-placeholder",
                 children: [
@@ -68,6 +108,10 @@ const createContent = async () => {
             });
         }
 
+        // Initially load a small batch of wallpapers
+        visiblePaths = wallpaperPaths.slice(0, 20);
+        loadMoreWallpapers();
+
         const scroll = Scrollable({
             hexpand: false,
             vexpand: false,
@@ -75,26 +119,22 @@ const createContent = async () => {
             vscroll: "never",
             child: Box({
                 className: "wallpaper-list",
-                children: paths.map(WallpaperButton),
+                children: visiblePaths.map(WallpaperButton),
             }),
         });
 
+        // Debounced scroll
+        const handleScroll = debouncedScroll(scroll);
+
         cachedContent = EventBox({
-            onScrollUp: () => {
-                const adj = scroll.get_hadjustment();
-                adj.set_value(adj.get_value() - 100);
-            },
-            onScrollDown: () => {
-                const adj = scroll.get_hadjustment();
-                adj.set_value(adj.get_value() + 100);
-            },
+            onScrollUp: handleScroll,
+            onScrollDown: handleScroll,
             child: scroll,
         });
 
         return cachedContent;
     } catch (error) {
         console.error("Error loading wallpapers:", error);
-        // Show fallback UI for errors
         return Box({
             className: "wallpaper-placeholder",
             children: [

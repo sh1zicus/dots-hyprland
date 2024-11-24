@@ -3,7 +3,7 @@
         "choreography": "complex"
     },
     "bar": {
-        "position": "bottom",
+        "position": "top",
         "modes": ["normal"],
         "wallpaper_folder": "/home/archlinux/Pictures/Wallpapers/"
     },
