@@ -7,13 +7,14 @@ import Gio from 'gi://Gio';
 
 const BRIGHTNESS_STEP = 0.05;
 const DEFAULT_WORKSPACE_LABEL = 'Desktop';
+const MAX_TITLE_LENGTH = 25;
 
 const WindowTitle = async () => {
     try {
         const Hyprland = (await import('resource:///com/github/Aylur/ags/service/hyprland.js')).default;
         
         const findAppIcon = (appClass) => {
-            if (!appClass) return 'application-default';
+            if (!appClass) return null;
             
             const desktopEntry = `${appClass.toLowerCase()}.desktop`;
             const desktopPaths = [
@@ -34,7 +35,7 @@ const WindowTitle = async () => {
                 }
             }
             
-            return appClass.toLowerCase();
+            return null;
         };
 
         const commonLabelProps = {
@@ -47,12 +48,14 @@ const WindowTitle = async () => {
             size: 16,
             setup: (self) => self.hook(Hyprland.active.client, () => {
                 const classname = Hyprland.active.client.class;
-                if (!classname) {
+                const icon = findAppIcon(classname);
+
+                if (!icon) {
                     self.visible = false;
                     return;
                 }
-                
-                self.icon = findAppIcon(classname);
+
+                self.icon = icon;
                 self.visible = true;
             }),
         });
@@ -69,7 +72,11 @@ const WindowTitle = async () => {
             ...commonLabelProps,
             className: 'txt-smallie bar-wintitle-txt',
             setup: (self) => self.hook(Hyprland.active.client, () => {
-                self.label = Hyprland.active.client.title || `Workspace ${Hyprland.active.workspace.id}`;
+                let title = Hyprland.active.client.title || 
+                           `Workspace ${Hyprland.active.workspace.id}`;
+                self.label = title.length > MAX_TITLE_LENGTH
+                    ? `${title.slice(0, MAX_TITLE_LENGTH)}...`
+                    : title;
             }),
         });
 
