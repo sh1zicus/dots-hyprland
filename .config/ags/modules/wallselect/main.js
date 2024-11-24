@@ -7,7 +7,7 @@ const { Box, EventBox, Scrollable, Label } = Widget;
 let cachedContent = null;
 let wallpaperPaths = [];
 let visiblePaths = [];
-let isLoading = false;
+let isLoading = true;
 
 // Read bar position from config
 const getBarPosition = () => {
@@ -68,7 +68,7 @@ const loadMoreWallpapers = () => {
     if (isLoading || visiblePaths.length === wallpaperPaths.length) return;
     isLoading = true;
 
-    const loadChunk = 20; // Load 20 wallpapers at a time
+    const loadChunk = 500; // Load 20 wallpapers at a time
     const newPaths = wallpaperPaths.slice(
         visiblePaths.length,
         visiblePaths.length + loadChunk,
@@ -109,7 +109,7 @@ const createContent = async () => {
         }
 
         // Initially load a small batch of wallpapers
-        visiblePaths = wallpaperPaths.slice(0, 20);
+        visiblePaths = wallpaperPaths.slice(0, 90);
         loadMoreWallpapers();
 
         const scroll = Scrollable({
@@ -154,8 +154,8 @@ export default () =>
         name: "wallselect",
         anchor:
             getBarPosition() === "top"
-                ? ["bottom", "left", "right"]
-                : ["top", "left", "right"],
+                ? ["top", "left", "right"]
+                : ["bottom", "left", "right"],
         visible: false,
         child: Box({
             vertical: true,
