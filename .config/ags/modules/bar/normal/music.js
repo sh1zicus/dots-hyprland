@@ -1,12 +1,13 @@
 const { GLib } = imports.gi;
-import Widget from "resource:///com/github/Aylur/ags/widget.js";
-import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
 import Mpris from "resource:///com/github/Aylur/ags/service/mpris.js";
-const { Box, Button, EventBox, Label, Overlay, Revealer, Scrollable } = Widget;
-const { execAsync, exec } = Utils;
+import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+import { showMusicControls } from "../../../variables.js";
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { showMusicControls } from "../../../variables.js";
+const { Box, Button, EventBox, Label, Overlay, Revealer, Scrollable } = Widget;
+const { execAsync, exec } = Utils;
+const { Pango } = imports.gi;
 
 const CUSTOM_MODULE_CONTENT_INTERVAL_FILE = `${GLib.get_user_cache_dir()}/ags/user/scripts/custom-module-interval.txt`;
 const CUSTOM_MODULE_CONTENT_SCRIPT = `${GLib.get_user_cache_dir()}/ags/user/scripts/custom-module-poll.sh`;
@@ -172,8 +173,10 @@ export default () => {
     const trackTitle = Label({
         hexpand: true,
         className: "txt-smallie txt-arabic bar-music-txt",
+        wrap: true, // Enable text wrapping
+        ellipsize: Pango.EllipsizeMode.END, // Truncate with ellipsis
+        maxWidthChars: 30, // Maximum width in characters (adjust as needed)
         truncate: "end",
-        maxWidthChars: 0,
         setup: (self) => {
             const update = () => {
                 const mpris = Mpris.getPlayer("");
@@ -248,22 +251,35 @@ export default () => {
                         "bar-cpu-txt",
                         "bar-cpu-icon",
                     ),
-                    // Box({
-                    //   className: "spacing-h-10 margin-left-10",
-                    //   children: [
-                    //     BarResource(
-                    //       getString("RAM Usage"),
-                    //       "memory",
-                    //       `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
-                    //       "bar-ram-circprog",
-                    //       "bar-ram-txt",
-                    //       "bar-ram-icon",
-                    //     ),
-                    // BarResource(getString('Swap Usage'), 'swap_horiz',
-                    //     `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
-                    //     'bar-swap-circprog', 'bar-swap-txt', 'bar-swap-icon'),
-                    //],
-                    //}),
+                    Box({
+                        className: "spacing-h-10 margin-left-10",
+                        children: [
+                            BarResource(
+                                getString("RAM Usage"),
+                                "memory",
+                                `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
+                                "bar-ram-circprog",
+                                "bar-ram-txt",
+                                "bar-ram-icon",
+                            ),
+                            BarResource(
+                                getString("Swap Usage"),
+                                "swap_horiz",
+                                `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
+                                "bar-swap-circprog",
+                                "bar-swap-txt",
+                                "bar-swap-icon",
+                            ),
+                            BarResource(
+                                getString("GPU Usage"),
+                                "developer_board",
+                                `nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits`,
+                                "bar-swap-circprog",
+                                "bar-swap-txt",
+                                "bar-swap-icon",
+                            ),
+                        ],
+                    }),
                 ],
             }),
         });
