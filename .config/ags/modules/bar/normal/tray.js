@@ -1,31 +1,48 @@
-import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import SystemTray from 'resource:///com/github/Aylur/ags/service/systemtray.js';
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+import SystemTray from "resource:///com/github/Aylur/ags/service/systemtray.js";
 const { Box, Icon, Button, Revealer } = Widget;
 const { Gravity } = imports.gi.Gdk;
 
-const SysTrayItem = (item) => item.id !== null ? Button({
-    className: 'bar-systray-item',
-    child: Icon({ hpack: 'center' }).bind('icon', item, 'icon'),
-    setup: (self) => self
-        .hook(item, (self) => self.tooltipMarkup = item['tooltip-markup'])
-    ,
-    onPrimaryClick: (_, event) => item.activate(event),
-    onSecondaryClick: (btn, event) => item.menu.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null),
-}) : null;
+const SysTrayItem = (item, iconSize = 16) =>
+    item.id !== null
+        ? Button({
+              className: "bar-systray-item",
+              child: Icon({
+                  hpack: "center",
+                  size: iconSize, // Set the icon size dynamically
+              }).bind("icon", item, "icon"),
+              setup: (self) =>
+                  self.hook(
+                      item,
+                      (self) => (self.tooltipMarkup = item["tooltip-markup"]),
+                  ),
+              onPrimaryClick: (_, event) => item.activate(event),
+              onSecondaryClick: (btn, event) =>
+                  item.menu.popup_at_widget(
+                      btn,
+                      Gravity.SOUTH,
+                      Gravity.NORTH,
+                      null,
+                  ),
+          })
+        : null;
 
 export const Tray = (props = {}) => {
+    const iconSize = props.iconSize || 16; // Default icon size is 16 if not provided
+
     const trayContent = Box({
-        className: 'margin-right-5 spacing-h-15',
-        setup: (self) => self
-            .hook(SystemTray, (self) => {
-                self.children = SystemTray.items.map(SysTrayItem);
+        className: "margin-right-5 spacing-h-15",
+        setup: (self) =>
+            self.hook(SystemTray, (self) => {
+                self.children = SystemTray.items.map((item) =>
+                    SysTrayItem(item, iconSize),
+                );
                 self.show_all();
-            })
-        ,
+            }),
     });
     const trayRevealer = Widget.Revealer({
         revealChild: true,
-        transition: 'slide_left',
+        transition: "slide_left",
         transitionDuration: userOptions.asyncGet().animations.durationLarge,
         child: trayContent,
     });
@@ -33,4 +50,4 @@ export const Tray = (props = {}) => {
         ...props,
         children: [trayRevealer],
     });
-}
+};
