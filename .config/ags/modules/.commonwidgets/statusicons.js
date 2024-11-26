@@ -112,7 +112,7 @@ export const NotificationIndicator = (notifCenterName = "sideright") => {
                 }),
         child: Widget.Box({
             children: [
-                MaterialIcon("notifications", "norm"),
+                MaterialIcon("notifications", "large"),
                 Widget.Label({
                     className: "txt-small titlefont",
                     attribute: {
@@ -155,11 +155,11 @@ export const BluetoothIndicator = () =>
         transitionDuration: userOptions.asyncGet().animations.durationSmall,
         children: {
             false: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "bluetooth_disabled",
             }),
             true: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "bluetooth",
             }),
         },
@@ -263,35 +263,35 @@ const NetworkWifiIndicator = () =>
         transitionDuration: userOptions.asyncGet().animations.durationSmall,
         children: {
             disabled: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "wifi_off",
             }),
             disconnected: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "signal_wifi_off",
             }),
             connecting: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "settings_ethernet",
             }),
             0: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "signal_wifi_0_bar",
             }),
             1: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "network_wifi_1_bar",
             }),
             2: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "network_wifi_2_bar",
             }),
             3: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "network_wifi_3_bar",
             }),
             4: Widget.Label({
-                className: "txt-norm icon-material",
+                className: "txt-large icon-material",
                 label: "signal_wifi_4_bar",
             }),
         },

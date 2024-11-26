@@ -78,7 +78,7 @@
     "overview": {
         "scale": 0.16,
         "numOfRows": 2,
-        "numOfCols": 5,
+        "numOfCols": 4,
         "wsNumScale": 0.09,
         "wsNumMarginScale": 0.07
     },

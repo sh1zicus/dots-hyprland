@@ -104,8 +104,8 @@ const WindowTitle = async () => {
 
         return Widget.Box({
             children: [
-                appIcon,
-                Widget.Box({ className: "bar-wintitle-icon-spacer" }),
+                // appIcon,
+                // Widget.Box({ className: "bar-wintitle-icon-spacer" }),
                 Widget.Box({
                     vertical: true,
                     children: [MIDLabel],
