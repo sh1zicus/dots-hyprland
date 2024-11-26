@@ -78,7 +78,15 @@ const WindowTitle = async () => {
                         Hyprland.active.client.class || DEFAULT_WORKSPACE_LABEL;
                 }),
         });
-
+        const MIDLabel = Widget.Label({
+            ...commonLabelProps,
+            className: "bar-midtitle",
+            setup: (self) =>
+                self.hook(Hyprland.active.client, () => {
+                    self.label =
+                        Hyprland.active.client.class || DEFAULT_WORKSPACE_LABEL;
+                }),
+        });
         const bottomLabel = Widget.Label({
             ...commonLabelProps,
             className: "txt-smallie bar-wintitle-txt",
@@ -96,11 +104,11 @@ const WindowTitle = async () => {
 
         return Widget.Box({
             children: [
-                appIcon,
-                Widget.Box({ className: "bar-wintitle-icon-spacer" }),
+                // appIcon,
+                // Widget.Box({ className: "bar-wintitle-icon-spacer" }),
                 Widget.Box({
                     vertical: true,
-                    children: [topLabel, bottomLabel],
+                    children: [MIDLabel],
                 }),
             ],
         });

@@ -1,7 +1,7 @@
 const { Gtk } = imports.gi;
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
-
+// import BarClock from "../.commonwidgets/statusicons.js";
 import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
 import Music from "./normal/music.js";
@@ -9,6 +9,7 @@ import BatteryModule from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
 import { currentShellMode } from "../../variables.js";
+import system from "./normal/system.js";
 
 const NormalOptionalWorkspaces = async () => {
     try {
@@ -48,25 +49,54 @@ export const Bar = async (monitor = 0) => {
                 "min-height",
                 Gtk.StateFlags.NORMAL,
             );
-            // execAsync(['bash', '-c', `hyprctl keyword monitor ,addreserved,${minHeight},0,0,0`]).catch(print);
         },
-        startWidget: await WindowTitle(monitor),
-        centerWidget: Widget.Box({
-            className: "spacing-h-4",
+        startWidget: Widget.Box({
+            className: "spacing-h-4 margin-left-2",
             children: [
-                SideModule([Music()]),
                 Widget.Box({
                     className: "spacing-h-5",
                     homogeneous: false,
                     children: [
                         await NormalOptionalWorkspaces(),
-                        BatteryModule(),
+                        await WindowTitle(),
                     ],
                 }),
-                // SideModule([System()]),
+                // SideModule([
+                //     Widget.Box({
+                //         className: "spacing-h-5",
+                //         homogeneous: false,
+                //         children: [Music()],
+                //     }),
+                // ]),
             ],
         }),
-        endWidget: Indicators(),
+        centerWidget: Widget.Box({
+            className: "spacing-h-4 margin-left-2",
+            children: [
+                Widget.Box({
+                    className: "spacing-h-5",
+                    homogeneous: false,
+                    children: [await WindowTitle()],
+                }),
+            ],
+        }),
+        endWidget: Widget.Box({
+            className: "spacing-h-4 margin-right-2",
+            children: [
+                SideModule([
+                    Widget.Box({
+                        className: "spacing-h-5 margin-right--2",
+                        homogeneous: true,
+                        children: [Indicators()],
+                    }),
+                ]),
+                Widget.Box({
+                    className: "spacing-h-5",
+                    homogeneous: false,
+                    children: [system(), Music()],
+                }),
+            ],
+        }),
     });
     const focusedBarContent = Widget.CenterBox({
         className: "bar-bg-focus",

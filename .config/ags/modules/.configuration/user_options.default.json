@@ -141,7 +141,7 @@
     "time": {
         "format": "%I:%M",
         "interval": 5000,
-        "dateFormatLong": "%A, %d/%m",
+        "dateFormatLong": "",
         "dateInterval": 5000,
         "dateFormat": "%d/%m"
     },
@@ -150,7 +150,7 @@
         "preferredUnit": "C"
     },
     "workspaces": {
-        "shown": 10
+        "shown": 8
     },
     "dock": {
         "enabled": false,

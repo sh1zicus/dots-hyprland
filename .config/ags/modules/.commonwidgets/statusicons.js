@@ -461,7 +461,7 @@ const SimpleButton = () =>
         className: "spacing-h-10",
         children: [
             Widget.Label({
-                className: "icon-material tx",
+                className: "icon-material txt-huge",
                 label: "power_settings_new",
                 //tooltipText: "date.bind()",
             }),
@@ -472,7 +472,7 @@ export const StatusIcons = (props = {}, monitor = 0) =>
     Widget.Box({
         ...props,
         child: Widget.Box({
-            className: "status-icons-group spacing-h-5",
+            className: "status-icons-group margin-right--2px",
             children: [
                 Widget.Box({
                     className: "spacing-h-10 status-icons-group",
@@ -482,16 +482,16 @@ export const StatusIcons = (props = {}, monitor = 0) =>
                         // MicIndicator(),
                         //SpeakerIndicator(),
                         // BluetoothDevices(),
-                        BluetoothIndicator(),
-                        NetworkIndicator(),
                         // Widget.Box({
-                        //     //className: "time-with-margin",
+                        //     className: "time-with-margin",
                         //     child: Widget.Label({
                         //         className: "bar-time txt-smallie",
                         //         label: time.bind(),
                         //         tooltipText: date.bind(),
                         //     }),
                         // }),
+                        NetworkIndicator(),
+                        BluetoothIndicator(),
                     ],
                 }),
             ],
@@ -500,9 +500,9 @@ export const StatusIcons = (props = {}, monitor = 0) =>
 
 export const CustomIcons = (props = {}, monitor = 0) =>
     Widget.Box({
-        //...props,
+        ...props,
         child: Widget.Box({
-            className: "spacing-h-15",
+            className: "spacing-h-10",
             children: [SimpleButton()],
         }),
     });

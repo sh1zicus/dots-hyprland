@@ -68,13 +68,13 @@ const BarClock = () =>
         className: "spacing-h-4 bar-clock-box",
         children: [
             Widget.Label({
-                className: "bar-time",
+                className: "bar-timer",
                 label: time.bind(),
             }),
-            Widget.Label({
-                className: "txt-norm txt-onLayer1",
-                label: "•",
-            }),
+            // Widget.Label({
+            //     className: "txt-norm txt-onLayer1",
+            //     label: "•",
+            // }),
             Widget.Label({
                 className: "txt-smallie bar-date",
                 label: date.bind(),
@@ -113,17 +113,17 @@ const Utilities = () => {
 
     const box = Box({
         hpack: "center",
-        className: "spacing-h-4",
+        className: "spacing-h-5",
         children: [
-            UtilButton({
-                name: getString("Screen snip"),
-                icon: "screenshot_region",
-                onClicked: () => {
-                    Utils.execAsync(
-                        `${App.configDir}/scripts/grimblast.sh copy area`,
-                    ).catch(print);
-                },
-            }),
+            // UtilButton({
+            //     name: getString("Screen snip"),
+            //     icon: "screenshot_region",
+            //     onClicked: () => {
+            //         Utils.execAsync(
+            //             `${App.configDir}/scripts/grimblast.sh copy area`,
+            //         ).catch(print);
+            //     },
+            // }),
             UtilButton({
                 name: getString("Color picker"),
                 icon: "colorize",
@@ -131,13 +131,13 @@ const Utilities = () => {
                     Utils.execAsync(["hyprpicker", "-a"]).catch(print);
                 },
             }),
-            UtilButton({
-                name: getString("Toggle on-screen keyboard"),
-                icon: "keyboard",
-                onClicked: () => {
-                    toggleWindowOnAllMonitors("osk");
-                },
-            }),
+            // UtilButton({
+            //     name: getString("Toggle on-screen keyboard"),
+            //     icon: "keyboard",
+            //     onClicked: () => {
+            //         toggleWindowOnAllMonitors("osk");
+            //     },
+            // }),
             change_wallpaper_btn,
         ],
     });
@@ -177,13 +177,13 @@ const BarBattery = () =>
                         self.revealChild = Battery.charging;
                     }),
             }),
-            Label({
-                className: "txt-smallie",
-                setup: (self) =>
-                    self.hook(Battery, (label) => {
-                        label.label = `${Number.parseFloat(Battery.percent.toFixed(1))}%`;
-                    }),
-            }),
+            // Label({
+            //     className: "txt-small",
+            //     setup: (self) =>
+            //         self.hook(Battery, (label) => {
+            //             label.label = `${Number.parseFloat(Battery.percent.toFixed(1))}%`;
+            //         }),
+            // }),
             Overlay({
                 child: Widget.Box({
                     vpack: "center",
@@ -221,8 +221,8 @@ const BatteryModule = () =>
     Box({
         className: "spacing-h-4",
         children: [
+            // BarGroup({ child: Utilities() }),
             BarGroup({ child: BarClock() }),
-            //BarGroup({ child: Utilities() }),
             Stack({
                 transition: "slide_up_down",
                 transitionDuration:

@@ -78,7 +78,7 @@ const BarResource = (
                         }),
                     ],
                 }),
-                resourceLabel,
+                // resourceLabel,
             ],
             setup: (self) =>
                 self.poll(5000, () => {
@@ -245,7 +245,7 @@ export default () => {
                 children: [
                     BarResource(
                         getString("CPU Usage"),
-                        "settings_motion_mode",
+                        "",
                         `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
                         "bar-cpu-circprog",
                         "bar-cpu-txt",
@@ -256,28 +256,28 @@ export default () => {
                         children: [
                             BarResource(
                                 getString("RAM Usage"),
-                                "memory",
+                                "",
                                 `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
                                 "bar-ram-circprog",
                                 "bar-ram-txt",
                                 "bar-ram-icon",
                             ),
-                            BarResource(
-                                getString("Swap Usage"),
-                                "swap_horiz",
-                                `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
-                                "bar-swap-circprog",
-                                "bar-swap-txt",
-                                "bar-swap-icon",
-                            ),
-                            BarResource(
-                                getString("GPU Usage"),
-                                "developer_board",
-                                `nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits`,
-                                "bar-swap-circprog",
-                                "bar-swap-txt",
-                                "bar-swap-icon",
-                            ),
+                            //         BarResource(
+                            //             getString("Swap Usage"),
+                            //             "swap_horiz",
+                            //             `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
+                            //             "bar-swap-circprog",
+                            //             "bar-swap-txt",
+                            //             "bar-swap-icon",
+                            //         ),
+                            //         BarResource(
+                            //             getString("GPU Usage"),
+                            //             "developer_board",
+                            //             `nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits`,
+                            //             "bar-swap-circprog",
+                            //             "bar-swap-txt",
+                            //             "bar-swap-icon",
+                            //         ),
                         ],
                     }),
                 ],
@@ -292,24 +292,24 @@ export default () => {
             className: "spacing-h-4",
             children: [
                 SystemResourcesOrCustomModule(),
-                EventBox({
-                    child: BarGroup({ child: musicStuff }),
-                    onPrimaryClick: () =>
-                        showMusicControls.setValue(!showMusicControls.value),
-                    onSecondaryClick: () =>
-                        execAsync([
-                            "bash",
-                            "-c",
-                            'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"` &',
-                        ]).catch(print),
-                    onMiddleClick: () =>
-                        execAsync("playerctl play-pause").catch(print),
-                    setup: (self) =>
-                        self.on("button-press-event", (_, event) => {
-                            if (event.get_button()[1] === 8)
-                                execAsync("playerctl previous").catch(print);
-                        }),
-                }),
+                // EventBox({
+                //     child: BarGroup({ child: musicStuff }),
+                //     onPrimaryClick: () =>
+                //         showMusicControls.setValue(!showMusicControls.value),
+                //     onSecondaryClick: () =>
+                //         execAsync([
+                //             "bash",
+                //             "-c",
+                //             'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"` &',
+                //         ]).catch(print),
+                //     onMiddleClick: () =>
+                //         execAsync("playerctl play-pause").catch(print),
+                //     setup: (self) =>
+                //         self.on("button-press-event", (_, event) => {
+                //             if (event.get_button()[1] === 8)
+                //                 execAsync("playerctl previous").catch(print);
+                //         }),
+                // }),
             ],
         }),
     });
