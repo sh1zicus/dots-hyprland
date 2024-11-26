@@ -25,7 +25,7 @@ import {
     ModuleInvertColors,
     ModuleIdleInhibitor,
     ModuleCloudflareWarp,
-    ModuleLMS,
+    ModuleVM,
 } from "./quicktoggles.js";
 import { ModuleGithub } from "./quicktoggles.js";
 
@@ -138,7 +138,8 @@ const timeRow = Box({
             },
         }),
         Widget.Box({ hexpand: true }),
-        ModuleReloadIcon({ hpack: "end" }),
+        ModuleVM(),
+        // ModuleReloadIcon({ hpack: "end" }),
         ModuleSettingsIcon({ hpack: "end" }),
         ModulePowerIcon({ hpack: "end" }),
     ],
@@ -157,7 +158,6 @@ const togglesBox = Widget.Box({
         ModuleIdleInhibitor(),
         await ModuleCloudflareWarp(),
         await ModuleGithub(),
-        ModuleLMS(),
     ],
 });
 

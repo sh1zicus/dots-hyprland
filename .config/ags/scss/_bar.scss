@@ -438,12 +438,13 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-wintitle-icon-spacer {
-    min-width: 1.0714rem;
-    //margin-left: 5px;
+    min-width: 1.2714rem;
+    margin-right: 5px;
+    /* margin-left: -10px; */
 }
 .app-icon {
-    margin-top: -0.35rem;
-    margin-left: -0.4rem;
+    margin-top: 0.35rem;
+    margin-left: -0.8rem;
 }
 .margin-right-2 {
     margin-right: 2rem;

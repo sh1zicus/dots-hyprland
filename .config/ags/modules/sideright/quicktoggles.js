@@ -406,7 +406,7 @@ export const ModuleGtkModeToggle = async (props = {}) => {
     });
     return button;
 };
-export const ModuleLMS = (props = {}) =>
+export const ModuleVM = (props = {}) =>
     Widget.Button({
         ...props,
         className: "txt-small sidebar-iconbutton",
@@ -415,7 +415,7 @@ export const ModuleLMS = (props = {}) =>
             await execAsync([
                 "bash",
                 "-c",
-                "zen-browser --new-window http://lms.nv.edu.eg/",
+                "gnome-boxes --open-uuid f034ed73-2018-4287-bbfa-ddf2a563b67d",
             ]);
             App.closeWindow("sideright");
         },
@@ -423,6 +423,6 @@ export const ModuleLMS = (props = {}) =>
             await execAsync(["bash", "-c", "obsidian"]);
             App.closeWindow("sideright");
         },
-        child: MaterialIcon("Book", "norm"),
+        child: MaterialIcon("window", "norm"),
         setup: setupCursorHover,
     });
