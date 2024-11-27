@@ -162,8 +162,8 @@
         "shown": 8
     },
     "dock": {
-        "enabled": false,
-        "hiddenThickness": 5,
+        "enabled": true,
+        "hiddenThickness": 20,
         "pinnedApps": ["firefox", "org.gnome.Nautilus"],
         "layer": "top",
         "monitorExclusivity": true,

@@ -145,12 +145,12 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-timer {
     @include titlefont;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: $timeOnLayer1;
     font-family: "Iosevka Nerd Font";
-    margin-left: -2px;
-    margin-right: -0.6rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
 }
 
 .bar-date {
@@ -476,4 +476,7 @@ $bar_ws_width_focus_active: 2.045rem;
     font-weight: 400;
     font-family: "Iosevka Nerd Font";
     color: $workspaceOnLayer2;
+}
+.bar-batt-sign {
+    color: $secondary;
 }

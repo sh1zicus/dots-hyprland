@@ -113,7 +113,7 @@ const Utilities = () => {
 
     const box = Box({
         hpack: "center",
-        className: "spacing-h-5",
+        className: "spacing-h-4",
         children: [
             // UtilButton({
             //     name: getString("Screen snip"),
@@ -162,14 +162,14 @@ const Utilities = () => {
 
 const BarBattery = () =>
     Box({
-        className: "spacing-h-4 bar-batt-txt",
+        className: "spacing-h-5 bar-batt-sign",
         children: [
             Revealer({
                 transitionDuration:
                     userOptions.asyncGet().animations.durationSmall,
                 revealChild: false,
                 transition: "slide_right",
-                child: MaterialIcon("bolt", "norm", {
+                child: MaterialIcon("bolt", "larger", {
                     tooltipText: "Charging",
                 }),
                 setup: (self) =>
@@ -221,7 +221,7 @@ const BatteryModule = () =>
     Box({
         className: "spacing-h-4",
         children: [
-            // BarGroup({ child: Utilities() }),
+            BarGroup({ child: Utilities() }),
             BarGroup({ child: BarClock() }),
             Stack({
                 transition: "slide_up_down",
