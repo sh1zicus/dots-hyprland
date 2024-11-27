@@ -145,11 +145,11 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-timer {
     @include titlefont;
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: $timeOnLayer1;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: $secondary;
     font-family: "Iosevka Nerd Font";
-    margin-left: -1rem;
+    margin-left: -1.4rem;
     margin-right: -1rem;
 }
 
@@ -174,11 +174,11 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-batt-circprog {
     @include fluent_decel_long;
-    min-width: 0.336rem; // line width
+    min-width: 0.35rem; // line width
     min-height: 1.636rem;
     padding: 0rem;
     background-color: $battLayer2;
-    color: $primary;
+    color: $secondary;
 }
 
 .bar-batt-circprog-low {
@@ -469,6 +469,10 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 .margin-right--2px {
     margin-right: -2px;
+}
+
+.margin-left--1 {
+    margin-left: -0.5rem;
 }
 .bar-midtitle {
     font-size: 18px;

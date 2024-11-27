@@ -172,7 +172,7 @@ export default () => {
 
     const trackTitle = Label({
         hexpand: true,
-        className: "txt-smallie txt-arabic bar-music-txt",
+        className: "txt-smallie bar-music-txt",
         wrap: true, // Enable text wrapping
         ellipsize: Pango.EllipsizeMode.END, // Truncate with ellipsis
         maxWidthChars: 20, // Maximum width in characters (adjust as needed)
@@ -242,44 +242,32 @@ export default () => {
 
         return BarGroup({
             child: Box({
+                className: "spacing-h-5 margin-left--1",
                 children: [
                     BarResource(
                         getString("CPU Usage"),
                         "",
                         `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
-                        "bar-cpu-circprog",
+                        "bar-batt-circprog",
                         "bar-cpu-txt",
                         "bar-cpu-icon",
                     ),
-                    Box({
-                        className: "spacing-h-10 margin-left-10",
-                        children: [
-                            BarResource(
-                                getString("RAM Usage"),
-                                "",
-                                `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
-                                "bar-ram-circprog",
-                                "bar-ram-txt",
-                                "bar-ram-icon",
-                            ),
-                            // BarResource(
-                            //     getString("Swap Usage"),
-                            //     "",
-                            //     `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
-                            //     "bar-batt-circprog",
-                            //     "bar-swap-txt",
-                            //     "bar-swap-icon",
-                            // ),
-                            BarResource(
-                                getString("GPU Usage"),
-                                "",
-                                `nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits`,
-                                "bar-batt-circprog",
-                                "bar-swap-txt",
-                                "bar-swap-icon",
-                            ),
-                        ],
-                    }),
+                    BarResource(
+                        getString("RAM Usage"),
+                        "",
+                        `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
+                        "bar-batt-circprog",
+                        "bar-ram-txt",
+                        "bar-ram-icon",
+                    ),
+                    BarResource(
+                        getString("GPU Usage"),
+                        "",
+                        `nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits`,
+                        "bar-batt-circprog",
+                        "bar-swap-txt",
+                        "bar-swap-icon",
+                    ),
                 ],
             }),
         });

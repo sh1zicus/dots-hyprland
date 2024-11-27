@@ -219,7 +219,7 @@ const BarGroup = ({ child }) =>
 
 const BatteryModule = () =>
     Box({
-        className: "spacing-h-4",
+        className: "spacing-h-10",
         children: [
             BarGroup({ child: Utilities() }),
             BarGroup({ child: BarClock() }),
