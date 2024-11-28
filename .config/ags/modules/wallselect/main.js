@@ -42,13 +42,19 @@ const WallpaperButton = (path) =>
             css: `background-image: url("${path}");`,
         }),
         onClicked: () => {
-            Utils.execAsync(
-                `sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${path.replace(
-                    "thumbnails",
-                    "",
-                )}"`,
-            );
-            App.closeWindow("wallselect");
+            const wallpaperPath = path.replace("thumbnails", "");
+            const command = `sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${wallpaperPath}"`;
+
+            // Execute the command asynchronously
+            Utils.execAsync(command)
+                .then(() => {
+                    // Close the window if command execution is successful
+                    App.closeWindow("wallselect");
+                })
+                .catch((error) => {
+                    // Log any errors if the command fails
+                    logError("Error executing script: ", error);
+                });
         },
     });
 

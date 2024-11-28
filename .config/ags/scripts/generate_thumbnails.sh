@@ -1,16 +1,22 @@
 #!/bin/bash
+set -e  # Exit on errors
+set -u  # Treat unset variables as errors
 
-THUMBNAIL_DIR="$HOME/Pictures/Wallpapers/thumbnails"
-WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+WALLPAPER_DIR="$1"
+THUMBNAIL_DIR="$2"
 
-# Create thumbnail directory if it doesn't exist
+# Ensure the thumbnail directory exists
 mkdir -p "$THUMBNAIL_DIR"
 
-# Generate thumbnails for all wallpapers
-find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" \) | while read -r file; do
-    base_name=$(basename "$file")
-    thumbnail="$THUMBNAIL_DIR/$base_name"
-    if [ ! -f "$thumbnail" ]; then
-        magick "$file" -resize 150x90^ -gravity center -extent 150x90 "$thumbnail"
-    fi
+# Loop through valid image files
+for image in "$WALLPAPER_DIR"/*.{jpg,JPG,jpeg,JPEG,png,PNG}; do
+    # Check if the file exists (handles the case where no files match the pattern)
+    [ -e "$image" ] || continue
+
+    filename=$(basename "$image")
+
+    # Generate a thumbnail using ImageMagick
+    magick "$image" -resize 150x90^ -gravity center -extent 150x90 "$THUMBNAIL_DIR/$filename"
 done
+
+echo "Thumbnails generated in $THUMBNAIL_DIR"
