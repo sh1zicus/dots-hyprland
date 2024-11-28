@@ -84,7 +84,7 @@ const trackTitle = Label({
       if (mpris) {
         self.label = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(", ")}`;
       } else {
-        self.label = "No media";
+        self.label = null;
       }
     };
     self.hook(Mpris, update, "player-changed");
