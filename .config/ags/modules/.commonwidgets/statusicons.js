@@ -472,13 +472,13 @@ export const StatusIcons = (props = {}, monitor = 0) =>
     Widget.Box({
         ...props,
         child: Widget.Box({
-            className: "status-icons-group margin-right--2px",
+            // className: "spacing- ",
+            css: "margin-right:16px;",
             children: [
                 Widget.Box({
-                    className: "spacing-h-10 status-icons-group",
+                    className: "spacing-h-10 ",
                     children: [
                         // optionalKeyboardLayoutInstances[monitor],
-                        NotificationIndicator(),
                         // MicIndicator(),
                         //SpeakerIndicator(),
                         // BluetoothDevices(),
@@ -492,6 +492,7 @@ export const StatusIcons = (props = {}, monitor = 0) =>
                         // }),
                         NetworkIndicator(),
                         BluetoothIndicator(),
+                        // NotificationIndicator(),
                     ],
                 }),
             ],

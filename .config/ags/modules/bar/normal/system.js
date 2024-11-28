@@ -65,20 +65,20 @@ const date = Variable("", {
 const BarClock = () =>
     Widget.Box({
         vpack: "center",
-        className: "spacing-h-4 bar-clock-box",
+        className: "spacing-h-4",
         children: [
             Widget.Label({
                 className: "bar-timer",
                 label: time.bind(),
             }),
+            // // Widget.Label({
+            // //     className: "txt-norm txt-onLayer1",
+            // //     label: "•",
+            // // }),
             // Widget.Label({
-            //     className: "txt-norm txt-onLayer1",
-            //     label: "•",
+            //     className: "txt-smallie bar-date",
+            //     label: date.bind(),
             // }),
-            Widget.Label({
-                className: "txt-smallie bar-date",
-                label: date.bind(),
-            }),
         ],
     });
 
@@ -92,7 +92,7 @@ const UtilButton = ({ name, icon, onClicked }) => {
                 vpack: "center",
                 tooltipText: name,
                 onClicked: onClicked,
-                className: "bar-util-btn icon-material txt-norm",
+                className: "spacing-h-10 icon-material txt-norm",
                 label: `${icon}`,
             }),
         );
@@ -113,7 +113,7 @@ const Utilities = () => {
 
     const box = Box({
         hpack: "center",
-        className: "spacing-h-4",
+        className: "spacing-h-10",
         children: [
             // UtilButton({
             //     name: getString("Screen snip"),
@@ -131,13 +131,6 @@ const Utilities = () => {
                     Utils.execAsync(["hyprpicker", "-a"]).catch(print);
                 },
             }),
-            // UtilButton({
-            //     name: getString("Toggle on-screen keyboard"),
-            //     icon: "keyboard",
-            //     onClicked: () => {
-            //         toggleWindowOnAllMonitors("osk");
-            //     },
-            // }),
             change_wallpaper_btn,
         ],
     });
@@ -219,9 +212,9 @@ const BarGroup = ({ child }) =>
 
 const BatteryModule = () =>
     Box({
-        className: "spacing-h-10",
+        // className: "spacing-h-10",
         children: [
-            BarGroup({ child: Utilities() }),
+            // BarGroup({ child: Utilities() }),
             BarGroup({ child: BarClock() }),
             Stack({
                 transition: "slide_up_down",

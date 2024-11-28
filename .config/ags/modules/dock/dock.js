@@ -308,11 +308,11 @@ export default (monitor = 0) => {
     const dockContent = Box({
         className: "dock-bg spacing-h-5",
         children: [
-            Rofi(),
+            // Rofi(),
             // PinButton(),
             PinnedApps(),
-            DockSeparator(),
-            Taskbar(),
+            // DockSeparator(),
+            // Taskbar(),
             // LauncherButton(),
         ],
     });

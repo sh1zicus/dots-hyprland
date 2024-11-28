@@ -16,14 +16,15 @@
 .bg-time-clock {
     @include titlefont;
     @include bg-textshadow;
-    font-size: 5.795rem;
+    font-family: Archivo Black;
+    font-size: 5rem;
     color: $onLayer0;
 }
 
 .bg-time-date {
     @include titlefont;
     @include bg-textshadow;
-    font-size: 2.591rem;
+    font-size: 2rem;
     color: $onLayer0;
 }
 

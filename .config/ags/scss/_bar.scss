@@ -144,18 +144,15 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-timer {
-    @include titlefont;
-    font-size: 1.45rem;
-    font-weight: 700;
-    color: $secondary;
+    font-size: 18px;
+    font-weight: 400;
     font-family: "Iosevka Nerd Font";
-    margin-left: -1.4rem;
-    margin-right: -1rem;
+    color: $workspaceOnLayer2;
 }
 
 .bar-date {
+    margin-left: 5px;
     background-color: $utilsLayer2;
-
     color: $dateOnLayer1;
 }
 
@@ -431,8 +428,8 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .status-icons-group {
-    padding-left: 0.273rem;
-    margin-right: 1.1rem;
+    padding-left: 0.2rem;
+    margin-right: 1.3rem;
 }
 
 .time-with-margin {
@@ -476,11 +473,14 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 .bar-midtitle {
     font-size: 18px;
-    margin: 4px -12px;
     font-weight: 400;
     font-family: "Iosevka Nerd Font";
+    margin: 4px -12px;
     color: $workspaceOnLayer2;
 }
 .bar-batt-sign {
     color: $secondary;
+}
+.spacing-h-25 {
+    margin: 0px 50px;
 }

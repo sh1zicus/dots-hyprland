@@ -56,7 +56,7 @@ VIDEO_QUALITY: $VIDEO_QUALITY
 
 # whether to show previews [true/false]
 # its cool so enable it
-ENABLE_PREVIEW: $ENABLE_PREVIEW
+ENABLE_PREVIEW: true
 
 # whether to run mpv as a background process and prevent it from closing even if you terminate the program or terminal session
 DISOWN_STREAMING_PROCESS: $DISOWN_STREAMING_PROCESS

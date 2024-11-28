@@ -5,6 +5,7 @@
   "dock": {
     "enabled": true,
     "pinnedApps": [
+      "spotify",
       "zen-browser",
       "davinci-resolve",
       "obsidian",
@@ -14,7 +15,9 @@
       "upscayl",
       "darktable",
       "github-desktop",
-      "zeditor"
+      "zeditor",
+      "ChatGPT-Web",
+      "GitHub-Web"
     ]
   }
 }

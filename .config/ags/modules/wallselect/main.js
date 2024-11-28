@@ -85,7 +85,7 @@ const loadMoreWallpapers = () => {
     if (isLoading || visiblePaths.length === wallpaperPaths.length) return;
     isLoading = true;
 
-    const loadChunk = 50; // Load smaller batches for smoother scrolling
+    const loadChunk = 5000; // Load smaller batches for smoother scrolling
     const newPaths = wallpaperPaths.slice(
         visiblePaths.length,
         visiblePaths.length + loadChunk,
@@ -116,7 +116,7 @@ const createContent = async () => {
         }
 
         // Load initial wallpapers
-        visiblePaths = wallpaperPaths.slice(0, 50);
+        visiblePaths = wallpaperPaths.slice(0, 5000);
 
         const scroll = Scrollable({
             hexpand: true,
