@@ -284,7 +284,7 @@ export default () =>
             children: [sidebarOptionsStack],
           }),
           // ModuleCalendar(),
-          WeatherWidget(),
+          // WeatherWidget(),
         ],
       }),
     ],
