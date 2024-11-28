@@ -43,7 +43,7 @@ const WallpaperButton = (path) =>
         }),
         onClicked: () => {
             const wallpaperPath = path.replace("thumbnails", "");
-            const command = `sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${wallpaperPath}"`;
+            const command = `sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${wallpaperPath}" --yes-gradience`;
 
             // Execute the command asynchronously
             Utils.execAsync(command)

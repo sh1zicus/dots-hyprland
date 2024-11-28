@@ -1,23 +1,25 @@
 {
-  "bar": {
-    "position": "top"
-  },
-  "dock": {
-    "enabled": true,
-    "pinnedApps": [
-      "spotify",
-      "zen-browser",
-      "davinci-resolve",
-      "obsidian",
-      "obs-studio",
-      "nautilus",
-      "telegram-desktop",
-      "upscayl",
-      "darktable",
-      "github-desktop",
-      "zeditor",
-      "ChatGPT-Web",
-      "GitHub-Web"
-    ]
-  }
+    "bar": {
+        "modes": ["normal"],
+        "wallpaper_folder": "/home/archlinux/Pictures/",
+        "position": "top"
+    },
+    "dock": {
+        "enabled": true,
+        "pinnedApps": [
+            "spotify",
+            "zen-browser",
+            "davinci-resolve",
+            "obsidian",
+            "obs-studio",
+            "nautilus",
+            "telegram-desktop",
+            "upscayl",
+            "darktable",
+            "github-desktop",
+            "zeditor",
+            "ChatGPT-Web",
+            "GitHub-Web"
+        ]
+    }
 }
