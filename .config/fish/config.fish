@@ -18,7 +18,7 @@ if test -f ~/.cache/ags/user/generated/terminal/sequences.txt
 end
 
 alias pamcan=pacman
-
+alias walp="sh ~/.config/ags/scripts/generate_thumbnails.sh ~/Pictures/Wallpapers ~/Pictures/Wallpapers/thumbnails"
 # function fish_prompt
 #   set_color cyan; echo (pwd)
 #   set_color green; echo '> '
