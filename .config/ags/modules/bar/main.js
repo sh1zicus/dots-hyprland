@@ -91,6 +91,60 @@ export const Bar = async (monitor = 0) => {
             ],
         }),
     });
+    const nothingContent = Widget.CenterBox({
+        className: "bar-none",
+        setup: (self) => {
+            const styleContext = self.get_style_context();
+            const minHeight = styleContext.get_property(
+                "min-height",
+                Gtk.StateFlags.NORMAL,
+            );
+        },
+        startWidget: Widget.Box({
+            className: "spacing-h-4 margin-left-2",
+            children: [
+                Widget.Box({
+                    className: "spacing-h-5",
+                    homogeneous: false,
+                    children: [
+                        await FocusOptionalWorkspaces(),
+                        // await WindowTitle(),
+                    ],
+                }),
+            ],
+        }),
+        centerWidget: Widget.Box({
+            className: "spacing-h-4 margin-left-2",
+            children: [
+                Widget.Box({
+                    homogeneous: true,
+                    children: [],
+                }),
+            ],
+        }),
+        endWidget: Widget.Box({
+            className: "spacing-h-4 margin-right-2",
+            children: [
+                SideModule([
+                    Widget.Box({
+                        className: "spacing-h-5",
+                        homogeneous: false,
+                        children: [
+                            Widget.Box({
+                                hexpand: true,
+                            }),
+                            system(),
+                        ],
+                    }),
+                ]),
+                Widget.Box({
+                    className: "spacing-h-5",
+                    homogeneous: false,
+                    children: [],
+                }),
+            ],
+        }),
+    });
     const focusedBarContent = Widget.CenterBox({
         className: "bar-bg-focus",
         startWidget: Widget.Box({}),
@@ -116,9 +170,7 @@ export const Bar = async (monitor = 0) => {
             });
         },
     });
-    const nothingContent = Widget.Box({
-        className: "bar-bg-nothing",
-    });
+
     return Widget.Window({
         monitor,
         name: `bar${monitor}`,
@@ -131,7 +183,7 @@ export const Bar = async (monitor = 0) => {
             transitionDuration: userOptions.asyncGet().animations.durationLarge,
             children: {
                 normal: normalBarContent,
-                focus: focusedBarContent,
+                // focus: focusedBarContent,
                 nothing: nothingContent,
             },
             setup: (self) =>
