@@ -5,8 +5,8 @@ import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
 import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
 import MusicStuff from "./normal/music.js";
-import { SystemResourcesOrCustomModule } from "./normal/resources.js";
-
+import Music from "./normal/MResources.js";
+import BarBattery from "./normal/system.js";
 import System from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
@@ -42,6 +42,11 @@ export const Bar = async (monitor = 0) => {
       className: "bar-sidemodule",
       children: children,
     });
+  const EndModule = (children) =>
+    Widget.Box({
+      className: "bar-end",
+      children: children,
+    });
   const nothingContent = Widget.CenterBox({
     className: "bar-bg",
     setup: (self) => {
@@ -53,9 +58,15 @@ export const Bar = async (monitor = 0) => {
       // execAsync(['bash', '-c', `hyprctl keyword monitor ,addreserved,${minHeight},0,0,0`]).catch(print);
     },
     startWidget: Widget.Box({
-      className: "spacing-h-15",
+      className: "spacing-h-10",
       css: "margin-left:1.5rem;",
       children: [
+        EndModule([
+          Widget.Box({
+            // css: "margin-left:1rem",
+            children: [BarBattery()],
+          }),
+        ]),
         Widget.Box({
           homogeneous: false,
           children: [await NormalOptionalWorkspaces()],
@@ -65,23 +76,22 @@ export const Bar = async (monitor = 0) => {
     centerWidget: Widget.Box({
       className: "spacing-h-15",
       children: [
-        // SideModule([await SystemResourcesOrCustomModule()]),
         Widget.Box({
-          homogeneous: false,
-          hexpand: true,
-          // children: [],
+          homogeneous: true,
+          hexpand: false,
+          children: [],
         }),
+        SideModule([MusicStuff()]),
       ],
     }),
     endWidget: Widget.Box({
       className: "spacing-h-4",
+      css: "margin-right:0.8rem;",
       children: [
-        // SideModule([Music()]),
         Widget.Box({
-          homogeneous: true,
-          children: [await Indicators()],
+          children: [],
         }),
-        // SideModule([System()]),
+        EndModule([await Indicators()]),
       ],
     }),
   });
@@ -98,18 +108,22 @@ export const Bar = async (monitor = 0) => {
     },
     startWidget: await WindowTitle(monitor),
     centerWidget: Widget.Box({
-      className: "spacing-h-4",
+      className: "spacing-h-5",
       children: [
         // SideModule([, await SystemResourcesOrCustomModule()]),
-        SideModule([, await MusicStuff()]),
+        SideModule([await Music()]),
         Widget.Box({
           homogeneous: true,
           children: [await NormalOptionalWorkspaces()],
         }),
-        SideModule([System()]),
+        EndModule([System()]),
       ],
     }),
-    endWidget: Indicators(monitor),
+    endWidget: Widget.Box({
+      homogeneous: true,
+      css: "margin-right:0.8rem",
+      children: [await Indicators()],
+    }),
   });
   const focusedBarContent = Widget.CenterBox({
     className: "bar-bg-focus",
@@ -149,7 +163,7 @@ export const Bar = async (monitor = 0) => {
       transitionDuration: userOptions.asyncGet().animations.durationLarge,
       children: {
         normal: normalBarContent,
-        focus: focusedBarContent,
+        // focus: focusedBarContent,
         nothing: nothingContent,
       },
       setup: (self) =>

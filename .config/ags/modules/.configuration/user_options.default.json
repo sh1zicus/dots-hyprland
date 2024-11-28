@@ -2,10 +2,10 @@
   "ai": {
     "defaultGPTProvider": "openrouter",
     "onSearch": "gemini",
-    "defaultTemperature": 0.9,
+    "defaultTemperature": 1.2,
     "enhancements": true,
     "useHistory": true,
-    "safety": true,
+    "safety": false,
     "writingCursor": " ...",
     "proxyUrl": ""
   },
@@ -107,17 +107,17 @@
     "pages": {
       "order": ["apis", "tools"],
       "apis": {
-        "order": ["gpt", "translater"]
+        "order": ["gemini", "gpt", "translater"]
       }
     },
     "translater": {
       "__custom": ["languages"],
       "from": "auto",
-      "to": "en",
+      "to": "ar",
       "languages": {
         "auto": "Auto",
         "en": "English",
-        "ru": "Russian"
+        "ar": "Arabic"
       }
     }
   },
@@ -188,13 +188,7 @@
       "wps": "wps-office2019-kprometheus",
       "wpsoffice": "wps-office2019-kprometheus",
       "": "image-missing"
-    },
-    "regexSubstitutions": [
-      {
-        "regex": {},
-        "replace": "steam_icon_$1"
-      }
-    ]
+    }
   },
   "keybinds": {
     "overview": {

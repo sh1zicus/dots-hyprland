@@ -97,7 +97,10 @@ const MusicStuff = () => {
   const musicStuff = Box({
     className: "spacing-h-10",
     hexpand: true,
-    children: [playingState, trackTitle],
+    children: [
+      // playingState,
+      trackTitle,
+    ],
   });
 
   return musicStuff;
