@@ -11,6 +11,28 @@ import {
     ConfigSpinButton,
     ConfigToggle,
 } from "../../.commonwidgets/configwidgets.js";
+const getHyprlandBorderSize = () => {
+    try {
+        const output = exec(`hyprctl getoption -j general:border_size`);
+        const parsed = JSON.parse(output);
+        return parsed["int"] || 0; // Default to 0 if undefined
+    } catch (error) {
+        print(`Failed to fetch border size: ${error}`);
+        return 0; // Default value
+    }
+};
+
+// Function to fetch the current corner rounding value from Hyprland
+const getHyprlandRounding = () => {
+    try {
+        const output = exec(`hyprctl getoption -j decoration:rounding`);
+        const parsed = JSON.parse(output);
+        return parsed["float"] || 0; // Default to 0 if undefined
+    } catch (error) {
+        print(`Failed to fetch rounding value: ${error}`);
+        return 0; // Default value
+    }
+};
 
 const getHyprlandGapValue = (option) => {
     try {
@@ -140,87 +162,14 @@ export default (props) => {
                             ),
                             option: "decoration:blur:enabled",
                         }),
-                        Subcategory([
-                            HyprlandToggle({
-                                icon: "stack_off",
-                                name: getString("X-ray"),
-                                desc: getString(
-                                    "[Hyprland]\nMake everything behind a window/layer except the wallpaper not rendered on its blurred surface\nRecommended to improve performance (if you don't abuse transparency/blur) ",
-                                ),
-                                option: "decoration:blur:xray",
-                            }),
-                            HyprlandSpinButton({
-                                icon: "target",
-                                name: getString("Size"),
-                                desc: getString(
-                                    "[Hyprland]\nAdjust the blur radius. Generally doesn't affect performance\nHigher = more color spread",
-                                ),
-                                option: "decoration:blur:size",
-                                minValue: 1,
-                                maxValue: 1000,
-                            }),
-                            HyprlandSpinButton({
-                                icon: "repeat",
-                                name: getString("Passes"),
-                                desc: getString(
-                                    "[Hyprland] Adjust the number of runs of the blur algorithm\nMore passes = more spread and power consumption\n4 is recommended\n2- would look weird and 6+ would look lame.",
-                                ),
-                                option: "decoration:blur:passes",
-                                minValue: 1,
-                                maxValue: 10,
-                            }),
-                            HyprlandSpinButton({
-                                icon: "fullscreen",
-                                name: getString("Gaps In"),
-                                desc: getString(
-                                    "[Hyprland]\nSet the size of gaps between windows.\nHigher values increase spacing.",
-                                ),
-                                option: "general:gaps_in",
-                                initValue:
-                                    getHyprlandGapValue("general:gaps_in"),
-                                minValue: 0,
-                                maxValue: 50, // Adjust as needed
-                                step: 1,
-                                onChange: (self, newValue) => {
-                                    execAsync([
-                                        "hyprctl",
-                                        "keyword",
-                                        "general:gaps_in",
-                                        `${newValue} ${newValue} ${newValue} ${newValue}`,
-                                    ]).catch((error) =>
-                                        print(
-                                            `Failed to set gaps_in: ${error}`,
-                                        ),
-                                    );
-                                },
-                            }),
-                            HyprlandSpinButton({
-                                icon: "crop_free",
-                                name: getString("Gaps Out"),
-                                desc: getString(
-                                    "[Hyprland]\nSet the size of gaps around the screen edge.\nHigher values increase spacing.",
-                                ),
-                                option: "general:gaps_out",
-                                initValue:
-                                    getHyprlandGapValue("general:gaps_out"),
-                                minValue: 0,
-                                maxValue: 50, // Adjust as needed
-                                step: 1,
-                                onChange: (self, newValue) => {
-                                    execAsync([
-                                        "hyprctl",
-                                        "keyword",
-                                        "general:gaps_out",
-                                        `${newValue} ${newValue} ${newValue} ${newValue}`,
-                                    ]).catch((error) =>
-                                        print(
-                                            `Failed to set gaps_out: ${error}`,
-                                        ),
-                                    );
-                                },
-                            }),
-                        ]),
-                        ConfigGap({}),
+                        HyprlandToggle({
+                            icon: "stack_off",
+                            name: getString("X-ray"),
+                            desc: getString(
+                                "[Hyprland]\nMake everything behind a window/layer except the wallpaper not rendered on its blurred surface\nRecommended to improve performance (if you don't abuse transparency/blur) ",
+                            ),
+                            option: "decoration:blur:xray",
+                        }),
                         HyprlandToggle({
                             icon: "animation",
                             name: getString("Animations"),
@@ -256,6 +205,115 @@ export default (props) => {
                                 },
                             }),
                         ]),
+                        Subcategory([
+                            HyprlandSpinButton({
+                                icon: "target",
+                                name: getString("Size"),
+                                desc: getString(
+                                    "[Hyprland]\nAdjust the blur radius. Generally doesn't affect performance\nHigher = more color spread",
+                                ),
+                                option: "decoration:blur:size",
+                                minValue: 1,
+                                maxValue: 1000,
+                            }),
+                            HyprlandSpinButton({
+                                icon: "repeat",
+                                name: getString("Passes"),
+                                desc: getString(
+                                    "[Hyprland] Adjust the number of runs of the blur algorithm\nMore passes = more spread and power consumption\n4 is recommended\n2- would look weird and 6+ would look lame.",
+                                ),
+                                option: "decoration:blur:passes",
+                                minValue: 1,
+                                maxValue: 10,
+                            }),
+                        ]),
+                        Subcategory([
+                            HyprlandSpinButton({
+                                icon: "arrows_input",
+                                name: getString("Gaps In"),
+                                desc: getString(
+                                    "[Hyprland]\nSet the size of gaps between windows.\nHigher values increase spacing.",
+                                ),
+                                option: "general:gaps_in",
+                                initValue:
+                                    getHyprlandGapValue("general:gaps_in"),
+                                minValue: 0,
+                                maxValue: 50, // Adjust as needed
+                                step: 1,
+                                onChange: (self, newValue) => {
+                                    execAsync([
+                                        "hyprctl",
+                                        "keyword",
+                                        "general:gaps_in",
+                                        `${newValue} ${newValue} ${newValue} ${newValue}`,
+                                    ]).catch((error) =>
+                                        print(
+                                            `Failed to set gaps_in: ${error}`,
+                                        ),
+                                    );
+                                },
+                            }),
+                            HyprlandSpinButton({
+                                icon: "arrows_output",
+                                name: getString("Gaps Out"),
+                                desc: getString(
+                                    "[Hyprland]\nSet the size of gaps around the screen edge.\nHigher values increase spacing.",
+                                ),
+                                option: "general:gaps_out",
+                                initValue:
+                                    getHyprlandGapValue("general:gaps_out"),
+                                minValue: 0,
+                                maxValue: 50, // Adjust as needed
+                                step: 1,
+                                onChange: (self, newValue) => {
+                                    execAsync([
+                                        "hyprctl",
+                                        "keyword",
+                                        "general:gaps_out",
+                                        `${newValue} ${newValue} ${newValue} ${newValue}`,
+                                    ]).catch((error) =>
+                                        print(
+                                            `Failed to set gaps_out: ${error}`,
+                                        ),
+                                    );
+                                },
+                            }),
+                            ConfigSpinButton({
+                                icon: "border_style",
+                                name: "Border Width",
+                                desc: "Adjust the thickness of window borders.",
+                                initValue: getHyprlandBorderSize(),
+                                minValue: 0,
+                                maxValue: 20, // Adjust as needed
+                                step: 1,
+                                onChange: (self, newValue) => {
+                                    execAsync([
+                                        "hyprctl",
+                                        "keyword",
+                                        "general:border_size",
+                                        `${newValue}`,
+                                    ]).catch(print);
+                                },
+                            }),
+                            ConfigSpinButton({
+                                icon: "rounded_corner",
+                                name: "Corner Rounding",
+                                desc: "Adjust the radius of window corners.",
+                                initValue: getHyprlandRounding(),
+                                minValue: 0,
+                                maxValue: 50, // Adjust as needed
+                                step: 1,
+                                onChange: (self, newValue) => {
+                                    execAsync([
+                                        "hyprctl",
+                                        "keyword",
+                                        "decoration:rounding",
+                                        `${newValue}`,
+                                    ]).catch(print);
+                                },
+                            }),
+                        ]),
+                        ConfigGap({}),
                     ],
                 }),
                 ConfigSection({
