@@ -115,12 +115,12 @@ const AppButton = ({ icon, ...rest }) =>
         transitionDuration: userOptions.asyncGet().animations.durationLarge,
         child: Widget.Button({
             ...rest,
-            className: "dock-app-btn dock-app-btn-animate",
+            className: `dock-app-btn dock-app-btn-animate ${userOptions.asyncGet().dock.iconSize}-icon`,
             child: Widget.Box({
                 child: Widget.Overlay({
                     child: Widget.Box({
                         homogeneous: true,
-                        className: "dock-app-icon",
+                        className: `dock-app-icon ${userOptions.asyncGet().dock.iconSize}`,
                         child: Widget.Icon({
                             icon: icon,
                         }),

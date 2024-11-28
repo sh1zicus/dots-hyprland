@@ -212,10 +212,11 @@ const BarGroup = ({ child }) =>
 
 const BatteryModule = () =>
     Box({
-        // className: "spacing-h-10",
+        className: "spacing-h-10",
+        css: "margin:0px 0px 0px 10px;",
         children: [
             // BarGroup({ child: Utilities() }),
-            BarGroup({ child: BarClock() }),
+            BarClock(),
             Stack({
                 transition: "slide_up_down",
                 transitionDuration:

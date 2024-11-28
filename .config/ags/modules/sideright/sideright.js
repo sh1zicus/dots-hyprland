@@ -15,6 +15,7 @@ import ModuleAudioControls from "./centermodules/audiocontrols.js";
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 import ModuleNotificationList from "./centermodules/notificationlist.js";
 import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
+// import MusicControls from "../indicators/musiccontrols.js";
 import {
     ModuleReloadIcon,
     ModuleSettingsIcon,
@@ -299,12 +300,14 @@ export default () =>
                         className: "spacing-v-5",
                         children: [timeRow, togglesBox],
                     }),
+
                     Box({
                         className: "sidebar-group",
                         children: [sidebarOptionsStack],
                     }),
-                    //ModuleCalendar(),
-                    //WeatherWidget(),
+                    // MusicControls(),
+                    // ModuleCalendar(),
+                    WeatherWidget(),
                 ],
             }),
         ],

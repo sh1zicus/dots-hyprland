@@ -12,8 +12,8 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-bg {
-    background-color: rgba($layer0, 1);
-    min-height: 2.8rem;
+    background-color: rgba($layer0, 0.7);
+    min-height: 2.6rem;
 }
 
 .bar-bg-focus {
@@ -39,7 +39,7 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-group {
-    background-color: $layer1;
+    /* background-color: $layer1; */
 }
 
 .bar-group-pad {
@@ -144,10 +144,11 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-timer {
-    font-size: 18px;
+    font-size: 22px;
+    margin-top: 2.5px;
     font-weight: 400;
     font-family: "Iosevka Nerd Font";
-    color: $workspaceOnLayer2;
+    color: $workspaceLayer3;
 }
 
 .bar-date {
@@ -175,7 +176,7 @@ $bar_ws_width_focus_active: 2.045rem;
     min-height: 1.636rem;
     padding: 0rem;
     background-color: $battLayer2;
-    color: $secondary;
+    color: $workspaceLayer3;
 }
 
 .bar-batt-circprog-low {
@@ -317,7 +318,7 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .corner {
-    background-color: $layer0;
+    background-color: rgba($layer0, 0.7);
     @include large-rounding;
 }
 
@@ -475,8 +476,8 @@ $bar_ws_width_focus_active: 2.045rem;
     font-size: 18px;
     font-weight: 400;
     font-family: "Iosevka Nerd Font";
-    margin: 4px -12px;
-    color: $workspaceOnLayer2;
+    margin: 2.8px -12px;
+    color: $workspaceLayer3;
 }
 .bar-batt-sign {
     color: $secondary;

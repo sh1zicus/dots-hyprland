@@ -1,10 +1,10 @@
 const { Gtk } = imports.gi;
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
-// import BarClock from "../.commonwidgets/statusicons.js";
+import MusicStuff from "./normal/music.js";
 import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
-import Music from "./normal/music.js";
+import SystemResourcesOrCustomModule from "./normal/resources.js";
 import BatteryModule from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
@@ -61,13 +61,6 @@ export const Bar = async (monitor = 0) => {
                         await WindowTitle(),
                     ],
                 }),
-                // SideModule([
-                //     Widget.Box({
-                //         className: "spacing-h-5",
-                //         homogeneous: false,
-                //         children: [Music()],
-                //     }),
-                // ]),
             ],
         }),
         centerWidget: Widget.Box({
@@ -76,7 +69,7 @@ export const Bar = async (monitor = 0) => {
                 Widget.Box({
                     className: "spacing-h-5",
                     homogeneous: false,
-                    children: [await WindowTitle()],
+                    children: [MusicStuff()],
                 }),
             ],
         }),
@@ -93,7 +86,7 @@ export const Bar = async (monitor = 0) => {
                 Widget.Box({
                     className: "spacing-h-5",
                     homogeneous: false,
-                    children: [system(), Music()],
+                    children: [system(), SystemResourcesOrCustomModule()],
                 }),
             ],
         }),

@@ -1,74 +1,89 @@
 const { GLib } = imports.gi;
-import App from 'resource:///com/github/Aylur/ags/app.js';
-import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
-import Mpris from 'resource:///com/github/Aylur/ags/service/mpris.js';
+import App from "resource:///com/github/Aylur/ags/app.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
+import Mpris from "resource:///com/github/Aylur/ags/service/mpris.js";
 const { exec, execAsync } = Utils;
 const { Box, EventBox, Icon, Scrollable, Label, Button, Revealer } = Widget;
 
-import { fileExists } from '../.miscutils/files.js';
+import { fileExists } from "../.miscutils/files.js";
 import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
-import { showMusicControls } from '../../variables.js';
-import { darkMode, hasPlasmaIntegration } from '../.miscutils/system.js';
+import { showMusicControls } from "../../variables.js";
+import { darkMode, hasPlasmaIntegration } from "../.miscutils/system.js";
 
-const COMPILED_STYLE_DIR = `${GLib.get_user_cache_dir()}/ags/user/generated`
+const COMPILED_STYLE_DIR = `${GLib.get_user_cache_dir()}/ags/user/generated`;
 const LIGHTDARK_FILE_LOCATION = `${GLib.get_user_state_dir()}/ags/user/colormode.txt`;
-const colorMode = Utils.exec(`bash -c "sed -n \'1p\' '${LIGHTDARK_FILE_LOCATION}'"`);
-const lightDark = (colorMode == "light") ? '-l' : '';
-const COVER_COLORSCHEME_SUFFIX = '_colorscheme.css';
-var lastCoverPath = '';
+const colorMode = Utils.exec(
+    `bash -c "sed -n \'1p\' '${LIGHTDARK_FILE_LOCATION}'"`,
+);
+const lightDark = colorMode == "light" ? "-l" : "";
+const COVER_COLORSCHEME_SUFFIX = "_colorscheme.css";
+var lastCoverPath = "";
 
 function isRealPlayer(player) {
     return (
         // Remove unecessary native buses from browsers if there's plasma integration
-        !(hasPlasmaIntegration && player.busName.startsWith('org.mpris.MediaPlayer2.firefox')) &&
-        !(hasPlasmaIntegration && player.busName.startsWith('org.mpris.MediaPlayer2.chromium')) &&
+        !(
+            hasPlasmaIntegration &&
+            player.busName.startsWith("org.mpris.MediaPlayer2.firefox")
+        ) &&
+        !(
+            hasPlasmaIntegration &&
+            player.busName.startsWith("org.mpris.MediaPlayer2.chromium")
+        ) &&
         // playerctld just copies other buses and we don't need duplicates
-        !player.busName.startsWith('org.mpris.MediaPlayer2.playerctld') &&
+        !player.busName.startsWith("org.mpris.MediaPlayer2.playerctld") &&
         // Non-instance mpd bus
-        !(player.busName.endsWith('.mpd') && !player.busName.endsWith('MediaPlayer2.mpd'))
+        !(
+            player.busName.endsWith(".mpd") &&
+            !player.busName.endsWith("MediaPlayer2.mpd")
+        )
     );
 }
 
-export const getPlayer = (name = userOptions.asyncGet().music.preferredPlayer) => Mpris.getPlayer(name) || Mpris.players[0] || null;
+export const getPlayer = (
+    name = userOptions.asyncGet().music.preferredPlayer,
+) => Mpris.getPlayer(name) || Mpris.players[0] || null;
 function lengthStr(length) {
     const min = Math.floor(length / 60);
     const sec = Math.floor(length % 60);
-    const sec0 = sec < 10 ? '0' : '';
+    const sec0 = sec < 10 ? "0" : "";
     return `${min}:${sec0}${sec}`;
 }
 
 function detectMediaSource(link) {
     if (link.startsWith("file://")) {
-        if (link.includes('firefox-mpris'))
-            return '󰈹 Firefox'
+        if (link.includes("firefox-mpris")) return "󰈹 Firefox";
         return "󰈣 File";
     }
-    let url = link.replace(/(^\w+:|^)\/\//, '');
+    let url = link.replace(/(^\w+:|^)\/\//, "");
     let domain = url.match(/(?:[a-z]+\.)?([a-z]+\.[a-z]+)/i)[1];
-    if (domain == 'ytimg.com') return '󰗃 Youtube';
-    if (domain == 'discordapp.net') return '󰙯 Discord';
-    if (domain == 'sndcdn.com') return '󰓀 SoundCloud';
+    if (domain == "ytimg.com") return "󰗃 Youtube";
+    if (domain == "discordapp.net") return "󰙯 Discord";
+    if (domain == "sndcdn.com") return "󰓀 SoundCloud";
     return domain;
 }
 
-const DEFAULT_MUSIC_FONT = 'Gabarito, sans-serif';
+const DEFAULT_MUSIC_FONT = "Gabarito, sans-serif";
 function getTrackfont(player) {
     const title = player.trackTitle;
-    const artists = player.trackArtists.join(' ');
-    if (artists.includes('TANO*C') || artists.includes('USAO') || artists.includes('Kobaryo'))
-        return 'Chakra Petch'; // Rigid square replacement
-    if (title.includes('東方'))
-        return 'Crimson Text, serif'; // Serif for Touhou stuff
+    const artists = player.trackArtists.join(" ");
+    if (
+        artists.includes("TANO*C") ||
+        artists.includes("USAO") ||
+        artists.includes("Kobaryo")
+    )
+        return "Chakra Petch"; // Rigid square replacement
+    if (title.includes("東方")) return "Crimson Text, serif"; // Serif for Touhou stuff
     return DEFAULT_MUSIC_FONT;
 }
 function trimTrackTitle(title) {
-    if (!title) return '';
+    if (!title) return "";
     const cleanPatterns = [
-        /【[^】]*】/,         // Touhou n weeb stuff
+        /【[^】]*】/, // Touhou n weeb stuff
         " [FREE DOWNLOAD]", // F-777
     ];
-    cleanPatterns.forEach((expr) => title = title.replace(expr, ''));
+    cleanPatterns.forEach((expr) => (title = title.replace(expr, "")));
     return title;
 }
 
@@ -77,62 +92,81 @@ const TrackProgress = ({ player, ...rest }) => {
         // const player = Mpris.getPlayer();
         if (!player) return;
         // Set circular progress (see definition of AnimatedCircProg for explanation)
-        circprog.css = `font-size: ${Math.max(player.position / player.length * 100, 0)}px;`
-    }
+        circprog.css = `font-size: ${Math.max((player.position / player.length) * 100, 0)}px;`;
+    };
     return AnimatedCircProg({
         ...rest,
-        className: 'osd-music-circprog',
-        vpack: 'center',
-        extraSetup: (self) => self
-            .hook(Mpris, _updateProgress)
-            .poll(3000, _updateProgress)
-        ,
-    })
-}
+        className: "osd-music-circprog",
+        vpack: "center",
+        extraSetup: (self) =>
+            self.hook(Mpris, _updateProgress).poll(3000, _updateProgress),
+    });
+};
 
-const TrackTitle = ({ player, ...rest }) => Label({
-    ...rest,
-    label: 'No music playing',
-    xalign: 0,
-    truncate: 'end',
-    // wrap: true,
-    className: 'osd-music-title',
-    setup: (self) => self.hook(player, (self) => {
-        // Player name
-        self.label = player.trackTitle.length > 0 ? trimTrackTitle(player.trackTitle) : 'No media';
-        // Font based on track/artist
-        const fontForThisTrack = getTrackfont(player);
-        self.css = `font-family: ${fontForThisTrack}, ${DEFAULT_MUSIC_FONT};`;
-    }, 'notify::track-title'),
-});
+const TrackTitle = ({ player, ...rest }) =>
+    Label({
+        ...rest,
+        label: "No music playing",
+        xalign: 0,
+        truncate: "end",
+        // wrap: true,
+        className: "osd-music-title",
+        setup: (self) =>
+            self.hook(
+                player,
+                (self) => {
+                    // Player name
+                    self.label =
+                        player.trackTitle.length > 0
+                            ? trimTrackTitle(player.trackTitle)
+                            : "No media";
+                    // Font based on track/artist
+                    const fontForThisTrack = getTrackfont(player);
+                    self.css = `font-family: ${fontForThisTrack}, ${DEFAULT_MUSIC_FONT};`;
+                },
+                "notify::track-title",
+            ),
+    });
 
-const TrackArtists = ({ player, ...rest }) => Label({
-    ...rest,
-    xalign: 0,
-    className: 'osd-music-artists',
-    truncate: 'end',
-    setup: (self) => self.hook(player, (self) => {
-        self.label = player.trackArtists.length > 0 ? player.trackArtists.join(', ') : '';
-    }, 'notify::track-artists'),
-})
+const TrackArtists = ({ player, ...rest }) =>
+    Label({
+        ...rest,
+        xalign: 0,
+        className: "osd-music-artists",
+        truncate: "end",
+        setup: (self) =>
+            self.hook(
+                player,
+                (self) => {
+                    self.label =
+                        player.trackArtists.length > 0
+                            ? player.trackArtists.join(", ")
+                            : "";
+                },
+                "notify::track-artists",
+            ),
+    });
 
 const CoverArt = ({ player, ...rest }) => {
-    const fallbackCoverArt = Box({ // Fallback
-        className: 'osd-music-cover-fallback',
+    const fallbackCoverArt = Box({
+        // Fallback
+        className: "osd-music-cover-fallback",
         homogeneous: true,
-        children: [Label({
-            className: 'icon-material txt-gigantic txt-thin',
-            label: 'music_note',
-        })]
+        children: [
+            Label({
+                className: "icon-material txt-gigantic txt-thin",
+                label: "music_note",
+            }),
+        ],
     });
     // const coverArtDrawingArea = Widget.DrawingArea({ className: 'osd-music-cover-art' });
     // const coverArtDrawingAreaStyleContext = coverArtDrawingArea.get_style_context();
     const realCoverArt = Box({
-        className: 'osd-music-cover-art',
+        className: "osd-music-cover-art",
         homogeneous: true,
         // children: [coverArtDrawingArea],
         attribute: {
-            'pixbuf': null,
+            pixbuf: null,
             // 'showImage': (self, imagePath) => {
             //     const borderRadius = coverArtDrawingAreaStyleContext.get_property('border-radius', Gtk.StateFlags.NORMAL);
             //     const frameHeight = coverArtDrawingAreaStyleContext.get_property('min-height', Gtk.StateFlags.NORMAL);
@@ -176,7 +210,7 @@ const CoverArt = ({ player, ...rest }) => {
             //             });
             //         }).catch(print)
             // },
-            'updateCover': (self) => {
+            updateCover: (self) => {
                 // const player = Mpris.getPlayer(); // Maybe no need to re-get player.. can't remember why I had this
                 // Player closed
                 // Note that cover path still remains, so we're checking title
@@ -187,8 +221,9 @@ const CoverArt = ({ player, ...rest }) => {
                 }
 
                 const coverPath = player.coverPath;
-                const stylePath = `${player.coverPath}${darkMode.value ? '' : '-l'}${COVER_COLORSCHEME_SUFFIX}`;
-                if (player.coverPath == lastCoverPath) { // Since 'notify::cover-path' emits on cover download complete
+                const stylePath = `${player.coverPath}${darkMode.value ? "" : "-l"}${COVER_COLORSCHEME_SUFFIX}`;
+                if (player.coverPath == lastCoverPath) {
+                    // Since 'notify::cover-path' emits on cover download complete
                     Utils.timeout(200, () => {
                         // self.attribute.showImage(self, coverPath);
                         self.css = `background-image: url('${coverPath}');`; // CSS image
@@ -205,12 +240,21 @@ const CoverArt = ({ player, ...rest }) => {
                 }
 
                 // Generate colors
-                execAsync(['bash', '-c',
-                    `${App.configDir}/scripts/color_generation/generate_colors_material.py --path '${coverPath}' --mode ${darkMode.value ? 'dark' : 'light'} > ${GLib.get_user_state_dir()}/ags/scss/_musicmaterial.scss`])
+                execAsync([
+                    "bash",
+                    "-c",
+                    `${App.configDir}/scripts/color_generation/generate_colors_material.py --path '${coverPath}' --mode ${darkMode.value ? "dark" : "light"} > ${GLib.get_user_state_dir()}/ags/scss/_musicmaterial.scss`,
+                ])
                     .then(() => {
-                        exec(`wal -i "${player.coverPath}" -n -t -s -e -q ${darkMode.value ? '' : '-l'}`)
-                        exec(`cp ${GLib.get_user_cache_dir()}/wal/colors.scss ${GLib.get_user_state_dir()}/ags/scss/_musicwal.scss`);
-                        exec(`sass -I "${GLib.get_user_state_dir()}/ags/scss" -I "${App.configDir}/scss/fallback" "${App.configDir}/scss/_music.scss" "${stylePath}"`);
+                        exec(
+                            `wal -i "${player.coverPath}" -n -t -s -e -q ${darkMode.value ? "" : "-l"}`,
+                        );
+                        exec(
+                            `cp ${GLib.get_user_cache_dir()}/wal/colors.scss ${GLib.get_user_state_dir()}/ags/scss/_musicwal.scss`,
+                        );
+                        exec(
+                            `sass -I "${GLib.get_user_state_dir()}/ags/scss" -I "${App.configDir}/scss/fallback" "${App.configDir}/scss/_music.scss" "${stylePath}"`,
+                        );
                         Utils.timeout(200, () => {
                             // self.attribute.showImage(self, coverPath)
                             self.css = `background-image: url('${coverPath}');`; // CSS image
@@ -220,189 +264,238 @@ const CoverArt = ({ player, ...rest }) => {
                     .catch(print);
             },
         },
-        setup: (self) => self
-            .hook(player, (self) => {
-                self.attribute.updateCover(self);
-            }, 'notify::cover-path')
-        ,
+        setup: (self) =>
+            self.hook(
+                player,
+                (self) => {
+                    self.attribute.updateCover(self);
+                },
+                "notify::cover-path",
+            ),
     });
     return Box({
         ...rest,
-        className: 'osd-music-cover',
+        className: "osd-music-cover",
         children: [
             Widget.Overlay({
                 child: fallbackCoverArt,
                 overlays: [realCoverArt],
-            })
-        ],
-    })
-}
-
-const TrackControls = ({ player, ...rest }) => Widget.Revealer({
-    revealChild: false,
-    transition: 'slide_right',
-    transitionDuration: userOptions.asyncGet().animations.durationLarge,
-    child: Widget.Box({
-        ...rest,
-        vpack: 'center',
-        className: 'osd-music-controls spacing-h-3',
-        children: [
-            Button({
-                className: 'osd-music-controlbtn',
-                onClicked: () => player.previous(),
-                child: Label({
-                    className: 'icon-material osd-music-controlbtn-txt',
-                    label: 'skip_previous',
-                })
-            }),
-            Button({
-                className: 'osd-music-controlbtn',
-                onClicked: () => player.next(),
-                child: Label({
-                    className: 'icon-material osd-music-controlbtn-txt',
-                    label: 'skip_next',
-                })
             }),
         ],
-    }),
-    setup: (self) => self.hook(Mpris, (self) => {
-        // const player = Mpris.getPlayer();
-        if (!player)
-            self.revealChild = false;
-        else
-            self.revealChild = true;
-    }, 'notify::play-back-status'),
-});
+    });
+};
 
-const TrackSource = ({ player, ...rest }) => Widget.Revealer({
-    revealChild: false,
-    transition: 'slide_left',
-    transitionDuration: userOptions.asyncGet().animations.durationLarge,
-    child: Widget.Box({
-        ...rest,
-        className: 'osd-music-pill spacing-h-5',
-        homogeneous: true,
-        children: [
-            Label({
-                hpack: 'fill',
-                justification: 'center',
-                className: 'icon-nerd',
-                setup: (self) => self.hook(player, (self) => {
-                    self.label = detectMediaSource(player.trackCoverUrl);
-                }, 'notify::cover-path'),
-            }),
-        ],
-    }),
-    setup: (self) => self.hook(Mpris, (self) => {
-        const mpris = Mpris.getPlayer('');
-        if (!mpris)
-            self.revealChild = false;
-        else
-            self.revealChild = true;
-    }),
-});
-
-const TrackTime = ({ player, ...rest }) => {
-    return Widget.Revealer({
+const TrackControls = ({ player, ...rest }) =>
+    Widget.Revealer({
         revealChild: false,
-        transition: 'slide_left',
+        transition: "slide_right",
         transitionDuration: userOptions.asyncGet().animations.durationLarge,
         child: Widget.Box({
             ...rest,
-            vpack: 'center',
-            className: 'osd-music-pill spacing-h-5',
+            vpack: "center",
+            className: "osd-music-controls spacing-h-3",
             children: [
-                Label({
-                    setup: (self) => self.poll(1000, (self) => {
-                        // const player = Mpris.getPlayer();
-                        if (!player) return;
-                        self.label = lengthStr(player.position);
+                Button({
+                    className: "osd-music-controlbtn",
+                    onClicked: () => player.previous(),
+                    child: Label({
+                        className: "icon-material osd-music-controlbtn-txt",
+                        label: "skip_previous",
                     }),
                 }),
-                Label({ label: '/' }),
-                Label({
-                    setup: (self) => self.hook(Mpris, (self) => {
-                        // const player = Mpris.getPlayer();
-                        if (!player) return;
-                        self.label = lengthStr(player.length);
+                Button({
+                    className: "osd-music-controlbtn",
+                    onClicked: () => player.next(),
+                    child: Label({
+                        className: "icon-material osd-music-controlbtn-txt",
+                        label: "skip_next",
                     }),
                 }),
             ],
         }),
-        setup: (self) => self.hook(Mpris, (self) => {
-            if (!player) self.revealChild = false;
-            else self.revealChild = true;
+        setup: (self) =>
+            self.hook(
+                Mpris,
+                (self) => {
+                    // const player = Mpris.getPlayer();
+                    if (!player) self.revealChild = false;
+                    else self.revealChild = true;
+                },
+                "notify::play-back-status",
+            ),
+    });
+
+const TrackSource = ({ player, ...rest }) =>
+    Widget.Revealer({
+        revealChild: false,
+        transition: "slide_left",
+        transitionDuration: userOptions.asyncGet().animations.durationLarge,
+        child: Widget.Box({
+            ...rest,
+            className: "osd-music-pill spacing-h-5",
+            homogeneous: true,
+            children: [
+                Label({
+                    hpack: "fill",
+                    justification: "center",
+                    className: "icon-nerd",
+                    setup: (self) =>
+                        self.hook(
+                            player,
+                            (self) => {
+                                self.label = detectMediaSource(
+                                    player.trackCoverUrl,
+                                );
+                            },
+                            "notify::cover-path",
+                        ),
+                }),
+            ],
         }),
-    })
-}
+        setup: (self) =>
+            self.hook(Mpris, (self) => {
+                const mpris = Mpris.getPlayer("");
+                if (!mpris) self.revealChild = false;
+                else self.revealChild = true;
+            }),
+    });
+
+const TrackTime = ({ player, ...rest }) => {
+    return Widget.Revealer({
+        revealChild: false,
+        transition: "slide_left",
+        transitionDuration: userOptions.asyncGet().animations.durationLarge,
+        child: Widget.Box({
+            ...rest,
+            vpack: "center",
+            className: "osd-music-pill spacing-h-5",
+            children: [
+                Label({
+                    setup: (self) =>
+                        self.poll(1000, (self) => {
+                            // const player = Mpris.getPlayer();
+                            if (!player) return;
+                            self.label = lengthStr(player.position);
+                        }),
+                }),
+                Label({ label: "/" }),
+                Label({
+                    setup: (self) =>
+                        self.hook(Mpris, (self) => {
+                            // const player = Mpris.getPlayer();
+                            if (!player) return;
+                            self.label = lengthStr(player.length);
+                        }),
+                }),
+            ],
+        }),
+        setup: (self) =>
+            self.hook(Mpris, (self) => {
+                if (!player) self.revealChild = false;
+                else self.revealChild = true;
+            }),
+    });
+};
 
 const PlayState = ({ player }) => {
     var position = 0;
     const trackCircProg = TrackProgress({ player: player });
     return Widget.Button({
-        className: 'osd-music-playstate',
+        className: "osd-music-playstate",
         child: Widget.Overlay({
             child: trackCircProg,
             overlays: [
                 Widget.Button({
-                    className: 'osd-music-playstate-btn',
+                    className: "osd-music-playstate-btn",
                     onClicked: () => player.playPause(),
                     child: Widget.Label({
-                        justification: 'center',
-                        hpack: 'fill',
-                        vpack: 'center',
-                        setup: (self) => self.hook(player, (label) => {
-                            label.label = `${player.playBackStatus == 'Playing' ? 'pause' : 'play_arrow'}`;
-                        }, 'notify::play-back-status'),
+                        justification: "center",
+                        hpack: "fill",
+                        vpack: "center",
+                        setup: (self) =>
+                            self.hook(
+                                player,
+                                (label) => {
+                                    label.label = `${player.playBackStatus == "Playing" ? "pause" : "play_arrow"}`;
+                                },
+                                "notify::play-back-status",
+                            ),
                     }),
                 }),
             ],
             passThrough: true,
-        })
+        }),
     });
-}
+};
 
-const MusicControlsWidget = (player) => Box({
-    className: 'osd-music spacing-h-20 test',
-    children: [
-        CoverArt({ player: player, vpack: 'center' }),
-        Box({
-            vertical: true,
-            className: 'spacing-v-5 osd-music-info',
-            children: [
-                Box({
-                    vertical: true,
-                    vpack: 'center',
-                    hexpand: true,
-                    children: [
-                        TrackTitle({ player: player }),
-                        TrackArtists({ player: player }),
-                    ]
-                }),
-                Box({ vexpand: true }),
-                Box({
-                    className: 'spacing-h-10',
-                    setup: (box) => {
-                        box.pack_start(TrackControls({ player: player }), false, false, 0);
-                        box.pack_end(PlayState({ player: player }), false, false, 0);
-                        if(hasPlasmaIntegration || player.busName.startsWith('org.mpris.MediaPlayer2.chromium')) box.pack_end(TrackTime({ player: player }), false, false, 0)
-                        // box.pack_end(TrackSource({ vpack: 'center', player: player }), false, false, 0);
-                    }
-                })
-            ]
-        })
-    ]
-})
+const MusicControlsWidget = (player) =>
+    Box({
+        className: "osd-music spacing-h-20 test",
+        children: [
+            CoverArt({ player: player, vpack: "center" }),
+            Box({
+                vertical: true,
+                className: "spacing-v-5 osd-music-info",
+                children: [
+                    Box({
+                        vertical: true,
+                        vpack: "center",
+                        hexpand: true,
+                        children: [
+                            TrackTitle({ player: player }),
+                            TrackArtists({ player: player }),
+                        ],
+                    }),
+                    Box({ vexpand: true }),
+                    Box({
+                        className: "spacing-h-10",
+                        setup: (box) => {
+                            box.pack_start(
+                                TrackControls({ player: player }),
+                                false,
+                                false,
+                                0,
+                            );
+                            box.pack_end(
+                                PlayState({ player: player }),
+                                false,
+                                false,
+                                0,
+                            );
+                            if (
+                                hasPlasmaIntegration ||
+                                player.busName.startsWith(
+                                    "org.mpris.MediaPlayer2.chromium",
+                                )
+                            )
+                                box.pack_end(
+                                    TrackTime({ player: player }),
+                                    false,
+                                    false,
+                                    0,
+                                );
+                            // box.pack_end(TrackSource({ vpack: 'center', player: player }), false, false, 0);
+                        },
+                    }),
+                ],
+            }),
+        ],
+    });
 
-export default () => Revealer({
-    transition: 'slide_down',
-    transitionDuration: userOptions.asyncGet().animations.durationLarge,
-    revealChild: false,
-    child: Box({
-        children: Mpris.bind("players")
-            .as(players => players.map((player) => (isRealPlayer(player) ? MusicControlsWidget(player) : null)))
-    }),
-    setup: (self) => self.hook(showMusicControls, (revealer) => {
-        revealer.revealChild = showMusicControls.value;
-    }),
-})
+export default () =>
+    Revealer({
+        transition: "slide_down",
+        transitionDuration: userOptions.asyncGet().animations.durationLarge,
+        revealChild: false,
+        child: Box({
+            children: Mpris.bind("players").as((players) =>
+                players.map((player) =>
+                    isRealPlayer(player) ? MusicControlsWidget(player) : null,
+                ),
+            ),
+        }),
+        setup: (self) =>
+            self.hook(showMusicControls, (revealer) => {
+                revealer.revealChild = showMusicControls.value;
+            }),
+    });
