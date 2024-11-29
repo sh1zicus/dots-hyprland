@@ -9,3 +9,4 @@ __pycache__/
 .config/hypr/hyprland.conf
 .config/hypr/hyprland/colors.conf
 .config/hypr/hyprlock.conf
+.config/ags/scripts/templates/pywal/pywal.json
