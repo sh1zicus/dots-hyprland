@@ -27,6 +27,8 @@ const isToday = (date) => {
 
 const CommitBox = ({ message, author, date }) => {
     const commitDate = new Date(date);
+    const [title, ...description] = message.split('\n').filter(line => line.trim() !== '');
+    
     return Box({
         className: 'sidebar-chat-message',
         children: [
@@ -48,19 +50,26 @@ const CommitBox = ({ message, author, date }) => {
                                     Label({
                                         xalign: 1,
                                         className: isToday(commitDate) 
-                                            ? 'sidebar-chat-name sidebar-chat-name-bot txt-smaller' // для сегодняшней даты
-                                            : 'sidebar-chat-name txt-smaller', // для остальных дат
+                                            ? 'sidebar-chat-name sidebar-chat-name-bot txt-smaller'
+                                            : 'sidebar-chat-name txt-smaller',
                                         label: commitDate.toLocaleDateString(),
                                     }),
                                 ],
                             }),
                             Label({
                                 xalign: 0,
-                                className: 'txt-smaller',
+                                className: 'txt-smaller txt-bold',
                                 css: 'color: white;',
-                                label: message,
+                                label: title,
                                 wrap: true,
                             }),
+                            description.length > 0 ? Label({
+                                xalign: 0,
+                                className: 'txt-smaller',
+                                css: 'color: white;',
+                                label: description.join('\n'),
+                                wrap: true,
+                            }) : null,
                         ],
                     }),
                 ],
