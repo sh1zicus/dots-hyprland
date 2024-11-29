@@ -14,17 +14,18 @@
 }
 
 .bg-time-clock {
-    @include titlefont;
+    font-family: "Archivo Black";
+    /* @include titlefont; */
     @include bg-textshadow;
     font-size: 5.795rem;
-    color: $onLayer0;
+    color: $onLayer1;
 }
 
 .bg-time-date {
     @include titlefont;
     @include bg-textshadow;
-    font-size: 2.591rem;
-    color: $onLayer0;
+    font-size: 2.391rem;
+    color: $onLayer3;
 }
 
 .bg-distro-box {
@@ -36,8 +37,9 @@
 .bg-distro-txt {
     @include titlefont;
     @include bg-textshadow;
-    font-size: 1.432rem;
-    color: $onLayer0;
+    font-size: 1.9rem;
+    color: $secondary;
+    opacity: 0.6;
 }
 
 .bg-distro-name {
