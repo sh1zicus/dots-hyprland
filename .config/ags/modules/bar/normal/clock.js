@@ -1,5 +1,6 @@
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
+import { showMusicControls } from "../../../variables.js";
 const { Box, Label } = Widget;
 const { GLib } = imports.gi;
 
@@ -44,7 +45,8 @@ const BarClock = () =>
 export default () =>
   Widget.EventBox({
     onPrimaryClick: () => App.toggleWindow("wallselect"),
-    onSecondaryClick: () => Utils.exec(`gnome-clocks`),
+    onSecondaryClick: () =>
+      showMusicControls.setValue(!showMusicControls.value),
     onMiddleClick: () => {
       Utils.execAsync(["hyprpicker", "-a"]).catch(print);
     },
