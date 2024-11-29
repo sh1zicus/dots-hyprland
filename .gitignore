@@ -8,3 +8,4 @@ __pycache__/
 *.py[cod]
 .config/hypr/hyprland.conf
 .config/hypr/hyprland/colors.conf
+.config/hypr/hyprlock.conf
