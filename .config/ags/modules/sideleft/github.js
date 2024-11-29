@@ -50,8 +50,8 @@ const CommitBox = ({ message, author, date }) => {
                                     Label({
                                         xalign: 1,
                                         className: isToday(commitDate) 
-                                            ? 'sidebar-chat-name sidebar-chat-name-bot txt-smaller'
-                                            : 'sidebar-chat-name txt-smaller',
+                                            ? 'sidebar-chat-name sidebar-chat-name-bot txt-smaller txt-bold'
+                                            : 'sidebar-chat-name txt-smaller txt-bold',
                                         label: commitDate.toLocaleDateString(),
                                     }),
                                 ],
