@@ -1,0 +1,1 @@
+Fuck Politics and Israel !!
