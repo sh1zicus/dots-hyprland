@@ -12,7 +12,7 @@ import BarBattery from "./normal/battery.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
 import { currentShellMode } from "../../variables.js";
-
+import MidTitle from "./normal/wintitle.js";
 const NormalOptionalWorkspaces = async () => {
   try {
     return (await import("./normal/workspaces_hyprland.js")).default();
@@ -72,10 +72,10 @@ export const Bar = async (monitor = 0) => {
           homogeneous: false,
           children: [await NormalOptionalWorkspaces()],
         }),
-        Widget.Box({
-          homogeneous: false,
-          // children: [SystemResourcesOrCustomModule()],
-        }),
+        // Widget.Box({
+        //   homogeneous: false,
+        //   children: [await Utilities()],
+        // }),
       ],
     }),
     centerWidget: Widget.Box({

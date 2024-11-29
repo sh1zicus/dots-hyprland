@@ -110,8 +110,15 @@ const distroAndVersion = Box({
       children: [
         Label({
           className: "bg-distro-txt",
-          css: "margin:0rem -1rem -1.7rem 0rem;",
-          label: "Activate ArchLinux",
+          css: "margin:0rem -11.7rem 2.2rem 0rem;",
+          label: "Activate Linux",
+          // yalign: 0,
+        }),
+        Label({
+          className: "bg-distro-txt",
+          css: "margin-bottom:-3rem;",
+          label: "Go To Settings to activate Linux",
+          xalign: 0,
         }),
         // Label({
         //   className: "bg-distro-name",
@@ -183,8 +190,8 @@ export default () =>
           vpack: "end",
           className: "bg-distro-box spacing-v-20",
           vertical: true,
-          children: [resources, distroAndVersion],
-        }),
+          children: [distroAndVersion],
+        }), //resources
         onPrimaryClickRelease: () => {
           const kids = resources.get_children();
           for (let i = 0; i < kids.length; i++) {

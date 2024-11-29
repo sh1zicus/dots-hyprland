@@ -78,19 +78,19 @@ const trackTitle = Label({
   hexpand: true,
   className: "txt-smallie bar-music-txt", // No truncation here
   setup: (self) => {
-    const maxChars = 100; // Customizable number of characters before wrapping (can be changed dynamically)
+    const maxChars = 60; // Customizable number of characters before wrapping (can be changed dynamically)
 
     const update = () => {
       const mpris = Mpris.getPlayer("");
       if (mpris) {
         // Get the track title and artists, then truncate it based on maxChars
-        let title = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(", ")}`;
+        let title = `${trimTrackTitle(mpris.trackTitle)}`; // • ${mpris.trackArtists.join(", ")}`;
         if (title.length > maxChars) {
-          title = title.slice(0, maxChars) + ""; // Optionally add ellipsis at the end if the text exceeds maxChars
+          title = title.slice(0, maxChars); // Optionally add ellipsis at the end if the text exceeds maxChars
         }
         self.label = title;
       } else {
-        self.label = "No music playing";
+        self.label = null;
       }
     };
 
