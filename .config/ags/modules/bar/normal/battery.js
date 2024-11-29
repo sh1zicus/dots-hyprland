@@ -77,6 +77,9 @@ const BatteryModule = () =>
 
 export default () =>
   Widget.EventBox({
+    onPrimaryClick: () => App.toggleWindow("sideleft"),
+    onMiddleClick: () => Utils.exec(`obsidian`),
+    onSecondaryClick: () => Utils.execAsync(`ags run-js 'cycleMode();'`),
     child: Widget.Box({
       children: [BatteryModule()],
     }),

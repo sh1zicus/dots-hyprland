@@ -24,7 +24,7 @@ const date = Variable("", {
 const BarClock = () =>
   Widget.Box({
     vpack: "center",
-    className: "spacing-h-4 ",
+    className: "spacing-h-4 bar-clock-box",
     children: [
       Widget.Label({
         className: "bar-time",
@@ -43,6 +43,11 @@ const BarClock = () =>
 
 export default () =>
   Widget.EventBox({
+    onPrimaryClick: () => App.toggleWindow("wallselect"),
+    onSecondaryClick: () => Utils.exec(`gnome-clocks`),
+    onMiddleClick: () => {
+      Utils.execAsync(["hyprpicker", "-a"]).catch(print);
+    },
     child: Widget.Box({
       children: [BarClock()],
     }),

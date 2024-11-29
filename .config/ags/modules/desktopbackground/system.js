@@ -66,7 +66,7 @@ const resources = Box({
     ResourceValue(
       "Memory",
       "memory",
-      10000,
+      15000,
       `free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
       (label) => {
         execAsync([
@@ -84,7 +84,7 @@ const resources = Box({
     ResourceValue(
       "Disk space",
       "hard_drive_2",
-      3600000,
+      72000000,
       `echo $(df --output=pcent / | tr -dc '0-9')`,
       (label) => {
         execAsync([
@@ -183,10 +183,7 @@ export default () =>
           vpack: "end",
           className: "bg-distro-box spacing-v-20",
           vertical: true,
-          children: [
-            // resources,
-            distroAndVersion,
-          ],
+          children: [resources, distroAndVersion],
         }),
         onPrimaryClickRelease: () => {
           const kids = resources.get_children();
