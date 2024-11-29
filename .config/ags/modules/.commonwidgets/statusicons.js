@@ -365,6 +365,8 @@ const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
     };
     const widgetContent = Widget.Stack({
       transition: "slide_up_down",
+      className: "bar-title",
+      css: "font-weight:600;",
       transitionDuration: userOptions.asyncGet().animations.durationSmall,
       children: widgetKids,
       setup: (self) =>
@@ -440,19 +442,19 @@ export const StatusIcons = (props = {}, monitor = 0) =>
         Widget.Box({
           className: "spacing-h-10",
           children: [
-            // optionalKeyboardLayoutInstances[monitor],
+            optionalKeyboardLayoutInstances[monitor],
             // MicIndicator(),
             // SpeakerIndicator(),
             BluetoothIndicator(),
             NetworkIndicator(),
-            Widget.Box({
-              className: "time-with-margin",
-              child: Widget.Label({
-                className: "bar-time txt-smallie",
-                label: time.bind(),
-                tooltipText: date.bind(),
-              }),
-            }),
+            // Widget.Box({
+            //   className: "time-with-margin",
+            //   child: Widget.Label({
+            //     className: "bar-time txt-smallie",
+            //     label: time.bind(),
+            //     tooltipText: date.bind(),
+            //   }),
+            // }),
             NotificationIndicator(),
           ],
         }),

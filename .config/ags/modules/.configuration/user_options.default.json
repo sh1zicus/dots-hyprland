@@ -150,7 +150,7 @@
   "time": {
     "format": "%I:%M",
     "interval": 5000,
-    "dateFormatLong": "",
+    "dateFormatLong": "%A  %d/%m",
     "dateInterval": 5000,
     "dateFormat": "%d/%m"
   },

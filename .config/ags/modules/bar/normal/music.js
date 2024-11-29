@@ -73,20 +73,27 @@ const playingState = Box({
 });
 
 // Music track title label
+// Music track title label with customizable max characters for wrapping
 const trackTitle = Label({
   hexpand: true,
-  className: "txt-smallie bar-music-txt",
-  truncate: "end",
-  maxWidthChars: 1,
+  className: "txt-smallie bar-music-txt", // No truncation here
   setup: (self) => {
+    const maxChars = 100; // Customizable number of characters before wrapping (can be changed dynamically)
+
     const update = () => {
       const mpris = Mpris.getPlayer("");
       if (mpris) {
-        self.label = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(", ")}`;
+        // Get the track title and artists, then truncate it based on maxChars
+        let title = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(", ")}`;
+        if (title.length > maxChars) {
+          title = title.slice(0, maxChars) + ""; // Optionally add ellipsis at the end if the text exceeds maxChars
+        }
+        self.label = title;
       } else {
-        self.label = null;
+        self.label = "No music playing";
       }
     };
+
     self.hook(Mpris, update, "player-changed");
     self.hook(Mpris, update, "changed");
   },

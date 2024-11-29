@@ -143,6 +143,11 @@ $bar_ws_width_focus_active: 2.045rem;
     color: $timeOnLayer1;
 }
 
+.bar-title {
+    @include titlefont;
+    font-size: 1rem;
+    color: $timeOnLayer1;
+}
 .bar-date {
     color: $dateOnLayer1;
 }
@@ -326,7 +331,9 @@ $bar_ws_width_focus_active: 2.045rem;
 .bar-wintitle-txt {
     color: $windowtitleOnLayer0;
 }
-
+bar-wintitle-middle {
+    color: $windowtitleOnLayer0;
+}
 .bar-space-button {
     padding: 0.341rem;
 }

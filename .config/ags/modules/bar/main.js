@@ -1,13 +1,14 @@
 const { Gtk } = imports.gi;
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
-
+import BarClock from "./normal/clock.js";
 import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
 import MusicStuff from "./normal/music.js";
+import Utilities from "./normal/utils.js";
+import SystemResourcesOrCustomModule from "./normal/resources.js";
 import Music from "./normal/MResources.js";
-import BarBattery from "./normal/system.js";
-import System from "./normal/system.js";
+import BarBattery from "./normal/battery.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
 import { currentShellMode } from "../../variables.js";
@@ -71,6 +72,10 @@ export const Bar = async (monitor = 0) => {
           homogeneous: false,
           children: [await NormalOptionalWorkspaces()],
         }),
+        Widget.Box({
+          homogeneous: false,
+          // children: [SystemResourcesOrCustomModule()],
+        }),
       ],
     }),
     centerWidget: Widget.Box({
@@ -81,7 +86,7 @@ export const Bar = async (monitor = 0) => {
           hexpand: false,
           children: [],
         }),
-        SideModule([MusicStuff()]),
+        EndModule([BarClock()]),
       ],
     }),
     endWidget: Widget.Box({
@@ -116,7 +121,15 @@ export const Bar = async (monitor = 0) => {
           homogeneous: true,
           children: [await NormalOptionalWorkspaces()],
         }),
-        EndModule([System()]),
+        EndModule([
+          Widget.Box({
+            homogeneous: false,
+            className: "spacing-h-5 bar-clock-box",
+            children: [BarClock()],
+          }),
+        ]),
+        EndModule([Utilities()]),
+        EndModule([BarBattery()]),
       ],
     }),
     endWidget: Widget.Box({
