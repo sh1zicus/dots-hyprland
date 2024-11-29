@@ -1,6 +1,6 @@
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
-const { Box, Label, Overlay, Revealer } = Widget;
+const { Box, Label, Overlay, Revealer, EventBox } = Widget;
 const { GLib } = imports.gi;
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
@@ -35,39 +35,64 @@ const BarBatteryProgress = () => {
   });
 };
 
-const BarBattery = () =>
-  Box({
-    className: "spacing-h-4 bar-batt-txt",
+const BarBattery = () => {
+  let isRevealed = false;
+
+  // Create Revealer only once
+  const percentageRevealer = Revealer({
+    transitionDuration: options.animations.durationSmall,
+    transition: "slide_right",
+    revealChild: false, // Initially hidden
+    child: Label({
+      className: "bar-batt-percent",
+      css: "margin-left: 6px;",
+      connections: [
+        [
+          Battery,
+          (label) => {
+            label.label = `${Battery.percent}%`; // Removed wattage
+          },
+        ],
+      ],
+    }),
+  });
+
+  return Box({
+    className: "spacing-h-10 bar-batt-txt",
     children: [
-      Revealer({
-        transitionDuration: userOptions.asyncGet().animations.durationSmall,
-        revealChild: false,
-        transition: "slide_right",
-        child: MaterialIcon("bolt", "norm", { tooltipText: "Charging" }),
-        setup: (self) =>
-          self.hook(Battery, (revealer) => {
-            self.revealChild = Battery.charging;
-          }),
-      }),
-      Overlay({
-        child: Widget.Box({
-          vpack: "center",
-          className: "bar-batt",
-          homogeneous: true,
-          children: [MaterialIcon("", "small")],
-          setup: (self) =>
-            self.hook(Battery, (box) => {
-              box.toggleClassName(
-                "bar-batt-low",
-                Battery.percent <= userOptions.asyncGet().battery.low,
-              );
-              box.toggleClassName("bar-batt-full", Battery.charged);
+      EventBox({
+        onPrimaryClick: () => {
+          isRevealed = !isRevealed;
+          percentageRevealer.revealChild = isRevealed;
+        },
+        child: Box({
+          className: "bar-batt-container",
+          children: [
+            MaterialIcon("", "norm"),
+            Overlay({
+              child: Box({
+                vpack: "center",
+                className: "bar-batt",
+                homogeneous: true,
+                children: [MaterialIcon("", "small")],
+                setup: (self) =>
+                  self.hook(Battery, (box) => {
+                    box.toggleClassName(
+                      "bar-batt-low",
+                      Battery.percent <= userOptions.asyncGet().battery.low,
+                    );
+                    box.toggleClassName("bar-batt-full", Battery.charged);
+                  }),
+              }),
+              overlays: [BarBatteryProgress()],
             }),
+          ],
         }),
-        overlays: [BarBatteryProgress()],
       }),
+      percentageRevealer, // Revealer added only once
     ],
   });
+};
 
 const BatteryModule = () =>
   Box({
@@ -77,10 +102,9 @@ const BatteryModule = () =>
 
 export default () =>
   Widget.EventBox({
-    onPrimaryClick: () => App.toggleWindow("sideleft"),
     onMiddleClick: () => Utils.exec(`obsidian`),
     onSecondaryClick: () => Utils.execAsync(`ags run-js 'cycleMode();'`),
-    child: Widget.Box({
+    child: Box({
       children: [BatteryModule()],
     }),
   });
