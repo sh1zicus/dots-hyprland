@@ -1,0 +1,22 @@
+{
+  "dock": {
+    "enabled": true,
+    "pinnedApps": [
+      "spotify",
+      "telegram-desktop",
+      "nautilus",
+      "zed",
+      "zen-browser",
+      "GitHub-Web",
+      "Github-desktop",
+      "Gemini-Web",
+      "ChatGPT-Web",
+      "obsidian"
+    ]
+  },
+  "apps": {
+    "terminal": "kitty",
+    "imageViewer": "loupe",
+    "bluetooth": "blueberry"
+  }
+}
