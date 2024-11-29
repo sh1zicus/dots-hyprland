@@ -7,7 +7,20 @@ const { Box, EventBox, Scrollable, Label } = Widget;
 let cachedContent = null;
 let wallpaperPaths = [];
 let visiblePaths = [];
-let isLoading = true;                     
+let isLoading = true;
+
+// Constants
+const THUMBNAIL_DIR = GLib.build_filenamev([
+    GLib.get_home_dir(),
+    "Pictures",
+    "Wallpapers",
+    "thumbnails",
+]);
+const WALLPAPER_DIR = GLib.build_filenamev([
+    GLib.get_home_dir(),
+    "Pictures",
+    "Wallpapers",
+]);
 
 // Read bar position from config
 const getBarPosition = () => {
@@ -21,6 +34,7 @@ const getBarPosition = () => {
     }
 };
 
+// Wallpaper Button
 const WallpaperButton = (path) =>
     Widget.Button({
         child: Box({
@@ -29,25 +43,29 @@ const WallpaperButton = (path) =>
         }),
         onClicked: () => {
             Utils.execAsync(
-                `sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${path}"`,
+                `sh ${GLib.get_home_dir()}/.config/ags/scripts/color_generation/switchwall.sh "${path.replace(
+                    "thumbnails",
+                    "",
+                )}"`,
             );
             App.closeWindow("wallselect");
         },
     });
 
-const getWallpaperPaths = async (directory) => {
+// Get Wallpaper Paths
+const getWallpaperPaths = async () => {
     try {
         const files = await Utils.execAsync(
-            `find ${GLib.shell_quote(directory)} -type f \\( -iname "*.jpg" -o -iname "*.png" \\)`,
+            `find ${GLib.shell_quote(THUMBNAIL_DIR)} -type f \\( -iname "*.jpg" -o -iname "*.png" \\)`,
         );
         return files.split("\n").filter((file) => file);
     } catch (error) {
-        console.error("Error discovering wallpapers:", error);
+        console.error("Error discovering thumbnails:", error);
         return [];
     }
 };
 
-// Debounced scroll event handler
+// Debounced Scroll Event
 const debouncedScroll = (scroll, delay = 150) => {
     let timeoutId;
     return () => {
@@ -55,53 +73,90 @@ const debouncedScroll = (scroll, delay = 150) => {
         timeoutId = setTimeout(() => {
             const adj = scroll.get_hadjustment();
             const scrollValue = adj.get_value();
-            if (scrollValue + adj.get_page_size() >= adj.get_upper() * 0.8) {
-                loadMoreWallpapers(scroll);
+            if (scrollValue + adj.get_page_size() >= adj.get_upper()) {
+                loadMoreWallpapers();
             }
         }, delay);
     };
 };
 
-// Lazy load more wallpapers
-const loadMoreWallpapers = (scroll) => {
-    if (isLoading || visiblePaths.length >= wallpaperPaths.length) return;
+// Lazy Load Wallpapers
+const loadMoreWallpapers = () => {
+    if (isLoading || visiblePaths.length === wallpaperPaths.length) return;
     isLoading = true;
 
-    const loadChunk = 20;
+    const loadChunk = 50; // Load smaller batches for smoother scrolling
     const newPaths = wallpaperPaths.slice(
         visiblePaths.length,
-        visiblePaths.length + loadChunk
+        visiblePaths.length + loadChunk,
     );
     visiblePaths = [...visiblePaths, ...newPaths];
 
-    // Update the scroll content
-    scroll.child.children = visiblePaths.map(WallpaperButton);
+    cachedContent.child.children = visiblePaths.map(WallpaperButton);
     isLoading = false;
 };
 
+// Placeholder content when no wallpapers found
+const createPlaceholder = () => Box({
+    className: 'wallpaper-placeholder',
+    vertical: true,
+    vexpand: true,
+    hexpand: true,
+    spacing: 10,
+    children: [
+        Box({
+            vertical: true,
+            vpack: 'center',
+            hpack: 'center',
+            vexpand: true,
+            children: [
+                Label({
+                    label: 'No wallpapers found.',
+                    className: 'txt-large txt-bold',
+                }),
+                Label({
+                    label: 'Generate thumbnails to get started.',
+                    className: 'txt-norm txt-subtext',
+                }),
+            ],
+        }),
+        Box({
+            hpack: 'center',
+            children: [
+                Widget.Button({
+                    className: 'button-accent button-large',
+                    label: 'Generate Thumbnails',
+                    onClicked: () => {
+                        Utils.execAsync([
+                            'bash',
+                            `${GLib.get_home_dir()}/.config/ags/scripts/generate_thumbnails.sh`
+                        ]).then(() => {
+                            // Clear cache to reload wallpapers
+                            cachedContent = null;
+                            // Reload window content
+                            App.closeWindow('wallselect');
+                            App.openWindow('wallselect');
+                        }).catch(console.error);
+                    },
+                }),
+            ],
+        }),
+    ],
+});
+
+// Create Content
 const createContent = async () => {
     if (cachedContent) return cachedContent;
 
-    const wallpaperDir = GLib.build_filenamev([
-        GLib.get_home_dir(),
-        "Pictures",
-        "Wallpapers",
-    ]);
     try {
-        wallpaperPaths = await getWallpaperPaths(wallpaperDir);
+        wallpaperPaths = await getWallpaperPaths();
 
         if (wallpaperPaths.length === 0) {
-            return Box({
-                className: "wallpaper-placeholder",
-                children: [Label({
-                    label: "No wallpapers found in ~/Pictures/Wallpapers.",
-                    className: "fallback-label",
-                })],
-            });
+            return createPlaceholder();
         }
 
-        // Load initial batch of wallpapers
-        visiblePaths = wallpaperPaths.slice(0, 20);
+        // Load initial wallpapers
+        visiblePaths = wallpaperPaths.slice(0, 50);
 
         const scroll = Scrollable({
             hexpand: true,
@@ -114,20 +169,10 @@ const createContent = async () => {
             }),
         });
 
-        // Add debounced scroll handler
         const handleScroll = debouncedScroll(scroll);
-
         cachedContent = EventBox({
-            onScrollUp: () => {
-                const adj = scroll.get_hadjustment();
-                adj.set_value(adj.get_value() - 100);
-                handleScroll();
-            },
-            onScrollDown: () => {
-                const adj = scroll.get_hadjustment();
-                adj.set_value(adj.get_value() + 100);
-                handleScroll();
-            },
+            onScrollUp: handleScroll,
+            onScrollDown: handleScroll,
             child: scroll,
         });
 
@@ -135,17 +180,20 @@ const createContent = async () => {
     } catch (error) {
         console.error("Error loading wallpapers:", error);
         return Box({
-            className: "wallpaper-placeholder",
-            children: [Label({
-                label: "Error loading wallpapers.",
-                className: "fallback-label",
-            })],
+            className: "wallpaper-error",
+            vexpand: true,
+            hexpand: true,
+            children: [
+                Label({
+                    label: "Error loading wallpapers. Check the console for details.",
+                    className: "txt-large txt-error",
+                }),
+            ],
         });
     }
 };
 
-createContent();
-
+// Main Window
 export default () =>
     Widget.Window({
         name: "wallselect",
@@ -159,8 +207,6 @@ export default () =>
             children: [
                 EventBox({
                     onPrimaryClick: () => App.closeWindow("wallselect"),
-                    onSecondaryClick: () => App.closeWindow("wallselect"),
-                    onMiddleClick: () => App.closeWindow("wallselect"),
                 }),
                 Box({
                     vertical: true,
