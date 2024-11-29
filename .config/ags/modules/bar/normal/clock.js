@@ -3,11 +3,11 @@ import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
 import { showMusicControls } from "../../../variables.js";
 const { Box, Label } = Widget;
 const { GLib } = imports.gi;
-
+import MusicStuff from "./music.js";
 const options = userOptions.asyncGet();
 const timeFormat = options.time.format;
 const dateFormat = options.time.dateFormatLong;
-
+import { Revealer } from "resource:///com/github/Aylur/ags/widget.js";
 const time = Variable("", {
   poll: [
     options.time.interval,
@@ -32,7 +32,7 @@ const BarClock = () =>
         label: time.bind(),
       }),
       Widget.Label({
-        className: "txt-norm txt-onLayer1",
+        className: "txt-small txt-onLayer1",
         label: "•",
       }),
       Widget.Label({
@@ -42,15 +42,26 @@ const BarClock = () =>
     ],
   });
 
+const musicRevealer = Revealer({
+  transitionDuration: options.animations.durationSmall,
+  transition: "slide_right",
+  revealChild: false, // Initially hidden
+  child: MusicStuff(),
+});
+
 export default () =>
   Widget.EventBox({
-    onPrimaryClick: () => App.toggleWindow("wallselect"),
-    onSecondaryClick: () =>
-      showMusicControls.setValue(!showMusicControls.value),
+    onPrimaryClick: () => {
+      //More robust handling of the animation
+      musicRevealer.revealChild = !musicRevealer.revealChild;
+      //Optionally add a callback to handle animation completion if needed for complex scenarios
+      //musicRevealer.onTransitionEnd(()=>{/*Do something after the animation*/})
+    },
+    onSecondaryClick: () => App.toggleWindow("wallselect"),
     onMiddleClick: () => {
       Utils.execAsync(["hyprpicker", "-a"]).catch(print);
     },
     child: Widget.Box({
-      children: [BarClock()],
+      children: [BarClock(), musicRevealer],
     }),
   });
