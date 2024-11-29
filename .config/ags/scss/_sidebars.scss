@@ -931,26 +931,3 @@ $skeleton-accent: mix($secondary, $onSecondary, 50%);
 .sidebar-centermodules-scrollgradient-bottom {
     background: linear-gradient(to top, $layer1 0%, transparentize($layer1, 1) 1.023rem);
 }
-
-.sidebar-scrollable {
-    min-height: 100px;
-}
-
-.sidebar-chat-message {
-    margin: 0.205rem 0.341rem;
-}
-
-.sidebar-chat-message-box {
-    background-color: $layer2;
-    border-radius: $rounding_small;
-    padding: 0.682rem;
-}
-
-.sidebar-chat-divider {
-    margin: 0.341rem 0;
-    border-top: 0.068rem solid $outlineVariant;
-}
-
-.sidebar-module-box {
-    padding: 0.341rem 0.682rem;
-}

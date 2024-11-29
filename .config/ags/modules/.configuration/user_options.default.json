@@ -114,7 +114,7 @@
       "saveInFolderByTags": false
     },
     "pages": {
-      "order": ["apis", "tools", "github"],
+      "order": ["apis", "tools"],
       "apis": {
         "order": ["gemini", "gpt", "translater"]
       }
