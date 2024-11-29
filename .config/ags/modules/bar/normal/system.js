@@ -12,11 +12,15 @@ import {
   WEATHER_SYMBOL,
   NIGHT_WEATHER_SYMBOL,
 } from "../../.commondata/weather.js";
+import Brightness from "../../../services/brightness.js";
+import Indicator from "../../../services/indicator.js";
 
 const options = userOptions.asyncGet();
 const WEATHER_CACHE_FOLDER = `${GLib.get_user_cache_dir()}/ags/weather`;
 const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + "/wttr.in.txt";
 Utils.exec(`mkdir -p ${WEATHER_CACHE_FOLDER}`);
+
+const BRIGHTNESS_STEP = 0.05;
 
 const batteryProgressCache = new Map();
 const BarBatteryProgress = () => {
@@ -253,11 +257,10 @@ const switchToRelativeWorkspace = async (self, num) => {
     ]).catch(print);
   }
 };
-
 export default () =>
   Widget.EventBox({
-    onScrollUp: (self) => switchToRelativeWorkspace(self, -1),
-    onScrollDown: (self) => switchToRelativeWorkspace(self, +1),
+    onScrollUp: () => handleScroll(1),
+    onScrollDown: () => handleScroll(-1),
     onPrimaryClick: () => App.toggleWindow("wallselect"),
     onSecondaryClickRelease: () => Utils.exec(`zeditor`),
     onMiddleClickRelease: () => Utils.exec(`sh  ~/.local/bin/ags-tweaks`),
@@ -265,3 +268,7 @@ export default () =>
       children: [BatteryModule()],
     }),
   });
+const handleScroll = (direction) => {
+  const adjustment = direction > 0 ? "10%+" : "10%-";
+  Utils.execAsync(`brightnessctl set ${adjustment}`);
+};

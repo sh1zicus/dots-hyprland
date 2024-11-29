@@ -285,8 +285,8 @@ export default (monitor = 0) => {
     children: [
       // PinButton(),
       PinnedApps(),
-      DockSeparator(),
-      Taskbar(),
+      // DockSeparator(),
+      // Taskbar(),
       // LauncherButton(),
     ],
   });
