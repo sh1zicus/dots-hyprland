@@ -19,7 +19,7 @@ import {
 import ModuleNotificationList from "./centermodules/notificationlist.js";
 import ModuleAudioControls from "./centermodules/audiocontrols.js";
 import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
-import ModulePowerProfiles from "./centermodules/powerprofiles.js";
+// import ModulePowerProfiles from "./centermodules/powerprofiles.js";
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 // import { ModuleCalendar } from "./calendar.js";
 import { getDistroIcon } from "../.miscutils/system.js";
@@ -67,7 +67,7 @@ const timeRow = Box({
   children: [
     Widget.Icon({
       icon: getDistroIcon(),
-      className: "txt txt-larger",
+      className: "txt txt-massive",
     }),
     Widget.Label({
       hpack: "center",
