@@ -5,8 +5,12 @@ const { GLib } = imports.gi;
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
+import Brightness from "../../../services/brightness.js"; // Assuming the brightness service is imported
+import Indicator from "../../../services/indicator.js"; // Assuming Indicator is used for popup
 
 const options = userOptions.asyncGet();
+
+const BRIGHTNESS_STEP = 0.05;
 
 const batteryProgressCache = new Map();
 const BarBatteryProgress = () => {
@@ -57,10 +61,17 @@ const BarBattery = () => {
     }),
   });
 
+  const handleScroll = (direction) => {
+    Indicator.popup(1);
+    Brightness[0].screen_value += direction * BRIGHTNESS_STEP; // Adjust brightness for monitor 0
+  };
+
   return Box({
     className: "spacing-h-10 bar-batt-txt",
     children: [
       EventBox({
+        onScrollUp: () => handleScroll(1), // Increase brightness
+        onScrollDown: () => handleScroll(-1), // Decrease brightness
         onPrimaryClick: () => {
           isRevealed = !isRevealed;
           percentageRevealer.revealChild = isRevealed;
