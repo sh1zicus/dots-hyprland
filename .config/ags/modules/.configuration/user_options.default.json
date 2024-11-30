@@ -10,9 +10,9 @@
     "proxyUrl": ""
   },
   "animations": {
-    "choreographyDelay": 25,
-    "durationSmall": 110,
-    "durationLarge": 180
+    "choreographyDelay": 15,
+    "durationSmall": 80,
+    "durationLarge": 100
   },
   "appearance": {
     "autoDarkMode": {

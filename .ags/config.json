@@ -1,6 +1,6 @@
 {
   "dock": {
-    "enabled": true,
+    "enabled": false,
     "pinnedApps": [
       "spotify",
       "telegram-desktop",
@@ -14,8 +14,10 @@
     ]
   },
   "apps": {
-    "terminal": "kitty",
+    "terminal": "foot",
     "imageViewer": "loupe",
-    "bluetooth": "blueberry"
+    "bluetooth": "blueberry",
+    "taskManager": "foot btop",
+    "settings": "sh ~/.local/bin/ags-tweaks"
   }
 }

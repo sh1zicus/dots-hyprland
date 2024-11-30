@@ -16,13 +16,13 @@ import {
   BarCornerTopleft,
   BarCornerTopright,
 } from "./modules/bar/main.js";
-import Cheatsheet from "./modules/cheatsheet/main.js";
-import DesktopBackground from "./modules/desktopbackground/main.js";
-import Dock from "./modules/dock/main.js";
+// import Cheatsheet from "./modules/cheatsheet/main.js";
+// import DesktopBackground from "./modules/desktopbackground/main.js";
+// import Dock from "./modules/dock/main.js";
 import Corner from "./modules/screencorners/main.js";
-import Crosshair from "./modules/crosshair/main.js";
+// import Crosshair from "./modules/crosshair/main.js";
 import Indicator from "./modules/indicators/main.js";
-import Osk from "./modules/onscreenkeyboard/main.js";
+// import Osk from "./modules/onscreenkeyboard/main.js";
 import Overview from "./modules/overview/main.js";
 import Session from "./modules/session/main.js";
 import SideLeft from "./modules/sideleft/main.js";
@@ -47,7 +47,8 @@ firstRunWelcome().catch(print);
 startBatteryWarningService().catch(print);
 
 const Windows = () => [
-  forMonitors(DesktopBackground),
+  Wallselect(),
+  // forMonitors(DesktopBackground),
   // forMonitors(Crosshair),
   Overview(),
   forMonitors(Indicator),
@@ -68,7 +69,6 @@ const Windows = () => [
   ...(userOptions.asyncGet().appearance.barRoundCorners
     ? [forMonitors(BarCornerTopleft), forMonitors(BarCornerTopright)]
     : []),
-  Wallselect(),
 ];
 
 const CLOSE_ANIM_TIME = 180; // Longer than actual anim time to make sure widgets animate fully
@@ -85,5 +85,6 @@ App.config({
 });
 
 // Stuff that don't need to be toggled. And they're async so ugh...
-forMonitorsAsync(Bar);
 // Bar().catch(print); // Use this to debug the bar. Single monitor only.
+
+forMonitorsAsync(Bar);
