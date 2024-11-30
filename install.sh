@@ -272,9 +272,6 @@ case $SKIP_WALLPAPERS in
   true) sleep 0;;
   *)
     echo -e "\e[34m[$0]: Setting up wallpapers...\e[0m"
-    # this should be something like 'v mkdir -p "XDG_PICTURE_DIR/Wallpapers"'
-    # unfortunately i am new to linux and have only basic or even less knowledge about XDG
-    # reason: in different localisations the Picture folder is named different for Example "Bilder" for german 
     v mkdir -p "$HOME/Pictures/Wallpapers" 
     v rsync -av "Wallpapers/Lock.jpg" "$HOME/Pictures/Wallpapers/" 
     ;;
