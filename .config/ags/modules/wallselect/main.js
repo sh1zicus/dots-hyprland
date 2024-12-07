@@ -136,27 +136,6 @@ const createPlaceholder = () => Box({
                 }),
             ],
         }),
-        Box({
-            hpack: 'center',
-            children: [
-                Widget.Button({
-                    className: 'button-accent button-large',
-                    label: 'Generate Thumbnails',
-                    onClicked: () => {
-                        Utils.execAsync([
-                            'bash',
-                            `${GLib.get_home_dir()}/.config/ags/scripts/generate_thumbnails.sh`
-                        ]).then(() => {
-                            // Clear cache to reload wallpapers
-                            cachedContent = null;
-                            // Reload window content
-                            App.closeWindow('wallselect');
-                            App.openWindow('wallselect');
-                        }).catch(console.error);
-                    },
-                }),
-            ],
-        }),
     ],
 });
 
@@ -210,6 +189,33 @@ const createContent = async () => {
     }
 };
 
+// Кнопка генерации превью
+const GenerateButton = () => Widget.Button({
+    className: 'button-accent generate-thumbnails',
+    child: Box({
+        children: [
+            Widget.Icon({
+                icon: 'view-refresh-symbolic',
+                size: 16,
+            }),
+            Widget.Label({
+                label: ' Generate Thumbnails',
+            }),
+        ],
+    }),
+    tooltipText: 'Regenerate all wallpaper thumbnails',
+    onClicked: () => {
+        Utils.execAsync([
+            'bash',
+            `${GLib.get_home_dir()}/.config/ags/scripts/generate_thumbnails.sh`
+        ]).then(() => {
+            cachedContent = null;
+            App.closeWindow('wallselect');
+            App.openWindow('wallselect');
+        }).catch(console.error);
+    },
+});
+
 // Main Window
 export default () =>
     Widget.Window({
@@ -229,6 +235,13 @@ export default () =>
                     vertical: true,
                     className: "sidebar-right spacing-v-15",
                     children: [
+                        Box({
+                            className: "wallselect-header",
+                            children: [
+                                Box({ hexpand: true }), // Пустое пространство для выравнивания
+                                GenerateButton(),
+                            ],
+                        }),
                         Box({
                             vertical: true,
                             className: "sidebar-module",
