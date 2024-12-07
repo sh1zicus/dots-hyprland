@@ -66,13 +66,29 @@ const getWallpaperPaths = async () => {
 };
 
 // Debounced Scroll Event
-const debouncedScroll = (scroll, delay = 150) => {
+const debouncedScroll = (scroll, delay = 50) => {
     let timeoutId;
-    return () => {
+    let lastScrollTime = 0;
+    
+    return (event) => {
+        // Предотвращаем слишком частую прокрутку
+        const now = Date.now();
+        if (now - lastScrollTime < 50) return;
+        lastScrollTime = now;
+
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
             const adj = scroll.get_hadjustment();
             const scrollValue = adj.get_value();
+            
+            // Плавная прокрутка с учетом направления
+            if (event.direction === 'up') {
+                adj.set_value(Math.max(0, scrollValue - adj.get_step_increment()));
+            } else {
+                const maxScroll = adj.get_upper() - adj.get_page_size();
+                adj.set_value(Math.min(maxScroll, scrollValue + adj.get_step_increment()));
+            }
+
             if (scrollValue + adj.get_page_size() >= adj.get_upper()) {
                 loadMoreWallpapers();
             }
@@ -171,8 +187,9 @@ const createContent = async () => {
 
         const handleScroll = debouncedScroll(scroll);
         cachedContent = EventBox({
-            onScrollUp: handleScroll,
-            onScrollDown: handleScroll,
+            onScrollUp: (event) => handleScroll({ direction: 'up', event }),
+            onScrollDown: (event) => handleScroll({ direction: 'down', event }),
+            onPrimaryClick: () => App.closeWindow("wallselect"),
             child: scroll,
         });
 
