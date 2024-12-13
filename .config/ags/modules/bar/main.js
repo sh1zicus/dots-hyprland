@@ -1,136 +1,79 @@
 const { Gtk } = imports.gi;
-import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import Battery from 'resource:///com/github/Aylur/ags/service/battery.js';
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+import { currentShellMode } from "../../variables.js";
 
-import WindowTitle from "./normal/spaceleft.js";
-import Indicators from "./normal/spaceright.js";
-import Music from "./normal/music.js";
-import System from "./normal/system.js";
-import { enableClickthrough } from "../.widgetutils/clickthrough.js";
-import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
-import { currentShellMode } from '../../variables.js';
+// Import modular components
+import { BarLayouts, createBarContent } from "./layouts/index.js";
+import { initializeModules } from "./modules/registry.js";
 
-const NormalOptionalWorkspaces = async () => {
-    try {
-        return (await import('./normal/workspaces_hyprland.js')).default();
-    } catch {
+// Create different bar contents
+const createBarContents = async (monitor) => {
+    const modules = await initializeModules();
+    const contents = {};
+
+    // Create content for each mode
+    for (const mode of [1, 2, 3, 4, 5, 6, 7, 8, 9]) { // Normal, Floating, Minimal
         try {
-            return (await import('./normal/workspaces_sway.js')).default();
-        } catch {
-            return null;
+            const layout = BarLayouts[mode];
+            if (layout) {
+                const content = await createBarContent(layout, modules);
+                if (content) {
+                    contents[`mode${mode}`] = content;
+                }
+            }
+        } catch (error) {
+            console.error(`Failed to create content for mode ${mode}:`, error);
         }
     }
+
+    return contents;
 };
 
-const FocusOptionalWorkspaces = async () => {
-    try {
-        return (await import('./focus/workspaces_hyprland.js')).default();
-    } catch {
-        try {
-            return (await import('./focus/workspaces_sway.js')).default();
-        } catch {
-            return null;
-        }
+// Create the bar window
+const createBar = async (monitor = 0) => {
+    const contents = await createBarContents(monitor);
+    const options = globalThis.userOptions?.asyncGet?.() || {};
+
+    // Default to mode1 if no contents are available
+    if (!contents.mode1) {
+        console.error('Failed to create default bar content');
+        return null;
     }
-};
 
-export const Bar = async (monitor = 0) => {
-    const SideModule = (children) => Widget.Box({
-        className: 'bar-sidemodule',
-        children: children,
+    const stack = Widget.Stack({
+        homogeneous: false,
+        transition: "slide_up_down",
+        transitionDuration: options.animations?.durationSmall || 60,
+        children: contents,
     });
-    const normalBarContent = Widget.CenterBox({
-        className: 'bar-bg',
-        setup: (self) => {
-            const styleContext = self.get_style_context();
-            const minHeight = styleContext.get_property('min-height', Gtk.StateFlags.NORMAL);
-            // execAsync(['bash', '-c', `hyprctl keyword monitor ,addreserved,${minHeight},0,0,0`]).catch(print);
-        },
-        startWidget: (await WindowTitle(monitor)),
-        centerWidget: Widget.Box({
-            className: 'spacing-h-4',
-            children: [
-                SideModule([Music()]),
-                Widget.Box({
-                    homogeneous: true,
-                    children: [await NormalOptionalWorkspaces()],
-                }),
-                SideModule([System()]),
-            ]
-        }),
-        endWidget: Indicators(monitor),
-    });
-    const focusedBarContent = Widget.CenterBox({
-        className: 'bar-bg-focus',
-        startWidget: Widget.Box({}),
-        centerWidget: Widget.Box({
-            className: 'spacing-h-4',
-            children: [
-                SideModule([]),
-                Widget.Box({
-                    homogeneous: true,
-                    children: [await FocusOptionalWorkspaces()],
-                }),
-                SideModule([]),
-            ]
-        }),
-        endWidget: Widget.Box({}),
-        setup: (self) => {
-            self.hook(Battery, (self) => {
-                if (!Battery.available) return;
-                self.toggleClassName('bar-bg-focus-batterylow', Battery.percent <= userOptions.asyncGet().battery.low);
-            })
-        }
-    });
-    const nothingContent = Widget.Box({
-        className: 'bar-bg-nothing',
-    })
-    return Widget.Window({
-        monitor,
-        name: `bar${monitor}`,
+
+    const bar = Widget.Window({
+        name: `bar-${monitor}`,
         anchor: [userOptions.asyncGet().bar.position, 'left', 'right'],
-        exclusivity: 'exclusive',
+        exclusivity: "exclusive",
         visible: true,
-        child: Widget.Stack({
-            homogeneous: false,
-            transition: 'slide_up_down',
-            transitionDuration: userOptions.asyncGet().animations.durationLarge,
-            children: {
-                'normal': normalBarContent,
-                'focus': focusedBarContent,
-                'nothing': nothingContent,
-            },
-            setup: (self) => self.hook(currentShellMode, (self) => {
-                self.shown = currentShellMode.value[monitor];
-            })
+        child: Widget.Box({
+            css: 'min-height: 3rem;',
+            children: [stack],
         }),
     });
+
+    // Set up mode switching
+    currentShellMode.connect('changed', () => {
+        const mode = currentShellMode.value?.[monitor] || 1;
+        const modeKey = `mode${mode}`;
+        if (contents[modeKey]) {
+            stack.shown = modeKey;
+        }
+    });
+
+    // Set initial mode
+    const initialMode = currentShellMode.value?.[monitor] || 1;
+    stack.shown = `mode${initialMode}`;
+
+    return bar;
+};
+
+export default async function Bar(monitor = 0) {
+    return createBar(monitor);
 }
-
-export const BarCornerTopleft = (monitor = 0) => Widget.Window({
-    monitor,
-    name: `barcornertl${monitor}`,
-    layer: 'top',
-    anchor: [userOptions.asyncGet().bar.position, 'left'],
-    exclusivity: 'normal',
-    visible: true,
-    child: RoundedCorner(
-        userOptions.asyncGet().bar.position === 'top' ? 'topleft' : 'bottomleft',
-        { className: 'corner', }
-    ),
-    setup: enableClickthrough,
-});
-
-export const BarCornerTopright = (monitor = 0) => Widget.Window({
-    monitor,
-    name: `barcornertr${monitor}`,
-    layer: 'top',
-    anchor: [userOptions.asyncGet().bar.position, 'right'],
-    exclusivity: 'normal',
-    visible: true,
-    child: RoundedCorner(
-        userOptions.asyncGet().bar.position === 'top' ? 'topright' : 'bottomright',
-        { className: 'corner', }
-    ),
-    setup: enableClickthrough,
-});
