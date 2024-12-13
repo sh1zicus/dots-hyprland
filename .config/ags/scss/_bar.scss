@@ -1,19 +1,64 @@
 // 1rem = 11pt = 14.6666666667px
 $bar_ws_width: 1.774rem;
-$bar_ws_width_focus: 0.614rem;
-$bar_ws_width_focus_active: 2.045rem;
+$bar_ws_width_focus: 1rem;
+$bar_ws_width_focus_active: 6.045rem;
 
 @mixin bar-group-rounding {
     @include small-rounding;
 }
-
+.bar-floating {
+    background-color: $layer0;
+    @include elevation2;
+    @include large-rounding;
+    margin: 8px 10px;
+    border-radius: 1.37rem;
+    padding: 3px;
+    -gtk-outline-radius: 10rem;
+}
+.bar-floating-short {
+    background-color: $layer0;
+    @include elevation2;
+    @include large-rounding;
+    margin: 8px 200px;
+    border-radius: 1.37rem;
+    padding: 3px;
+    -gtk-outline-radius: 10rem;
+}
+.bar-floating-shorter {
+    background-color: $layer0;
+    @include elevation2;
+    @include large-rounding;
+    margin: 8px 500px;
+    border-radius: 1.37rem;
+    padding: 3px;
+    -gtk-outline-radius: 10rem;
+}
+.bar-hang {
+    background-color: $layer0;
+    /* padding: 0.3rem 1.1rem; */
+    border-radius: 0px 0px 1.5rem 1.5rem;
+    /* margin: 0px 1px; */
+}
+.bar-notch {
+    background-color: $layer0;
+    padding: 0.05rem 1.1rem 0.4rem;
+    border-radius: 0px 0px 1.5rem 1.5rem;
+    margin-top:-5px
+}
 .bar-height {
-    min-height: 2.727rem;
+    min-height: 3rem;
+}
+.sec-txt {
+    color: $secondary;
 }
 
+.prim-txt {
+    color: $primary;
+}
 .bar-bg {
     background-color: $layer0;
-    min-height: 2.727rem;
+    padding :0px;
+    min-height: 3.3rem;
 }
 
 .bar-bg-focus {
@@ -33,7 +78,10 @@ $bar_ws_width_focus_active: 2.045rem;
 .bar-sidespace {
     min-width: 1.5rem;
 }
+.txt-percent{
+    @include numbertext;
 
+}
 .bar-group-margin {
     padding: 0.273rem 0rem;
 }
@@ -67,6 +115,7 @@ $bar_ws_width_focus_active: 2.045rem;
 .bar-group-round {
     border-radius: 10rem;
     -gtk-outline-radius: 10rem;
+    padding:4px;
 }
 
 .bar-group-middle {
@@ -87,15 +136,18 @@ $bar_ws_width_focus_active: 2.045rem;
     border-top-right-radius: 1.364rem;
     border-bottom-right-radius: 1.364rem;
 }
-
-.bar-sidemodule {
+.bar-largesidemodule {
     min-width: 26rem;
 }
-
+.bar-normsidemodule {
+    min-width: 12rem;
+}
+.bar-smallsidemodule {
+    min-width: 6rem;
+}
 .bar-ws-width {
     min-width: 18.341rem;
 }
-
 
 .bar-ws-container {
     transition: 700ms cubic-bezier(0.1, 1, 0, 1);
@@ -127,7 +179,7 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-ws-focus-active {
     min-width: $bar_ws_width_focus_active;
-    background-color: $onLayer0;
+    background-color: $onSurfaceVariant;
 }
 
 .bar-ws-focus-occupied {
@@ -140,12 +192,35 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-time {
     @include titlefont;
-    font-size: 1.2727rem;
+    font-size: 1.3727rem;
+    color: $timeOnLayer1;
+}
+
+.power-draw-text {
+    @include titlefont;
+    font-size: 1.2rem;
     color: $timeOnLayer1;
 }
 
 .bar-date {
     color: $dateOnLayer1;
+}
+
+.bar-bat {
+    @include full-rounding;
+    @include element_decel;
+    min-height: 1.99rem;
+    min-width: 1.99rem;
+    border-radius: 10rem;
+    color: $battOnLayer2;
+}
+.bar-bat-circprog {
+    @include fluent_decel_long;
+    min-width: 0.2rem; // line width
+    min-height: 1.97rem;
+    padding: 0rem;
+    background-color: $battLayer2;
+    color: $battOnLayer2;
 }
 
 .bar-batt {
@@ -174,7 +249,6 @@ $bar_ws_width_focus_active: 2.045rem;
     background-color: $error;
     color: $errorContainer;
 }
-
 
 .bar-batt-low {
     background-color: $error;
@@ -328,12 +402,15 @@ $bar_ws_width_focus_active: 2.045rem;
 .bar-wintitle-txt {
     color: $windowtitleOnLayer0;
 }
-
+.wintitle {
+    @include techfont;
+    color: $timeOnLayer1;
+}
 .bar-space-button {
     padding: 0.341rem;
 }
 
-.bar-space-button>box:first-child {
+.bar-space-button > box:first-child {
     @include full-rounding;
     padding: 0rem 0.682rem;
 }
@@ -344,7 +421,7 @@ $bar_ws_width_focus_active: 2.045rem;
     }
 }
 
-.bar-space-area-rightmost>box {
+.bar-space-area-rightmost > box {
     padding-right: 1.364rem;
 }
 
@@ -372,8 +449,8 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-statusicons-active {
-    background-color: $layer0Active;
-    color: $onLayer0Active;
+    /* background-color: $layer0Active;
+    color: $onLayer0Active; */
 }
 
 .bar-util-btn {
@@ -393,7 +470,9 @@ $bar_ws_width_focus_active: 2.045rem;
 .bar-util-btn:active {
     background-color: $layer2Active;
 }
-
+.bar-button {
+    color: $utilsOnLayer2;
+}
 .bar-spaceright {
     color: $barspacerightOnLayer0;
 }
@@ -424,4 +503,16 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-wintitle-icon-spacer {
     min-width: 0.714rem;
+}
+
+.bar-content {
+    margin: 0.273rem;
+    padding: 0 0.682rem;
+}
+
+.bar-round-padding{
+    padding:0.3rem 1rem ;
+    background-color: $layer0;
+    @include large-rounding;
+    @include elevation2 
 }
