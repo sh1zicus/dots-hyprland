@@ -23,8 +23,11 @@
     "keyboardUseFlag": false,
     "layerSmoke": false,
     "layerSmokeStrength": 0.2,
-    "barRoundCorners": 1,
-    "fakeScreenRounding": 1
+    "barRoundCorners": 0,
+    "fakeScreenRounding": 1 ,
+    "visualizer": {
+     
+    }
   },
   "apps": {
     "bluetooth": "blueberry",
@@ -107,17 +110,17 @@
     "pages": {
       "order": ["apis", "tools", "github"],
       "apis": {
-        "order": ["gpt", "translater"]
+        "order": ["gemini", "gpt", "translater"]
       }
     },
     "translater": {
       "__custom": ["languages"],
       "from": "auto",
-      "to": "en",
+      "to": "ar",
       "languages": {
         "auto": "Auto",
         "en": "English",
-        "ru": "Russian"
+        "ar": "Arabic"
       }
     }
   },
@@ -139,23 +142,36 @@
     "excludedSites": ["quora.com"]
   },
   "time": {
-    "format": "%H:%M",
-    "interval": 5000,
+    "format": "%I:%M",
+    "interval": 1000,
     "dateFormatLong": "%A, %d/%m",
-    "dateInterval": 5000,
+    "dateInterval": 500000,
     "dateFormat": "%d/%m"
   },
   "weather": {
-    "city": "Barabinsk",
+    "city": "Cairo",
     "preferredUnit": "C"
   },
   "workspaces": {
-    "shown": 10
+    "shown": 10,
+    "focus": 6
   },
   "dock": {
-    "enabled": false,
+    "enabled": true,
     "hiddenThickness": 5,
-    "pinnedApps": ["firefox", "org.gnome.Nautilus"],
+    "pinnedApps": [
+      "zen-browser",
+      "spotube",
+      "github-desktop",
+      "visual-studio-code",
+      "zeditor",
+      "firefox",
+      "nwg-look",
+      "Obisidian",
+      "steam",
+      "heroic-games-launcher",
+      "org.gnome.Nautilus"
+    ],
     "layer": "top",
     "monitorExclusivity": true,
     "searchPinnedAppIcons": false,
@@ -227,7 +243,7 @@
     }
   },
   "bar": {
-    "modes": ["normal"],
+    "mode":"mode1",
     "wallpaper_folder": "~/Pictures/Wallpapers",
     "position": "top"
   }
