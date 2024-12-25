@@ -4,29 +4,58 @@ import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
 const { Box, Button, CenterBox, Entry, EventBox, Icon, Label, Overlay, Revealer, Scrollable, Stack } = Widget;
 const { execAsync, exec } = Utils;
 import { setupCursorHover, setupCursorHoverInfo } from '../.widgetutils/cursorhover.js';
-// APIs
-import GPTService from '../../services/gpt.js';
-import Gemini from '../../services/gemini.js';
-import { geminiView, geminiCommands, sendMessage as geminiSendMessage, geminiTabIcon } from './apis/gemini.js';
-import { chatGPTView, chatGPTCommands, sendMessage as chatGPTSendMessage, chatGPTTabIcon } from './apis/chatgpt.js';
-import { TranslaterView, translaterCommands, sendMessage as translaterSendMessage, translaterIcon } from './apis/translater.js';
+import { MaterialIcon } from '../.commonwidgets/materialicon.js';
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { checkKeybind } from '../.widgetutils/keybind.js';
-const TextView = Widget.subclass(Gtk.TextView, "AgsTextView");
-
 import { widgetContent } from './sideleft.js';
 import { IconTabContainer } from '../.commonwidgets/tabcontainer.js';
 import { writable } from '../../modules/.miscutils/store.js';
+import { fileExists } from '../.miscutils/files.js';
+import GLib from 'gi://GLib';
+import { SystemMessage } from './apis/ai_chatmessage.js';
+const TextView = Widget.subclass(Gtk.TextView, "AgsTextView");
+
+// APIs
+import GPTService from '../../services/gpt.js';
+import Gemini from '../../services/gemini.js';
+import YTMusic from '../../services/ytmusic.js';
+import QuranService from '../../services/quran.js';
+import WallpaperService from '../../services/wallpapers.js';
+import { geminiView, geminiCommands, sendMessage as geminiSendMessage, geminiTabIcon } from './apis/gemini.js';
+import { chatGPTView, chatGPTCommands, sendMessage as chatGPTSendMessage, chatGPTTabIcon } from './apis/chatgpt.js';
+import { TranslaterView, translaterCommands, sendMessage as translaterSendMessage, translaterIcon } from './apis/translater.js';
+import { ytmusicView, ytmusicCommands, sendMessage as ytmusicSendMessage, ytmusicTabIcon, MediaControls } from './apis/ytmusic.js';
+import { quranView, quranCommands, sendMessage as quranSendMessage, quranTabIcon } from './apis/quran.js';
+import { wallpaperView, wallpaperCommands, sendMessage as wallpaperSendMessage, wallpaperTabIcon } from './apis/wallpapers.js';
+
+// Create a custom icon for YouTube Music
 
 const EXPAND_INPUT_THRESHOLD = 30;
 const APILIST = {
+    'wallpapers': {
+        name: 'Wallpapers',
+        sendCommand: wallpaperSendMessage,
+        contentWidget: wallpaperView,
+        commandBar: wallpaperCommands,
+        tabIcon: wallpaperTabIcon,
+        placeholderText: 'Describe your dream wallpaper...',
+    },
+    'quran': {
+        name: 'Quran',
+        sendCommand: quranSendMessage,
+        contentWidget: quranView,
+        commandBar: quranCommands,
+        tabIcon: quranTabIcon,
+    
+        placeholderText: 'وَقُل رَّبِّ زِدْنِي عِلْمًا'
+    },
     'gemini': {
         name: 'Assistant (Gemini Pro)',
         sendCommand: geminiSendMessage,
         contentWidget: geminiView,
         commandBar: geminiCommands,
         tabIcon: geminiTabIcon,
-        placeholderText: getString('Message Gemini...'),
+        placeholderText: 'Message Gemini...',
     },
     'gpt': {
         name: 'Assistant (GPTs)',
@@ -34,7 +63,7 @@ const APILIST = {
         contentWidget: chatGPTView,
         commandBar: chatGPTCommands,
         tabIcon: chatGPTTabIcon,
-        placeholderText: getString('Message the model...'),
+        placeholderText: 'Message the model...',
     },
     'translater': {
         name: 'Google Translater',
@@ -44,6 +73,14 @@ const APILIST = {
         commandBar: translaterCommands,
         placeholderText: 'Translate the text...'
     },
+    'ytmusic': {
+    name: 'YouTube Music',
+    sendCommand: ytmusicSendMessage,
+    contentWidget: ytmusicView,
+    commandBar: ytmusicCommands,
+    tabIcon: ytmusicTabIcon,
+    placeholderText: 'Search music...',
+},
 }
 
 let APIS = writable ([]);
@@ -58,12 +95,16 @@ function apiSendMessage(textView) {
     // Get text
     const buffer = textView.get_buffer();
     const [start, end] = buffer.get_bounds();
-    const text = buffer.get_text(start, end, true).trimStart();
-    if (!text || text.length == 0) return;
-    // Send
-    APIS.asyncGet()[currentApiId].sendCommand(text)
-    // Reset
-    buffer.set_text("", -1);
+    const text = buffer.get_text(start, end, true);
+    if (!text || text.trim().length === 0) return;
+    
+    // Only send if the current API has a sendCommand function
+    const currentApi = APIS.asyncGet()[currentApiId];
+    if (currentApi && currentApi.sendCommand) {
+        currentApi.sendCommand(text.trim());
+    }
+    
+    // Don't reset the buffer here - let the API handle it
     chatEntryWrapper.toggleClassName('sidebar-chat-wrapper-extended', false);
     chatEntry.set_valign(Gtk.Align.CENTER);
 }
@@ -74,18 +115,13 @@ export const chatEntry = TextView({
     acceptsTab: false,
     className: 'sidebar-chat-entry txt txt-smallie',
     setup: (self) => self
-        .hook(App, (self, currentName, visible) => {
-            if (visible && currentName === 'sideleft') {
-                self.grab_focus();
-            }
-        })
         .hook(GPTService, (self) => {
             if (APIS.asyncGet()[currentApiId].name != 'Assistant (GPTs)') return;
-            self.placeholderText = (GPTService.key.length > 0 ? getString('Message the model...') : getString('Enter API Key...'));
+            self.placeholderText = (GPTService.key.length > 0 ? 'Message the model...' : 'Enter API Key...');
         }, 'hasKey')
         .hook(Gemini, (self) => {
             if (APIS.asyncGet()[currentApiId].name != 'Assistant (Gemini Pro)') return;
-            self.placeholderText = (Gemini.key.length > 0 ? getString('Message Gemini...') : getString('Enter Google AI API Key...'));
+            self.placeholderText = (Gemini.key.length > 0 ? 'Message Gemini...' : 'Enter Google AI API Key...');
         }, 'hasKey')
         .on("key-press-event", (widget, event) => {
             // Swtich APIs with Tab
@@ -152,9 +188,18 @@ const chatSendButton = Button({
     label: 'arrow_upward',
     setup: setupCursorHover,
     onClicked: (self) => {
-        APIS.asyncGet()[currentApiId].sendCommand(chatEntry.get_buffer().text);
+        APIS.asyncGet()[currentApiId].sendCommand(chatEntry);
         chatEntry.get_buffer().set_text("", -1);
     },
+});
+
+const chatScreenshotButton = Button({
+    className: 'sidebar-chat-chip sidebar-chat-chip-action txt-small',
+    vpack: 'end',
+    setup: setupCursorHover,
+    tooltipText: 'Take a screenshot',
+    child: MaterialIcon('screenshot_region', 'small'),
+    onClicked: () => sendScreenshotToGemini(),
 });
 
 const chatPlaceholder = Label({
@@ -181,7 +226,13 @@ const textboxArea = Box({ // Entry area
             overlays: [chatPlaceholderRevealer],
         }),
         Box({ className: 'width-10' }),
-        chatSendButton,
+        Box({
+            className: 'spacing-h-5',
+            children: [
+                chatScreenshotButton,
+                chatSendButton,
+            ],
+        }),
     ]
 });
 

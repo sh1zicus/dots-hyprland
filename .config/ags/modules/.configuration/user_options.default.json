@@ -1,7 +1,43 @@
 {
+  "enabled": true,
+  "opacity": 0,
+  "defaultBarMode": 1,
+  "modules": {
+    "bar": true,
+    "dock": false,
+    "sideleft": true,
+    "sideright": true,
+    "overview": true,
+    "cheatsheet": true,
+    "indicators": false,
+    "osd": false,
+    "powermenu": true,
+    "settings": false,
+    "session": true,
+    "colorscheme": true,
+    "screencorners": true,
+    "desktopbackground": false,
+    "wallselect": true,
+    "onscreenkeyboard": false,
+    "crosshair": false,
+    "notifications": true,
+    "weather": false,
+    "system": false,
+    "media": true,
+    "clock": true,
+    "workspaces": true,
+    "tray": true,
+    "battery": true,
+    "network": true,
+    "volume": true,
+    "keyboard": true,
+    "quran": {
+      "verseNumberStyle": "circle"
+    }
+  },
   "ai": {
     "defaultGPTProvider": "openrouter",
-    "onSearch": "gemini",
+    "onSearch": "openrouter",
     "defaultTemperature": 0.9,
     "enhancements": true,
     "useHistory": true,
@@ -12,7 +48,11 @@
   "animations": {
     "choreographyDelay": 25,
     "durationSmall": 110,
-    "durationLarge": 180
+    "durationLarge": 180,
+    "enabled": true,
+    "choreography": true,
+    "duration": 200,
+    "curve": "ease-out"
   },
   "appearance": {
     "autoDarkMode": {
@@ -23,8 +63,27 @@
     "keyboardUseFlag": false,
     "layerSmoke": false,
     "layerSmokeStrength": 0.2,
-    "barRoundCorners": 1,
-    "fakeScreenRounding": 1
+    "barRoundCorners": 0,
+    "fakeScreenRounding": 0,
+    "visualizer": {},
+    "profilePhoto": "",
+    "theme": {
+      "name": "default",
+      "style": "dark",
+      "blur": {
+        "enabled": true,
+        "strength": 5
+      },
+      "colors": {
+        "primary": "#5294e2",
+        "secondary": "#7c818c",
+        "success": "#73d216",
+        "warning": "#f57900",
+        "error": "#cc0000",
+        "background": "#2f343f",
+        "foreground": "#d3dae3"
+      }
+    }
   },
   "apps": {
     "bluetooth": "blueberry",
@@ -32,19 +91,37 @@
     "network": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center wifi",
     "settings": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center",
     "taskManager": "foot -e btop",
-    "terminal": "foot"
+    "terminal": "foot",
+    "browser": "firefox",
+    "fileManager": "nautilus",
+    "textEditor": "code",
+    "audioPlayer": "spotify",
+    "calculator": "gnome-calculator"
   },
   "battery": {
     "low": 20,
     "critical": 10,
-    "warnLevels": [20, 15, 5],
-    "warnTitles": ["Low battery", "Very low battery", "Critical Battery"],
+    "warnLevels": [
+      20,
+      15,
+      5
+    ],
+    "warnTitles": [
+      "Low battery",
+      "Very low battery",
+      "Critical Battery"
+    ],
     "warnMessages": [
       "Plug in the charger",
       "You there?",
       "PLUG THE CHARGER ALREADY"
     ],
-    "suspendThreshold": 3
+    "suspendThreshold": 3,
+    "batteryBar": {
+      "enabled": true,
+      "showPercentage": true,
+      "showTime": true
+    }
   },
   "brightness": {
     "controllers": {
@@ -73,18 +150,30 @@
     "preferredPlayer": "plasma-browser-integration"
   },
   "onScreenKeyboard": {
-    "layout": "qwerty_full"
+    "layout": "qwerty_full",
+    "enabled": true
   },
   "overview": {
     "scale": 0.18,
     "numOfRows": 2,
     "numOfCols": 5,
     "wsNumScale": 0.09,
-    "wsNumMarginScale": 0.07
+    "wsNumMarginScale": 0.07,
+    "enabled": true,
+    "layout": "grid",
+    "scrolling": true,
+    "preview": {
+      "enabled": true,
+      "scale": 0.18,
+      "rows": 2,
+      "cols": 3
+    }
   },
   "sidebar": {
     "ai": {
-      "__custom": ["extraGptModels"],
+      "__custom": [
+        "extraGptModels"
+      ],
       "extraGptModels": {
         "openrouter": {
           "name": "Llama 3 8B",
@@ -105,19 +194,29 @@
       "saveInFolderByTags": false
     },
     "pages": {
-      "order": ["apis", "tools", "github"],
+      "order": [
+        "apis",
+        "tools"
+      ],
       "apis": {
-        "order": ["gpt", "translater"]
+        "order": [
+          "gemini",
+          "gpt",
+          "translater",
+          "quran"
+        ]
       }
     },
     "translater": {
-      "__custom": ["languages"],
+      "__custom": [
+        "languages"
+      ],
       "from": "auto",
-      "to": "en",
+      "to": "ar",
       "languages": {
         "auto": "Auto",
         "en": "English",
-        "ru": "Russian"
+        "ar": "Arabic"
       }
     }
   },
@@ -136,65 +235,67 @@
       "webSearch": true
     },
     "engineBaseUrl": "https://www.google.com/search?q=",
-    "excludedSites": ["quora.com"]
+    "excludedSites": [
+      "quora.com"
+    ]
   },
   "time": {
-    "format": "%H:%M",
-    "interval": 5000,
+    "format": "%I:%M",
+    "interval": 1000,
     "dateFormatLong": "%A, %d/%m",
-    "dateInterval": 5000,
+    "dateInterval": 500000,
     "dateFormat": "%d/%m"
   },
-  "weather": {
-    "city": "Barabinsk",
-    "preferredUnit": "C"
-  },
-  "workspaces": {
-    "shown": 10
-  },
-  "dock": {
-    "enabled": false,
-    "hiddenThickness": 5,
-    "pinnedApps": ["firefox", "org.gnome.Nautilus"],
-    "layer": "top",
-    "monitorExclusivity": true,
-    "searchPinnedAppIcons": false,
-    "trigger": ["client-added", "client-removed"],
-    "autoHide": [
+  "timers": {
+    "presets": [
       {
-        "trigger": "client-added",
-        "interval": 500
+        "name": "Pomodoro",
+        "duration": 1500,
+        "icon": "timer"
       },
       {
-        "trigger": "client-removed",
-        "interval": 500
+        "name": "Short Break",
+        "duration": 300,
+        "icon": "coffee"
+      },
+      {
+        "name": "Long Break",
+        "duration": 900,
+        "icon": "self_improvement"
       }
     ]
   },
-  "icons": {
-    "__custom": ["substitutions", "regexSubstitutions"],
-    "searchPaths": [""],
-    "symbolicIconTheme": {
-      "dark": "Adwaita",
-      "light": "Adwaita"
+  "weather": {
+    "city": "Cairo",
+    "preferredUnit": "C",
+    "enabled": true,
+    "provider": "openweathermap",
+    "location": "auto",
+    "units": "metric",
+    "showDetails": true,
+    "updateInterval": 900000
+  },
+  "workspaces": {
+    "shown": 10,
+    "labels": {
+      "1": "一",
+      "2": "二",
+      "3": "三",
+      "4": "四",
+      "5": "五",
+      "6": "六",
+      "7": "七",
+      "8": "八",
+      "9": "九",
+      "10": "十"
     },
-    "substitutions": {
-      "code-url-handler": "code",
-      "Code": "code",
-      "GitHub Desktop": "github-desktop",
-      "Minecraft* 1.20.1": "minecraft",
-      "gnome-tweaks": "org.gnome.tweaks",
-      "pavucontrol-qt": "pavucontrol",
-      "wps": "wps-office2019-kprometheus",
-      "wpsoffice": "wps-office2019-kprometheus",
-      "": "image-missing"
-    },
-    "regexSubstitutions": [
-      {
-        "regex": {},
-        "replace": "steam_icon_$1"
-      }
-    ]
+    "numeric_style": "unicode",
+    "defaultLabel": "•",
+    "activeWorkspaceStyle": "unicode",
+    "focus": 6,
+    "enabled": true,
+    "style": "unicode",
+    "duration": 200
   },
   "keybinds": {
     "overview": {
@@ -226,9 +327,260 @@
       "cycleTab": "Ctrl+Tab"
     }
   },
+  "ytmusic": {
+    "audioQuality": {
+      "type": "enum",
+      "default": "low",
+      "enums": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "descriptions": {
+        "low": "Low quality (saves data)",
+        "medium": "Medium quality (128kbps)",
+        "high": "High quality (best opus/audio)"
+      }
+    },
+    "autoQueue": {
+      "type": "boolean",
+      "default": true,
+      "description": "Automatically queue similar tracks"
+    },
+    "queueSize": {
+      "type": "number",
+      "default": 5,
+      "description": "Number of tracks to auto-queue"
+    },
+    "cacheTimeout": {
+      "type": "number",
+      "default": 30,
+      "description": "Cache timeout in minutes"
+    }
+  },
+  "widget": {
+    "enabled": true,
+    "name": "ags-shell"
+  },
+  "display": {
+    "enabled": true,
+    "expand": true,
+    "scale-factor": 1
+  },
+  "keyboard": {
+    "enabled": true,
+    "layout": "us",
+    "numlock": true,
+    "capslock": false,
+    "repeat": {
+      "delay": 500,
+      "interval": 30
+    }
+  },
+  "panel": {
+    "enabled": true,
+    "position": "top",
+    "spacing": 8,
+    "height": 32,
+    "margin": {
+      "top": 0,
+      "bottom": 0,
+      "left": 0,
+      "right": 0
+    },
+    "padding": {
+      "top": 0,
+      "bottom": 0,
+      "left": 8,
+      "right": 8
+    }
+  },
+  "presets": {
+    "minimal": {
+      "bar": true,
+      "dock": false,
+      "sideleft": false,
+      "sideright": true,
+      "notifications": true,
+      "quicksettings": true
+    },
+    "gaming": {
+      "bar": true,
+      "dock": false,
+      "sideleft": false,
+      "sideright": false,
+      "notifications": false,
+      "quicksettings": false
+    },
+    "full": {
+      "bar": true,
+      "dock": true,
+      "sideleft": true,
+      "sideright": true,
+      "notifications": true,
+      "quicksettings": true
+    }
+  },
+  "gestures": {
+    "enabled": true,
+    "workspace": {
+      "swipeLeft": "next",
+      "swipeRight": "prev",
+      "pinchThreshold": 0.5
+    },
+    "overview": {
+      "pinchThreshold": 0.5
+    }
+  },
+  "icons": {
+    "__custom": [
+      "substitutions",
+      "regexSubstitutions"
+    ],
+    "searchPaths": [
+      ""
+    ],
+    "symbolicIconTheme": {
+      "dark": "Adwaita",
+      "light": "Adwaita"
+    },
+    "substitutions": {
+      "code-url-handler": "code",
+      "Code": "code",
+      "GitHub Desktop": "github-desktop",
+      "Minecraft* 1.20.1": "minecraft",
+      "gnome-tweaks": "org.gnome.tweaks",
+      "pavucontrol-qt": "pavucontrol",
+      "wps": "wps-office2019-kprometheus",
+      "wpsoffice": "wps-office2019-kprometheus",
+      "": "image-missing"
+    },
+    "regexSubstitutions": [
+      {
+        "regex": "^steam_app_(\\d+)$",
+        "replace": "steam_icon_$1"
+      }
+    ]
+  },
+  "dock": {
+    "enabled": true,
+    "hiddenThickness": 5,
+    "pinnedApps": [
+      "zen-browser",
+      "spotube",
+      "github-desktop",
+      "visual-studio-code",
+      "zeditor",
+      "nwg-look",
+      "Obisidian",
+      "steam",
+      "heroic-games-launcher",
+      "org.gnome.Nautilus",
+      "chromium",
+      "visual studio code",
+      "windsurf"
+    ],
+    "layer": "top",
+    "monitorExclusivity": true,
+    "searchPinnedAppIcons": false,
+    "trigger": [
+      "client-added",
+      "client-removed"
+    ],
+    "autoHide": [
+      {
+        "trigger": "client-added",
+        "interval": 500
+      },
+      {
+        "trigger": "client-removed",
+        "interval": 500
+      }
+    ],
+    "position": "bottom",
+    "iconSize": 48,
+    "margin": 8,
+    "spacing": 8,
+    "behavior": {
+      "pressure": true,
+      "autohide": true,
+      "showUnpinned": true,
+      "hideTimeout": 500
+    }
+  },
   "bar": {
-    "modes": ["normal"],
+    "mode": "mode1",
     "wallpaper_folder": "~/Pictures/Wallpapers",
-    "position": "top"
+    "position": "top",
+    "enabled": true,
+    "spacing": 8,
+    "elements": {
+      "showWorkspaces": true,
+      "showBattery": true,
+      "showClock": true,
+      "showNetwork": true,
+      "showVolume": true,
+      "showPower": true,
+      "showNotifications": true,
+      "showSystemTray": true
+    }
+  },
+  "notifications": {
+    "position": "top right",
+    "blacklist": [
+      "Spotify"
+    ],
+    "enabled": true,
+    "width": 380,
+    "timeout": 5000,
+    "popupTimeout": 5000,
+    "maxVisible": 5,
+    "spacing": 8
+  },
+  "quicksettings": {
+    "enabled": true,
+    "position": "right",
+    "media": {
+      "enabled": true,
+      "preferredPlayer": "spotify",
+      "coverArt": {
+        "enabled": true,
+        "size": 96
+      }
+    },
+    "sliders": {
+      "volume": {
+        "enabled": true,
+        "showIcon": true
+      },
+      "brightness": {
+        "enabled": true,
+        "showIcon": true
+      }
+    }
+  },
+  "power": {
+    "enabled": true,
+    "profile": "balanced"
+  },
+  "sideright": {
+    "enabled": true,
+    "width": 400,
+    "position": "right",
+    "modules": {
+      "quicksettings": true,
+      "notifications": true,
+      "media": true
+    }
+  },
+  "sideleft": {
+    "enabled": true,
+    "width": 400,
+    "position": "left",
+    "modules": {
+      "dashboard": true,
+      "music": true,
+      "weather": true
+    }
   }
 }
