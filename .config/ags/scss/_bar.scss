@@ -320,6 +320,10 @@ $bar_ws_width_focus_active: 2.045rem;
     @include large-rounding;
 }
 
+.bar-wintitle-icon-spacer {
+    min-width: 0.414rem;
+}
+
 .bar-wintitle-topdesc {
     margin-top: -0.136rem;
     margin-bottom: -0.341rem;
