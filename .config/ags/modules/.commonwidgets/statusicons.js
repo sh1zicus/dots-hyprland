@@ -82,6 +82,52 @@ export const NotificationIndicator = (notifCenterName = 'sideright') => {
     return widget;
 }
 
+export const MicIndicator = () => Widget.Button({
+    onClicked: () => {
+        if (Audio.microphone)
+            Audio.microphone.isMuted = !Audio.microphone.isMuted;
+    },
+    child: Widget.Box({
+        children: [
+            Widget.Stack({
+                transition: 'slide_up_down',
+                transitionDuration: userOptions.animations.durationSmall,
+                children: {
+                    'true': MaterialIcon('mic_off', 'norm'),
+                    'false': MaterialIcon('mic', 'norm'),
+                },
+                setup: (self) => self.hook(Audio, (stack) => {
+                    if (!Audio.microphone) return;
+                    stack.shown = String(Audio.microphone.isMuted);
+                }),
+            }),
+        ],
+    }),
+});
+
+export const SpeakerIndicator = () => Widget.Button({
+    onClicked: () => {
+        if (Audio.speaker)
+            Audio.speaker.isMuted = !Audio.speaker.isMuted;
+    },
+    child: Widget.Box({
+        children: [
+            Widget.Stack({
+                transition: 'slide_up_down',
+                transitionDuration: userOptions.animations.durationSmall,
+                children: {
+                    'true': MaterialIcon('volume_off', 'norm'),
+                    'false': MaterialIcon('volume_up', 'norm'),
+                },
+                setup: (self) => self.hook(Audio, (stack) => {
+                    if (!Audio.speaker) return;
+                    stack.shown = String(Audio.speaker.isMuted);
+                }),
+            }),
+        ],
+    }),
+});
+
 export const BluetoothIndicator = () => Widget.Stack({
     transition: 'slide_up_down',
     transitionDuration: userOptions.animations.durationSmall,
@@ -293,7 +339,8 @@ export const StatusIcons = (props = {}, monitor = 0) => Widget.Box({
     child: Widget.Box({
         className: 'spacing-h-15',
         children: [
-            MicMuteIndicator(),
+            MicIndicator(),
+            SpeakerIndicator(),
             optionalKeyboardLayoutInstances[monitor],
             NotificationIndicator(),
             NetworkIndicator(),
