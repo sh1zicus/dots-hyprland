@@ -7,7 +7,7 @@ CONFIG_DIR="$XDG_CONFIG_HOME/ags"
 CACHE_DIR="$XDG_CACHE_HOME/ags"
 STATE_DIR="$XDG_STATE_HOME/ags"
 
-term_alpha=90 #Set this to < 100 make all your terminals transparent
+term_alpha=100 #Set this to < 100 make all your terminals transparent
 # sleep 0 # idk i wanted some delay or colors dont get applied properly
 if [ ! -d "$CACHE_DIR"/user/generated ]; then
     mkdir -p "$CACHE_DIR"/user/generated
@@ -106,17 +106,13 @@ apply_hyprland() {
 
 apply_hyprlock() {
     # Check if scripts/templates/hypr/hyprlock.conf exists
-    if [[ ! -f "scripts/templates/hypr/hyprlock.conf" ]] then
+    if [ ! -f "scripts/templates/hypr/hyprlock.conf" ]; then
         echo "Template file not found for hyprlock. Skipping that."
         return
     fi
     # Copy template
     mkdir -p "$CACHE_DIR"/user/generated/hypr/
-    if [[ -f "$HOME/.ags/templates/hypr/hyprlock.conf" ]] then
-        cp "$HOME/.ags/templates/hypr/hyprlock.conf" "$CACHE_DIR"/user/generated/hypr/hyprlock.conf
-    else
-        cp "scripts/templates/hypr/hyprlock.conf" "$CACHE_DIR"/user/generated/hypr/hyprlock.conf
-    fi
+    cp "scripts/templates/hypr/hyprlock.conf" "$CACHE_DIR"/user/generated/hypr/hyprlock.conf
     # Apply colors
     # sed -i "s/{{ SWWW_WALL }}/${wallpath_png}/g" "$CACHE_DIR"/user/generated/hypr/hyprlock.conf
     for i in "${!colorlist[@]}"; do

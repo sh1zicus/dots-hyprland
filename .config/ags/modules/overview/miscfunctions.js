@@ -5,112 +5,161 @@ const { execAsync, exec } = Utils;
 import Todo from "../../services/todo.js";
 import { darkMode } from '../.miscutils/system.js';
 
-export const hasUnterminatedBackslash = str => /\\+$/.test(str);
-
-export function launchCustomCommand(command) {
-    const [cmd, ...args] = command.toLowerCase().split(' ');
-    const execScript = (script, params = '') => 
-        execAsync([`bash`, `-c`, `${App.configDir}/scripts/${script}`, params]).catch(print);
-        
-    const commands = {
-        '>raw': () => {
-            Utils.execAsync('hyprctl -j getoption input:accel_profile')
-                .then(output => {
-                    const value = JSON.parse(output).str.trim();
-                    execAsync(['bash', '-c', 
-                        `hyprctl keyword input:accel_profile '${value != "[[EMPTY]]" && value != "" ? "[[EMPTY]]" : "flat"}'`
-                    ]).catch(print);
-                });
-        },
-        '>img': () => execScript('color_generation/switchwall.sh', '&'),
-        '>color': () => {
-            if (!args[0]) execScript('color_generation/switchcolor.sh --pick', '&');
-            else if (args[0][0] === '#') execScript(`color_generation/switchcolor.sh "${args[0]}"`, '&');
-        },
-        '>light': () => darkMode.value = false,
-        '>dark': () => darkMode.value = true,
-        '>badapple': () => {
-            const userStateDir = GLib.get_user_state_dir();
-            execAsync([`bash`, `-c`, 
-                `mkdir -p ${userStateDir}/ags/user && 
-                 sed -i "3s/.*/monochrome/" ${userStateDir}/ags/user/colormode.txt`])
-                .then(() => execScript('color_generation/switchcolor.sh'))
-                .catch(print);
-        },
-        '>adw': () => execScript('color_generation/switchcolor.sh "#3584E4" --no-gradience', '&'),
-        '>adwaita': () => execScript('color_generation/switchcolor.sh "#3584E4" --no-gradience', '&'),
-        '>grad': () => execScript('color_generation/switchcolor.sh - --yes-gradience', '&'),
-        '>gradience': () => execScript('color_generation/switchcolor.sh - --yes-gradience', '&'), 
-        '>nograd': () => execScript('color_generation/switchcolor.sh - --no-gradience', '&'),
-        '>nogradience': () => execScript('color_generation/switchcolor.sh - --no-gradience', '&'),
-        '>material': () => {
-            const userStateDir = GLib.get_user_state_dir();
-            execAsync([`bash`, `-c`, 
-                `mkdir -p ${userStateDir}/ags/user && 
-                 echo "material" > ${userStateDir}/ags/user/colorbackend.txt`])
-                .then(() => execScript('color_generation/switchwall.sh --noswitch'))
-                .catch(print);
-        },
-        '>pywal': () => {
-            const userStateDir = GLib.get_user_state_dir();
-            execAsync([`bash`, `-c`, 
-                `mkdir -p ${userStateDir}/ags/user && 
-                 echo "pywal" > ${userStateDir}/ags/user/colorbackend.txt`])
-                .then(() => execScript('color_generation/switchwall.sh --noswitch'))
-                .catch(print);
-        },
-        '>todo': () => Todo.add(args.join(' ')),
-        '>shutdown': () => execAsync(['bash', '-c', 'systemctl poweroff || loginctl poweroff']).catch(print),
-        '>reboot': () => execAsync(['bash', '-c', 'systemctl reboot || loginctl reboot']).catch(print),
-        '>sleep': () => execAsync(['bash', '-c', 'systemctl suspend || loginctl suspend']).catch(print),
-        '>logout': () => execAsync(['bash', '-c', 'pkill Hyprland || pkill sway']).catch(print)
-    };
-
-    commands[cmd]?.();
+export function hasUnterminatedBackslash(inputString) {
+    // Use a regular expression to match a trailing odd number of backslashes
+    const regex = /\\+$/;
+    return regex.test(inputString);
 }
 
-export const execAndClose = (command, terminal) => {
+export function launchCustomCommand(command) {
+    const args = command.toLowerCase().split(' ');
+    if (args[0] == '>raw') { // Mouse raw input
+        Utils.execAsync('hyprctl -j getoption input:accel_profile')
+            .then((output) => {
+                const value = JSON.parse(output)["str"].trim();
+                if (value != "[[EMPTY]]" && value != "") {
+                    execAsync(['bash', '-c', `hyprctl keyword input:accel_profile '[[EMPTY]]'`]).catch(print);
+                }
+                else {
+                    execAsync(['bash', '-c', `hyprctl keyword input:accel_profile flat`]).catch(print);
+                }
+            })
+    }
+    else if (args[0] == '>img') { // Change wallpaper
+        execAsync([`bash`, `-c`, `${App.configDir}/scripts/color_generation/switchwall.sh`, `&`]).catch(print);
+    }
+    else if (args[0] == '>color') { // Generate colorscheme from color picker
+        if (!args[1])
+            execAsync([`bash`, `-c`, `${App.configDir}/scripts/color_generation/switchcolor.sh --pick`, `&`]).catch(print);
+        else if (args[1][0] === '#')
+            execAsync([`bash`, `-c`, `${App.configDir}/scripts/color_generation/switchcolor.sh "${args[1]}"`, `&`]).catch(print);
+    }
+    else if (args[0] == '>light') { // Light mode
+        darkMode.value = false;
+    }
+    else if (args[0] == '>dark') { // Dark mode
+        darkMode.value = true;
+    }
+    else if (args[0] == '>badapple') { // Black and white
+        execAsync([`bash`, `-c`, `mkdir -p ${GLib.get_user_state_dir()}/ags/user && sed -i "3s/.*/monochrome/" ${GLib.get_user_state_dir()}/ags/user/colormode.txt`])
+            .then(execAsync(['bash', '-c', `${App.configDir}/scripts/color_generation/switchcolor.sh`]))
+            .catch(print);
+    }
+    else if (args[0] == '>adw' || args[0] == '>adwaita') {
+        const ADWAITA_BLUE = "#3584E4";
+        execAsync([`bash`, `-c`, `${App.configDir}/scripts/color_generation/switchcolor.sh "${ADWAITA_BLUE}" --no-gradience`, `&`])
+            .catch(print);
+    }
+    else if (args[0] == '>grad' || args[0] == '>gradience') {
+        execAsync([`bash`, `-c`, `${App.configDir}/scripts/color_generation/switchcolor.sh - --yes-gradience`, `&`])
+            .catch(print);
+    }
+    else if (args[0] == '>nograd' || args[0] == '>nogradience') {
+        execAsync([`bash`, `-c`, `${App.configDir}/scripts/color_generation/switchcolor.sh - --no-gradience`, `&`])
+            .catch(print);
+    }
+    else if (args[0] == '>material') { // Use material colors
+        execAsync([`bash`, `-c`, `mkdir -p ${GLib.get_user_state_dir()}/ags/user && echo "material" > ${GLib.get_user_state_dir()}/ags/user/colorbackend.txt`]).catch(print)
+            .then(execAsync(['bash', '-c', `${App.configDir}/scripts/color_generation/switchwall.sh --noswitch`]).catch(print))
+            .catch(print);
+    }
+    else if (args[0] == '>pywal') { // Use Pywal (ik it looks shit but I'm not removing)
+        execAsync([`bash`, `-c`, `mkdir -p ${GLib.get_user_state_dir()}/ags/user && echo "pywal" > ${GLib.get_user_state_dir()}/ags/user/colorbackend.txt`]).catch(print)
+            .then(execAsync(['bash', '-c', `${App.configDir}/scripts/color_generation/switchwall.sh --noswitch`]).catch(print))
+            .catch(print);
+    }
+    else if (args[0] == '>todo') { // Todo
+        Todo.add(args.slice(1).join(' '));
+    }
+    else if (args[0] == '>shutdown') { // Shut down
+        execAsync([`bash`, `-c`, `systemctl poweroff || loginctl poweroff`]).catch(print);
+    }
+    else if (args[0] == '>reboot') { // Reboot
+        execAsync([`bash`, `-c`, `systemctl reboot || loginctl reboot`]).catch(print);
+    }
+    else if (args[0] == '>sleep') { // Sleep
+        execAsync([`bash`, `-c`, `systemctl suspend || loginctl suspend`]).catch(print);
+    }
+    else if (args[0] == '>logout') { // Log out
+        execAsync([`bash`, `-c`, `pkill Hyprland || pkill sway`]).catch(print);
+    }
+}
+
+export function execAndClose(command, terminal) {
     App.closeWindow('overview');
     if (terminal) {
-        execAsync(['bash', '-c', `${userOptions.asyncGet().apps.terminal} fish -C "${command}"`, '&']).catch(print);
-    } else {
-        execAsync(command).catch(print);
+        execAsync([`bash`, `-c`, `${userOptions.apps.terminal} fish -C "${command}"`, `&`]).catch(print);
     }
-};
+    else
+        execAsync(command).catch(print);
+}
 
-export const couldBeMath = str => /^[0-9.+*/-]/.test(str);
+export function couldBeMath(str) {
+    const regex = /^[0-9.+*/-]/;
+    return regex.test(str);
+}
 
-export const expandTilde = path => path.startsWith('~') ? GLib.get_home_dir() + path.slice(1) : path;
+export function expandTilde(path) {
+    if (path.startsWith('~')) {
+        return GLib.get_home_dir() + path.slice(1);
+    } else {
+        return path;
+    }
+}
 
-const getFileIcon = fileInfo => fileInfo.get_icon()?.get_names()[0] || 'text-x-generic';
+function getFileIcon(fileInfo) {
+    let icon = fileInfo.get_icon();
+    if (icon) {
+        // Get the icon's name
+        return icon.get_names()[0];
+    } else {
+        // Default icon for files
+        return 'text-x-generic';
+    }
+}
 
 export function ls({ path = '~', silent = false }) {
+    let contents = [];
     try {
-        const expandedPath = expandTilde(path).replace(/\/$/, '');
-        const folder = Gio.File.new_for_path(expandedPath);
-        const enumerator = folder.enumerate_children('standard::*', Gio.FileQueryInfoFlags.NONE, null);
-        
-        const contents = [];
+        let expandedPath = expandTilde(path);
+        if (expandedPath.endsWith('/'))
+            expandedPath = expandedPath.slice(0, -1);
+        let folder = Gio.File.new_for_path(expandedPath);
+
+        let enumerator = folder.enumerate_children('standard::*', Gio.FileQueryInfoFlags.NONE, null);
         let fileInfo;
-        while ((fileInfo = enumerator.next_file(null))) {
-            const fileName = fileInfo.get_display_name();
-            const isDirectory = fileInfo.get_file_type() === Gio.FileType.DIRECTORY;
-            
-            contents.push({
+        while ((fileInfo = enumerator.next_file(null)) !== null) {
+            let fileName = fileInfo.get_display_name();
+            let fileType = fileInfo.get_file_type();
+
+            let item = {
                 parentPath: expandedPath,
                 name: fileName,
-                type: isDirectory ? 'folder' : fileName.split('.').pop(),
-                icon: getFileIcon(fileInfo)
+                type: fileType === Gio.FileType.DIRECTORY ? 'folder' : 'file',
+                icon: getFileIcon(fileInfo),
+            };
+
+            // Add file extension for files
+            if (fileType === Gio.FileType.REGULAR) {
+                let fileExtension = fileName.split('.').pop();
+                item.type = `${fileExtension}`;
+            }
+
+            contents.push(item);
+            contents.sort((a, b) => {
+                const aIsFolder = a.type.startsWith('folder');
+                const bIsFolder = b.type.startsWith('folder');
+                if (aIsFolder && !bIsFolder) {
+                    return -1;
+                } else if (!aIsFolder && bIsFolder) {
+                    return 1;
+                } else {
+                    return a.name.localeCompare(b.name); // Sort alphabetically within folders and files
+                }
             });
         }
-        
-        return contents.sort((a, b) => {
-            const aIsFolder = a.type === 'folder';
-            const bIsFolder = b.type === 'folder';
-            return aIsFolder === bIsFolder ? a.name.localeCompare(b.name) : bIsFolder ? 1 : -1;
-        });
     } catch (e) {
         if (!silent) console.log(e);
-        return [];
     }
+    return contents;
 }

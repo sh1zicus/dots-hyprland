@@ -90,10 +90,10 @@ export default (props) => {
                                 icon: 'clear_all',
                                 name: getString('Choreography delay'),
                                 desc: getString('In milliseconds, the delay between animations of a series'),
-                                initValue: userOptions.asyncGet().animations.choreographyDelay,
+                                initValue: userOptions.animations.choreographyDelay,
                                 step: 10, minValue: 0, maxValue: 1000,
                                 onChange: (self, newValue) => {
-                                    userOptions.asyncGet().animations.choreographyDelay = newValue
+                                    userOptions.animations.choreographyDelay = newValue
                                 },
                             })
                         ]),
@@ -101,15 +101,6 @@ export default (props) => {
                 }),
                 ConfigSection({
                     name: getString('Developer'), children: [
-                        ConfigToggle({
-                            icon: 'developer_mode',
-                            name: getString('Developer mode'),
-                            desc: getString("Show development widgets\nCurrently controls battery widget visibility"),
-                            initValue: globalThis.devMode.value,
-                            onChange: (self, newValue) => {
-                                globalThis.devMode.setValue(newValue);
-                            },
-                        }),
                         HyprlandToggle({ icon: 'speed', name: getString('Show FPS'), desc: getString("[Hyprland]\nShow FPS overlay on top-left corner"), option: "debug:overlay" }),
                         HyprlandToggle({ icon: 'sort', name: getString('Log to stdout'), desc: getString("[Hyprland]\nPrint LOG, ERR, WARN, etc. messages to the console"), option: "debug:enable_stdout_logs" }),
                         HyprlandToggle({ icon: 'motion_sensor_active', name: getString('Damage tracking'), desc: getString("[Hyprland]\nEnable damage tracking\nGenerally, leave it on.\nTurn off only when a shader doesn't work"), option: "debug:damage_tracking", enableValue: 2 }),

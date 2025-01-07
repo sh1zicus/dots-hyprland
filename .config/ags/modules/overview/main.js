@@ -3,14 +3,9 @@ import { SearchAndWindows } from "./windowcontent.js";
 import PopupWindow from '../.widgethacks/popupwindow.js';
 import { clickCloseRegion } from '../.commonwidgets/clickcloseregion.js';
 
-const createCloseRegion = (expand = false) => clickCloseRegion({
-    name: 'overview',
-    multimonitor: false,
-    expand,
-});
-
 export default (id = '') => PopupWindow({
     name: `overview${id}`,
+    // exclusivity: 'ignore',
     keymode: 'on-demand',
     visible: false,
     anchor: ['top', 'bottom', 'left', 'right'],
@@ -18,15 +13,16 @@ export default (id = '') => PopupWindow({
     child: Widget.Box({
         vertical: true,
         children: [
-            createCloseRegion(false),
+            clickCloseRegion({ name: 'overview', multimonitor: false, expand: false }),
             Widget.Box({
                 children: [
-                    createCloseRegion(),
+                    clickCloseRegion({ name: 'overview', multimonitor: false }),
                     SearchAndWindows(),
-                    createCloseRegion(),
+                    clickCloseRegion({ name: 'overview', multimonitor: false }),
                 ]
             }),
-            createCloseRegion(),
+            clickCloseRegion({ name: 'overview', multimonitor: false }),
         ]
     }),
 })
+

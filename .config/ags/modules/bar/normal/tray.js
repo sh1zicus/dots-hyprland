@@ -26,7 +26,7 @@ export const Tray = (props = {}) => {
     const trayRevealer = Widget.Revealer({
         revealChild: true,
         transition: 'slide_left',
-        transitionDuration: userOptions.asyncGet().animations.durationLarge,
+        transitionDuration: userOptions.animations.durationLarge,
         child: trayContent,
     });
     return Box({

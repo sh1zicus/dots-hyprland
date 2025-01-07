@@ -20,9 +20,6 @@ darkMode.connect('changed', ({ value }) => {
 globalThis['darkMode'] = darkMode;
 export const hasPlasmaIntegration = !!Utils.exec('bash -c "command -v plasma-browser-integration-host"');
 
-export const devMode = Variable(false);
-globalThis['devMode'] = devMode;
-
 export const getDistroIcon = () => {
     // Arches
     if(distroID == 'arch') return 'arch-symbolic';

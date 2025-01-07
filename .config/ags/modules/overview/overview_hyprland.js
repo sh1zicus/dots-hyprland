@@ -17,9 +17,7 @@ import { iconExists, substitute } from "../.miscutils/icons.js";
 import { monitors } from '../.commondata/hyprlanddata.js';
 import { MaterialIcon } from '../.commonwidgets/materialicon.js';
 
-// Cache user options
-const userOpts = userOptions.asyncGet();
-const NUM_OF_WORKSPACES_SHOWN = userOpts.overview.numOfCols * userOpts.overview.numOfRows;
+const NUM_OF_WORKSPACES_SHOWN = userOptions.overview.numOfCols * userOptions.overview.numOfRows;
 const TARGET = [Gtk.TargetEntry.new('text/plain', Gtk.TargetFlags.SAME_APP, 0)];
 
 const overviewTick = Variable(false);
@@ -40,6 +38,7 @@ export default (overviewMonitor = 0) => {
                     label: `Workspace ${i}`
                 });
                 button.connect("activate", () => {
+                    // execAsync([`${onClickBinary}`, `${thisWorkspace}`, `${i}`]).catch(print);
                     actionFunc(thisWorkspace, i);
                     overviewTick.setValue(!overviewTick.value);
                 });
@@ -50,46 +49,44 @@ export default (overviewMonitor = 0) => {
         }
     })
 
-    const Window = ({ address, at: [x, y], size: [w, h], workspace: { id }, class: c, initialClass, monitor, title, xwayland }, screenCoords) => {
-        const scale = userOpts.overview.scale;
-        const revealInfoCondition = (Math.min(w, h) * scale > 70);
+    const Window = ({ address, at: [x, y], size: [w, h], workspace: { id, name }, class: c, initialClass, monitor, title, xwayland }, screenCoords) => {
+        const revealInfoCondition = (Math.min(w, h) * userOptions.overview.scale > 70);
         if (w <= 0 || h <= 0 || (c === '' && title === '')) return null;
-        
-        // Screen coordinate adjustments
+        // Non-primary monitors
         if (screenCoords.x != 0) x -= screenCoords.x;
         if (screenCoords.y != 0) y -= screenCoords.y;
+        // Other offscreen adjustments
         if (x + w <= 0) x += (Math.floor(x / monitors[monitor].width) * monitors[monitor].width);
         else if (x < 0) { w = x + w; x = 0; }
         if (y + h <= 0) x += (Math.floor(y / monitors[monitor].height) * monitors[monitor].height);
         else if (y < 0) { h = y + h; y = 0; }
+        // Truncate if offscreen
         if (x + w > monitors[monitor].width) w = monitors[monitor].width - x;
         if (y + h > monitors[monitor].height) h = monitors[monitor].height - y;
 
         if(c.length == 0) c = initialClass;
         const iconName = substitute(c);
-        const iconSize = Math.min(w, h) * scale / 2.5;
         const appIcon = iconExists(iconName) ? Widget.Icon({
             icon: iconName,
-            size: iconSize,
+            size: Math.min(w, h) * userOptions.overview.scale / 2.5,
         }) : MaterialIcon('terminal', 'gigantic', {
-            css: `font-size: ${iconSize}px`,
+            css: `font-size: ${Math.min(w, h) * userOptions.overview.scale / 2.5}px`,
         });
-
         return Widget.Button({
             attribute: {
                 address, x, y, w, h, ws: id,
                 updateIconSize: (self) => {
-                    appIcon.size = Math.min(self.attribute.w, self.attribute.h) * scale / 2.5;
+                    appIcon.size = Math.min(self.attribute.w, self.attribute.h) * userOptions.overview.scale / 2.5;
                 },
             },
             className: 'overview-tasks-window',
             hpack: 'start',
             vpack: 'start',
             css: `
-                margin-left: ${Math.round(x * scale)}px;
-                margin-top: ${Math.round(y * scale)}px;
-                margin-right: -${Math.round((x + w) * scale)}px;
-                margin-bottom: -${Math.round((y + h) * scale)}px;
+                margin-left: ${Math.round(x * userOptions.overview.scale)}px;
+                margin-top: ${Math.round(y * userOptions.overview.scale)}px;
+                margin-right: -${Math.round((x + w) * userOptions.overview.scale)}px;
+                margin-bottom: -${Math.round((y + h) * userOptions.overview.scale)}px;
             `,
             onClicked: (self) => {
                 Hyprland.messageAsync(`dispatch focuswindow address:${address}`);
@@ -114,7 +111,7 @@ export default (overviewMonitor = 0) => {
                             thisWorkspace: Number(id)
                         }),
                         ContextMenuWorkspaceArray({
-                            label: "Swap windows with workspace", 
+                            label: "Swap windows with workspace",
                             actionFunc: swapWorkspace,
                             thisWorkspace: Number(id)
                         }),
@@ -126,7 +123,7 @@ export default (overviewMonitor = 0) => {
                 menu.connect("selection-done", () => {
                     button.toggleClassName('overview-tasks-window-selected', false);
                 })
-                menu.popup_at_widget(button.get_parent(), Gravity.SOUTH, Gravity.NORTH, null);
+                menu.popup_at_widget(button.get_parent(), Gravity.SOUTH, Gravity.NORTH, null); // Show menu below the button
                 button.connect("destroy", () => menu.destroy());
             },
             child: Widget.Box({
@@ -136,6 +133,7 @@ export default (overviewMonitor = 0) => {
                     vpack: 'center',
                     children: [
                         appIcon,
+                        // TODO: Add xwayland tag instead of just having italics
                         Widget.Revealer({
                             transition: 'slide_right',
                             revealChild: revealInfoCondition,
@@ -143,13 +141,14 @@ export default (overviewMonitor = 0) => {
                                 transition: 'slide_down',
                                 revealChild: revealInfoCondition,
                                 child: Widget.Label({
-                                    maxWidthChars: 1,
+                                    maxWidthChars: 1, // Doesn't matter what number
                                     truncate: 'end',
                                     className: `margin-top-5 ${xwayland ? 'txt txt-italic' : 'txt'}`,
                                     css: `
-                                        font-size: ${Math.min(monitors[monitor].width, monitors[monitor].height) * scale / 14.6}px;
-                                        margin: 0px ${Math.min(monitors[monitor].width, monitors[monitor].height) * scale / 10}px;
-                                    `,
+                                font-size: ${Math.min(monitors[monitor].width, monitors[monitor].height) * userOptions.overview.scale / 14.6}px;
+                                margin: 0px ${Math.min(monitors[monitor].width, monitors[monitor].height) * userOptions.overview.scale / 10}px;
+                            `,
+                                    // If the title is too short, include the class
                                     label: (title.length <= 1 ? `${c}: ${title}` : title),
                                 })
                             })
@@ -160,12 +159,14 @@ export default (overviewMonitor = 0) => {
             tooltipText: `${c}: ${title}`,
             setup: (button) => {
                 setupCursorHoverGrab(button);
+
                 button.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, TARGET, Gdk.DragAction.MOVE);
                 button.drag_source_set_icon_name(substitute(c));
-                button.connect('drag-begin', (button) => {
+
+                button.connect('drag-begin', (button) => {  // On drag start, add the dragging class
                     button.toggleClassName('overview-tasks-window-dragging', true);
                 });
-                button.connect('drag-data-get', (_w, _c, data) => {
+                button.connect('drag-data-get', (_w, _c, data) => { // On drag finish, give address
                     data.set_text(address, address.length);
                     button.toggleClassName('overview-tasks-window-dragging', false);
                 });
@@ -174,52 +175,65 @@ export default (overviewMonitor = 0) => {
     }
 
     const Workspace = (index) => {
+        // const fixed = Widget.Fixed({
+        //     attribute: {
+        //         put: (widget, x, y) => {
+        //             fixed.put(widget, x, y);
+        //         },
+        //         move: (widget, x, y) => {
+        //             fixed.move(widget, x, y);
+        //         },
+        //     }
+        // });
         const fixed = Widget.Box({
             attribute: {
                 put: (widget, x, y) => {
                     if (!widget.attribute) return;
+                    // Note: x and y are already multiplied by userOptions.overview.scale
                     const newCss = `
                         margin-left: ${Math.round(x)}px;
                         margin-top: ${Math.round(y)}px;
-                        margin-right: -${Math.round(x + (widget.attribute.w * userOpts.overview.scale))}px;
-                        margin-bottom: -${Math.round(y + (widget.attribute.h * userOpts.overview.scale))}px;
+                        margin-right: -${Math.round(x + (widget.attribute.w * userOptions.overview.scale))}px;
+                        margin-bottom: -${Math.round(y + (widget.attribute.h * userOptions.overview.scale))}px;
                     `;
                     widget.css = newCss;
                     fixed.pack_start(widget, false, false, 0);
                 },
                 move: (widget, x, y) => {
-                    if (!widget?.attribute) return;
+                    if (!widget) return;
+                    if (!widget.attribute) return;
+                    // Note: x and y are already multiplied by userOptions.overview.scale
                     const newCss = `
                         margin-left: ${Math.round(x)}px;
                         margin-top: ${Math.round(y)}px;
-                        margin-right: -${Math.round(x + (widget.attribute.w * userOpts.overview.scale))}px;
-                        margin-bottom: -${Math.round(y + (widget.attribute.h * userOpts.overview.scale))}px;
+                        margin-right: -${Math.round(x + (widget.attribute.w * userOptions.overview.scale))}px;
+                        margin-bottom: -${Math.round(y + (widget.attribute.h * userOptions.overview.scale))}px;
                     `;
                     widget.css = newCss;
                 },
             }
         })
-
         const WorkspaceNumber = ({ index, ...rest }) => Widget.Label({
             className: 'overview-tasks-workspace-number',
             label: `${index}`,
             css: `
-                margin: ${Math.min(monitors[overviewMonitor].width, monitors[overviewMonitor].height) * userOpts.overview.scale * userOpts.overview.wsNumMarginScale}px;
-                font-size: ${monitors[overviewMonitor].height * userOpts.overview.scale * userOpts.overview.wsNumScale}px;
+                margin: ${Math.min(monitors[overviewMonitor].width, monitors[overviewMonitor].height) * userOptions.overview.scale * userOptions.overview.wsNumMarginScale}px;
+                font-size: ${monitors[overviewMonitor].height * userOptions.overview.scale * userOptions.overview.wsNumScale}px;
             `,
             setup: (self) => self.hook(Hyprland.active.workspace, (self) => {
+                // Update when going to new ws group
                 const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN);
                 self.label = `${currentGroup * NUM_OF_WORKSPACES_SHOWN + index}`;
             }),
             ...rest,
         })
-
         const widget = Widget.Box({
             className: 'overview-tasks-workspace',
             vpack: 'center',
+            // Rounding and adding 1px to minimum width/height to work around scaling inaccuracy:
             css: `
-                min-width: ${1 + Math.round(monitors[overviewMonitor].width * userOpts.overview.scale)}px;
-                min-height: ${1 + Math.round(monitors[overviewMonitor].height * userOpts.overview.scale)}px;
+                min-width: ${1 + Math.round(monitors[overviewMonitor].width * userOptions.overview.scale)}px;
+                min-height: ${1 + Math.round(monitors[overviewMonitor].height * userOptions.overview.scale)}px;
             `,
             children: [Widget.EventBox({
                 hexpand: true,
@@ -244,10 +258,8 @@ export default (overviewMonitor = 0) => {
                 }),
             })],
         });
-
         const offset = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN) * NUM_OF_WORKSPACES_SHOWN;
         fixed.attribute.put(WorkspaceNumber(offset + index), 0, 0);
-
         widget.clear = () => {
             const offset = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN) * NUM_OF_WORKSPACES_SHOWN;
             clientMap.forEach((client, address) => {
@@ -255,50 +267,60 @@ export default (overviewMonitor = 0) => {
                 if ((client.attribute.ws <= offset || client.attribute.ws > offset + NUM_OF_WORKSPACES_SHOWN) ||
                     (client.attribute.ws == offset + index)) {
                     client.destroy();
+                    client = null;
                     clientMap.delete(address);
                 }
             });
         }
-
         widget.set = (clientJson, screenCoords) => {
             let c = clientMap.get(clientJson.address);
             if (c) {
                 if (c.attribute?.ws !== clientJson.workspace.id) {
                     c.destroy();
+                    c = null;
                     clientMap.delete(clientJson.address);
                 }
-                else {
+                else if (c) {
                     c.attribute.w = clientJson.size[0];
                     c.attribute.h = clientJson.size[1];
                     c.attribute.updateIconSize(c);
                     fixed.attribute.move(c,
-                        Math.max(0, clientJson.at[0] * userOpts.overview.scale),
-                        Math.max(0, clientJson.at[1] * userOpts.overview.scale)
+                        Math.max(0, clientJson.at[0] * userOptions.overview.scale),
+                        Math.max(0, clientJson.at[1] * userOptions.overview.scale)
                     );
                     return;
                 }
             }
             const newWindow = Window(clientJson, screenCoords);
             if (newWindow === null) return;
+            // clientMap.set(clientJson.address, newWindow);
             fixed.attribute.put(newWindow,
-                Math.max(0, newWindow.attribute.x * userOpts.overview.scale),
-                Math.max(0, newWindow.attribute.y * userOpts.overview.scale)
+                Math.max(0, newWindow.attribute.x * userOptions.overview.scale),
+                Math.max(0, newWindow.attribute.y * userOptions.overview.scale)
             );
             clientMap.set(clientJson.address, newWindow);
         };
-
         widget.unset = (clientAddress) => {
-            const c = clientMap.get(clientAddress);
+            const offset = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN) * NUM_OF_WORKSPACES_SHOWN;
+            let c = clientMap.get(clientAddress);
             if (!c) return;
             c.destroy();
+            c = null;
             clientMap.delete(clientAddress);
         };
-
-        widget.show = () => fixed.show_all();
+        widget.show = () => {
+            fixed.show_all();
+        }
         return widget;
     };
 
-    const arr = (s, n) => Array.from({length: n}, (_, i) => s + i);
+    const arr = (s, n) => {
+        const array = [];
+        for (let i = 0; i < n; i++)
+            array.push(s + i);
+
+        return array;
+    };
 
     const OverviewRow = ({ startWorkspace, workspaces, windowName = 'overview' }) => Widget.Box({
         children: arr(startWorkspace, workspaces).map(Workspace),
@@ -319,30 +341,37 @@ export default (overviewMonitor = 0) => {
                     const allClients = JSON.parse(clients);
                     const kids = box.get_children();
                     kids.forEach(kid => kid.clear());
-                    allClients.forEach(client => {
+                    for (let i = 0; i < allClients.length; i++) {
+                        const client = allClients[i];
                         const childID = client.workspace.id - (offset + startWorkspace);
                         if (offset + startWorkspace <= client.workspace.id &&
                             client.workspace.id <= offset + startWorkspace + workspaces) {
                             const screenCoords = box.attribute.monitorMap[client.monitor];
-                            kids[childID]?.set(client, screenCoords);
+                            if (kids[childID]) {
+                                kids[childID].set(client, screenCoords);
+                            }
+                            continue;
                         }
-                    });
+                    }
                     kids.forEach(kid => kid.show());
                 }).catch(print);
             },
             updateWorkspace: (box, id) => {
                 const offset = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN) * NUM_OF_WORKSPACES_SHOWN;
-                if (!(offset + startWorkspace <= id && id <= offset + startWorkspace + workspaces)) return;
-                
+                if (!( // Not in range, ignore
+                    offset + startWorkspace <= id &&
+                    id <= offset + startWorkspace + workspaces
+                )) return;
+                // if (!App.getWindow(windowName)?.visible) return;
                 Hyprland.messageAsync('j/clients').then(clients => {
                     const allClients = JSON.parse(clients);
                     const kids = box.get_children();
-                    allClients.forEach(client => {
-                        if (client.workspace.id === id) {
-                            const screenCoords = box.attribute.monitorMap[client.monitor];
-                            kids[id - (offset + startWorkspace)]?.set(client, screenCoords);
-                        }
-                    });
+                    for (let i = 0; i < allClients.length; i++) {
+                        const client = allClients[i];
+                        if (client.workspace.id != id) continue;
+                        const screenCoords = box.attribute.monitorMap[client.monitor];
+                        kids[id - (offset + startWorkspace)]?.set(client, screenCoords);
+                    }
                     kids[id - (offset + startWorkspace)]?.show();
                 }).catch(print);
             },
@@ -367,32 +396,34 @@ export default (overviewMonitor = 0) => {
                     box.attribute.updateWorkspace(box, client.workspace.id);
                 }, 'client-added')
                 .hook(Hyprland.active.workspace, (box) => {
+                    // Full update when going to new ws group
                     const previousGroup = box.attribute.workspaceGroup;
                     const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN);
                     if (currentGroup !== previousGroup) {
-                        if (!App.getWindow(windowName)?.visible) return;
+                        if (!App.getWindow(windowName) || !App.getWindow(windowName).visible) return;
                         box.attribute.update(box);
                         box.attribute.workspaceGroup = currentGroup;
                     }
                 })
-                .hook(App, (box, name, visible) => {
-                    if (name === 'overview' && visible) box.attribute.update(box);
+                .hook(App, (box, name, visible) => { // Update on open
+                    if (name == 'overview' && visible) box.attribute.update(box);
                 })
         },
     });
 
     return Widget.Revealer({
         revealChild: true,
+        // hpack to prevent unneeded expansion in overview-tasks-workspace:
         hpack: 'center',
         transition: 'slide_down',
-        transitionDuration: userOpts.animations.durationLarge,
+        transitionDuration: userOptions.animations.durationLarge,
         child: Widget.Box({
             vertical: true,
             className: 'overview-tasks',
-            children: Array.from({ length: userOpts.overview.numOfRows }, (_, index) =>
+            children: Array.from({ length: userOptions.overview.numOfRows }, (_, index) =>
                 OverviewRow({
-                    startWorkspace: 1 + index * userOpts.overview.numOfCols,
-                    workspaces: userOpts.overview.numOfCols,
+                    startWorkspace: 1 + index * userOptions.overview.numOfCols,
+                    workspaces: userOptions.overview.numOfCols,
                 })
             )
         }),

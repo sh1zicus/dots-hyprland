@@ -78,7 +78,7 @@ export const Bar = async (monitor = 0) => {
         setup: (self) => {
             self.hook(Battery, (self) => {
                 if (!Battery.available) return;
-                self.toggleClassName('bar-bg-focus-batterylow', Battery.percent <= userOptions.asyncGet().battery.low);
+                self.toggleClassName('bar-bg-focus-batterylow', Battery.percent <= userOptions.battery.low);
             })
         }
     });
@@ -88,13 +88,13 @@ export const Bar = async (monitor = 0) => {
     return Widget.Window({
         monitor,
         name: `bar${monitor}`,
-        anchor: [userOptions.asyncGet().bar.position, 'left', 'right'],
+        anchor: ['top', 'left', 'right'],
         exclusivity: 'exclusive',
         visible: true,
         child: Widget.Stack({
             homogeneous: false,
             transition: 'slide_up_down',
-            transitionDuration: userOptions.asyncGet().animations.durationLarge,
+            transitionDuration: userOptions.animations.durationLarge,
             children: {
                 'normal': normalBarContent,
                 'focus': focusedBarContent,
@@ -111,26 +111,19 @@ export const BarCornerTopleft = (monitor = 0) => Widget.Window({
     monitor,
     name: `barcornertl${monitor}`,
     layer: 'top',
-    anchor: [userOptions.asyncGet().bar.position, 'left'],
+    anchor: ['top', 'left'],
     exclusivity: 'normal',
     visible: true,
-    child: RoundedCorner(
-        userOptions.asyncGet().bar.position === 'top' ? 'topleft' : 'bottomleft',
-        { className: 'corner', }
-    ),
+    child: RoundedCorner('topleft', { className: 'corner', }),
     setup: enableClickthrough,
 });
-
 export const BarCornerTopright = (monitor = 0) => Widget.Window({
     monitor,
     name: `barcornertr${monitor}`,
     layer: 'top',
-    anchor: [userOptions.asyncGet().bar.position, 'right'],
+    anchor: ['top', 'right'],
     exclusivity: 'normal',
     visible: true,
-    child: RoundedCorner(
-        userOptions.asyncGet().bar.position === 'top' ? 'topright' : 'bottomright',
-        { className: 'corner', }
-    ),
+    child: RoundedCorner('topright', { className: 'corner', }),
     setup: enableClickthrough,
 });

@@ -9,14 +9,14 @@ import GPTService from '../../services/gpt.js';
 import Gemini from '../../services/gemini.js';
 import { geminiView, geminiCommands, sendMessage as geminiSendMessage, geminiTabIcon } from './apis/gemini.js';
 import { chatGPTView, chatGPTCommands, sendMessage as chatGPTSendMessage, chatGPTTabIcon } from './apis/chatgpt.js';
-import { TranslaterView, translaterCommands, sendMessage as translaterSendMessage, translaterIcon } from './apis/translater.js';
+import { waifuView, waifuCommands, sendMessage as waifuSendMessage, waifuTabIcon } from './apis/waifu.js';
+import { booruView, booruCommands, sendMessage as booruSendMessage, booruTabIcon } from './apis/booru.js';
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { checkKeybind } from '../.widgetutils/keybind.js';
 const TextView = Widget.subclass(Gtk.TextView, "AgsTextView");
 
 import { widgetContent } from './sideleft.js';
 import { IconTabContainer } from '../.commonwidgets/tabcontainer.js';
-import { writable } from '../../modules/.miscutils/store.js';
 
 const EXPAND_INPUT_THRESHOLD = 30;
 const APILIST = {
@@ -36,22 +36,24 @@ const APILIST = {
         tabIcon: chatGPTTabIcon,
         placeholderText: getString('Message the model...'),
     },
-    'translater': {
-        name: 'Google Translater',
-        sendCommand: translaterSendMessage,
-        contentWidget: TranslaterView,
-        tabIcon: translaterIcon,
-        commandBar: translaterCommands,
-        placeholderText: 'Translate the text...'
+    'waifu': {
+        name: 'Waifus',
+        sendCommand: waifuSendMessage,
+        contentWidget: waifuView,
+        commandBar: waifuCommands,
+        tabIcon: waifuTabIcon,
+        placeholderText: getString('Enter tags'),
+    },
+    'booru': {
+        name: 'Booru',
+        sendCommand: booruSendMessage,
+        contentWidget: booruView,
+        commandBar: booruCommands,
+        tabIcon: booruTabIcon,
+        placeholderText: getString('Enter tags'),
     },
 }
-
-let APIS = writable ([]);
-
-userOptions.subscribe ((n) => {
-    APIS.set(n.sidebar.pages.apis.order.map((apiName) => APILIST[apiName]))
-});
-
+const APIS = userOptions.sidebar.pages.apis.order.map((apiName) => APILIST[apiName]);
 let currentApiId = 0;
 
 function apiSendMessage(textView) {
@@ -61,7 +63,7 @@ function apiSendMessage(textView) {
     const text = buffer.get_text(start, end, true).trimStart();
     if (!text || text.length == 0) return;
     // Send
-    APIS.asyncGet()[currentApiId].sendCommand(text)
+    APIS[currentApiId].sendCommand(text)
     // Reset
     buffer.set_text("", -1);
     chatEntryWrapper.toggleClassName('sidebar-chat-wrapper-extended', false);
@@ -80,42 +82,34 @@ export const chatEntry = TextView({
             }
         })
         .hook(GPTService, (self) => {
-            if (APIS.asyncGet()[currentApiId].name != 'Assistant (GPTs)') return;
+            if (APIS[currentApiId].name != 'Assistant (GPTs)') return;
             self.placeholderText = (GPTService.key.length > 0 ? getString('Message the model...') : getString('Enter API Key...'));
         }, 'hasKey')
         .hook(Gemini, (self) => {
-            if (APIS.asyncGet()[currentApiId].name != 'Assistant (Gemini Pro)') return;
+            if (APIS[currentApiId].name != 'Assistant (Gemini Pro)') return;
             self.placeholderText = (Gemini.key.length > 0 ? getString('Message Gemini...') : getString('Enter Google AI API Key...'));
         }, 'hasKey')
         .on("key-press-event", (widget, event) => {
-            // Swtich APIs with Tab
-            const key = event.get_keyval()[1];
-            if (key === Gdk.KEY_Tab || key === Gdk.KEY_ISO_Left_Tab) {
-                const dir = key === Gdk.KEY_Tab ? 1 : -1;
-                const newId = (currentApiId + dir + APIS.asyncGet().length) % APIS.asyncGet().length;
-                switchToTab(newId);
-                return true;
-            }
             // Don't send when Shift+Enter
             if (event.get_keyval()[1] === Gdk.KEY_Return || event.get_keyval()[1] === Gdk.KEY_KP_Enter) {
-                if (event.get_state()[1] !== 17) {
+                if (event.get_state()[1] !== 17) {// SHIFT_MASK doesn't work but 17 should be shift
                     apiSendMessage(widget);
                     return true;
                 }
                 return false;
             }
             // Keybinds
-            if (checkKeybind(event, userOptions.asyncGet().keybinds.sidebar.cycleTab))
+            if (checkKeybind(event, userOptions.keybinds.sidebar.cycleTab))
                 widgetContent.cycleTab();
-            else if (checkKeybind(event, userOptions.asyncGet().keybinds.sidebar.nextTab))
+            else if (checkKeybind(event, userOptions.keybinds.sidebar.nextTab))
                 widgetContent.nextTab();
-            else if (checkKeybind(event, userOptions.asyncGet().keybinds.sidebar.prevTab))
+            else if (checkKeybind(event, userOptions.keybinds.sidebar.prevTab))
                 widgetContent.prevTab();
-            else if (checkKeybind(event, userOptions.asyncGet().keybinds.sidebar.apis.nextTab)) {
+            else if (checkKeybind(event, userOptions.keybinds.sidebar.apis.nextTab)) {
                 apiWidgets.attribute.nextTab();
                 return true;
             }
-            else if (checkKeybind(event, userOptions.asyncGet().keybinds.sidebar.apis.prevTab)) {
+            else if (checkKeybind(event, userOptions.keybinds.sidebar.apis.prevTab)) {
                 apiWidgets.attribute.prevTab();
                 return true;
             }
@@ -152,7 +146,7 @@ const chatSendButton = Button({
     label: 'arrow_upward',
     setup: setupCursorHover,
     onClicked: (self) => {
-        APIS.asyncGet()[currentApiId].sendCommand(chatEntry.get_buffer().text);
+        APIS[currentApiId].sendCommand(chatEntry.get_buffer().text);
         chatEntry.get_buffer().set_text("", -1);
     },
 });
@@ -161,13 +155,13 @@ const chatPlaceholder = Label({
     className: 'txt-subtext txt-smallie margin-left-5',
     hpack: 'start',
     vpack: 'center',
-    label: APIS.asyncGet()[currentApiId].placeholderText,
+    label: APIS[currentApiId].placeholderText,
 });
 
 const chatPlaceholderRevealer = Revealer({
     revealChild: true,
     transition: 'crossfade',
-    transitionDuration: userOptions.asyncGet().animations.durationLarge,
+    transitionDuration: userOptions.animations.durationLarge,
     child: chatPlaceholder,
     setup: enableClickthrough,
 });
@@ -187,22 +181,22 @@ const textboxArea = Box({ // Entry area
 
 const apiCommandStack = Stack({
     transition: 'slide_up_down',
-    transitionDuration: userOptions.asyncGet().animations.durationLarge,
-    children: APIS.asyncGet().reduce((acc, api) => {
+    transitionDuration: userOptions.animations.durationLarge,
+    children: APIS.reduce((acc, api) => {
         acc[api.name] = api.commandBar;
         return acc;
-    }, {})
+    }, {}),
 })
 
-export let apiContentStack = IconTabContainer({
+export const apiContentStack = IconTabContainer({
     tabSwitcherClassName: 'sidebar-icontabswitcher',
     className: 'margin-top-5',
-    iconWidgets: APIS.asyncGet().map((api) => api.tabIcon),
-    names: APIS.asyncGet().map((api) => api.name),
-    children: APIS.asyncGet().map((api) => api.contentWidget),
+    iconWidgets: APIS.map((api) => api.tabIcon),
+    names: APIS.map((api) => api.name),
+    children: APIS.map((api) => api.contentWidget),
     onChange: (self, id) => {
-        apiCommandStack.shown = APIS.asyncGet()[id].name;
-        chatPlaceholder.label = APIS.asyncGet()[id].placeholderText;
+        apiCommandStack.shown = APIS[id].name;
+        chatPlaceholder.label = APIS[id].placeholderText;
         currentApiId = id;
     }
 });
@@ -213,7 +207,7 @@ function switchToTab(id) {
 
 const apiWidgets = Widget.Box({
     attribute: {
-        'nextTab': () => switchToTab(Math.min(currentApiId + 1, APIS.asyncGet().length - 1)),
+        'nextTab': () => switchToTab(Math.min(currentApiId + 1, APIS.length - 1)),
         'prevTab': () => switchToTab(Math.max(0, currentApiId - 1)),
     },
     vertical: true,

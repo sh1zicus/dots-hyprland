@@ -1,3 +1,4 @@
+// Made to be pixel-perfect with 11pt font size
 // 1rem = 11pt = 14.6666666667px
 $bar_ws_width: 1.774rem;
 $bar_ws_width_focus: 0.614rem;
@@ -305,7 +306,7 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-corner-spacing {
-    min-width: 0.882rem;
+    min-width: $rounding_large;
     min-height: $rounding_large;
 }
 
@@ -345,7 +346,7 @@ $bar_ws_width_focus_active: 2.045rem;
 }
 
 .bar-space-area-rightmost>box {
-    padding-right: 1.364rem;
+    padding-right: 2.386rem;
 }
 
 .bar-systray {
@@ -405,23 +406,4 @@ $bar_ws_width_focus_active: 2.045rem;
     min-width: 1.032rem;
     font-size: 1.032rem;
     padding: 0.205rem 0.341rem;
-}
-
-.bar-time-module {
-    margin-left: 0.5rem;
-    margin-right: 1rem;
-    color: $timeOnLayer1;
-}
-
-.status-icons-group {
-    padding-left: 0.273rem;
-    padding-right: 1rem;
-}
-
-.time-with-margin {
-    margin-left: 0.5rem;
-}
-
-.bar-wintitle-icon-spacer {
-    min-width: 0.714rem;
 }

@@ -101,7 +101,7 @@ export const ConfigSegmentedSelection = ({
             const selectedIcon = Revealer({
                 revealChild: id == initIndex,
                 transition: 'slide_right',
-                transitionDuration: userOptions.asyncGet().animations.durationSmall,
+                transitionDuration: userOptions.animations.durationSmall,
                 child: MaterialIcon('check', 'norm')
             });
             return Button({

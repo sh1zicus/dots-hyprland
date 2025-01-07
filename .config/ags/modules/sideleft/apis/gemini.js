@@ -1,4 +1,4 @@
-const { Gtk, Pango } = imports.gi;
+const { Gtk } = imports.gi;
 import App from 'resource:///com/github/Aylur/ags/app.js';
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
@@ -131,7 +131,7 @@ export const GoogleAiInstructions = () => Box({
     homogeneous: true,
     children: [Revealer({
         transition: 'slide_down',
-        transitionDuration: userOptions.asyncGet().animations.durationLarge,
+        transitionDuration: userOptions.animations.durationLarge,
         setup: (self) => self
             .hook(GeminiService, (self, hasKey) => {
                 self.revealChild = (GeminiService.key.length == 0);
@@ -143,7 +143,6 @@ export const GoogleAiInstructions = () => Box({
                 wrap: true,
                 className: 'txt sidebar-chat-welcome-txt',
                 justify: Gtk.Justification.CENTER,
-                wrapMode: Pango.WrapMode.WORD_CHAR,
                 label: 'A Google AI API key is required\nYou can grab one <u>here</u>, then enter it below',
                 // setup: self => self.set_markup("This is a <a href=\"https://www.github.com\">test link</a>")
             }),
@@ -256,77 +255,34 @@ export const sendMessage = (text) => {
     }
 }
 
-// export const geminiView = Box({
-//     homogeneous: true,
-//     children: [Scrollable({
-//         className: 'sidebar-chat-viewport',
-//         vexpand: true,
-//         child: Box({
-//             vertical: true,
-//             children: [
-//                 geminiWelcome,
-//                 chatContent,
-//             ]
-//         }),
-//         setup: (scrolledWindow) => {
-//             // Show scrollbar
-//             scrolledWindow.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-//             const vScrollbar = scrolledWindow.get_vscrollbar();
-//             vScrollbar.get_style_context().add_class('sidebar-scrollbar');
-//             // Avoid click-to-scroll-widget-to-view behavior
-//             Utils.timeout(1, () => {
-//                 const viewport = scrolledWindow.child;
-//                 viewport.set_focus_vadjustment(new Gtk.Adjustment(undefined));
-//             })
-//             // Always scroll to bottom with new content
-//             const adjustment = scrolledWindow.get_vadjustment();
-//             adjustment.connect("changed", () => Utils.timeout(1, () => {
-//                 if (!chatEntry.hasFocus) return;
-//                 adjustment.set_value(adjustment.get_upper() - adjustment.get_page_size());
-//             }))
-//         }
-//     })]
-// });
-
 export const geminiView = Box({
     homogeneous: true,
-    vertical: true,
-    attribute: {
-        'pinnedDown': true
-    },
-    children: [
-        Scrollable({
-            className: 'sidebar-chat-viewport',
-            vexpand: true,
-            child: Box({
-                vertical: true,
-                children: [
-                    geminiWelcome,
-                    chatContent,
-                ]
-            }),
-            setup: (scrolledWindow) => {
-                // Show scrollbar
-                scrolledWindow.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-                const vScrollbar = scrolledWindow.get_vscrollbar();
-                vScrollbar.get_style_context().add_class('sidebar-scrollbar');
-                // Avoid click-to-scroll-widget-to-view behavior
-                Utils.timeout(1, () => {
-                    const viewport = scrolledWindow.child;
-                    viewport.set_focus_vadjustment(new Gtk.Adjustment(undefined));
-                })
-                // Always scroll to bottom with new content
-                const adjustment = scrolledWindow.get_vadjustment();
-
-                adjustment.connect("changed", () => {
-                    if (!geminiView.attribute.pinnedDown) { return; }
-                    adjustment.set_value(adjustment.get_upper() - adjustment.get_page_size());
-                })
-
-                adjustment.connect("value-changed", () => {
-                    geminiView.attribute.pinnedDown = adjustment.get_value() == (adjustment.get_upper() - adjustment.get_page_size());
-                });
-            }
-        })
-    ]
+    children: [Scrollable({
+        className: 'sidebar-chat-viewport',
+        vexpand: true,
+        child: Box({
+            vertical: true,
+            children: [
+                geminiWelcome,
+                chatContent,
+            ]
+        }),
+        setup: (scrolledWindow) => {
+            // Show scrollbar
+            scrolledWindow.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
+            const vScrollbar = scrolledWindow.get_vscrollbar();
+            vScrollbar.get_style_context().add_class('sidebar-scrollbar');
+            // Avoid click-to-scroll-widget-to-view behavior
+            Utils.timeout(1, () => {
+                const viewport = scrolledWindow.child;
+                viewport.set_focus_vadjustment(new Gtk.Adjustment(undefined));
+            })
+            // Always scroll to bottom with new content
+            const adjustment = scrolledWindow.get_vadjustment();
+            adjustment.connect("changed", () => Utils.timeout(1, () => {
+                if (!chatEntry.hasFocus) return;
+                adjustment.set_value(adjustment.get_upper() - adjustment.get_page_size());
+            }))
+        }
+    })]
 });

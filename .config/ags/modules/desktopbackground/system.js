@@ -11,7 +11,7 @@ const ResourceValue = (name, icon, interval, valueUpdateCmd, displayFunc, props 
     children: [
         Revealer({
             transition: 'slide_left',
-            transitionDuration: userOptions.asyncGet().animations.durationLarge,
+            transitionDuration: userOptions.animations.durationLarge,
             child: Box({
                 vpack: 'center',
                 vertical: true,

@@ -242,7 +242,7 @@ const isHoveredColorschemeSettings = Variable(false);
 
 export default () => Widget.Revealer({
     transition: 'slide_down',
-    transitionDuration: userOptions.asyncGet().animations.durationLarge,
+    transitionDuration: userOptions.animations.durationLarge,
     child: ColorschemeContent(),
     setup: (self) => {
         self

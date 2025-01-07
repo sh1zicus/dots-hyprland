@@ -269,7 +269,7 @@ export default () => {
     })
     return SidebarModule({
         icon: MaterialIcon('colorize', 'norm'),
-        name: getString('Color picker'),
+        name: getString('<span strikethrough="true">Inaccurate</span> Color picker'),
         revealChild: false,
         child: Box({
             className: 'spacing-h-5',

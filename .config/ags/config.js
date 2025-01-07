@@ -1,8 +1,9 @@
 "use strict";
 // Import
 import Gdk from 'gi://Gdk';
+import GLib from 'gi://GLib';
 import App from 'resource:///com/github/Aylur/ags/app.js'
-import Wallselect from './modules/wallselect/main.js';
+import * as Utils from 'resource:///com/github/Aylur/ags/utils.js'
 // Stuff
 import userOptions from './modules/.configuration/user_options.js';
 import { firstRunWelcome, startBatteryWarningService } from './services/messages.js';
@@ -48,21 +49,20 @@ const Windows = () => [
     SideRight(),
     forMonitors(Osk),
     forMonitors(Session),
-    ...(userOptions.asyncGet().dock.enabled ? [forMonitors(Dock)] : []),
-    ...(userOptions.asyncGet().appearance.fakeScreenRounding !== 0 ? [
+    ...(userOptions.dock.enabled ? [forMonitors(Dock)] : []),
+    ...(userOptions.appearance.fakeScreenRounding !== 0 ? [
         forMonitors((id) => Corner(id, 'top left', true)),
         forMonitors((id) => Corner(id, 'top right', true)),
         forMonitors((id) => Corner(id, 'bottom left', true)),
         forMonitors((id) => Corner(id, 'bottom right', true)),
     ] : []),
-    ...(userOptions.asyncGet().appearance.barRoundCorners ? [
+    ...(userOptions.appearance.barRoundCorners ? [
         forMonitors(BarCornerTopleft),
         forMonitors(BarCornerTopright),
     ] : []),
-    Wallselect(),
 ];
 
-const CLOSE_ANIM_TIME = 180; // Longer than actual anim time to make sure widgets animate fully
+const CLOSE_ANIM_TIME = 210; // Longer than actual anim time to make sure widgets animate fully
 const closeWindowDelays = {}; // For animations
 for (let i = 0; i < (Gdk.Display.get_default()?.get_n_monitors() || 1); i++) {
     closeWindowDelays[`osk${i}`] = CLOSE_ANIM_TIME;
@@ -72,7 +72,7 @@ App.config({
     css: `${COMPILED_STYLE_DIR}/style.css`,
     stackTraceOnError: true,
     closeWindowDelay: closeWindowDelays,
-    windows: Windows().flat(1)
+    windows: Windows().flat(1),
 });
 
 // Stuff that don't need to be toggled. And they're async so ugh...

@@ -119,7 +119,7 @@ const AudioDevices = (input = false) => {
     const deviceSelector = Revealer({
         transition: 'slide_down',
         revealChild: dropdownShown.bind("value"),
-        transitionDuration: userOptions.asyncGet().animations.durationSmall,
+        transitionDuration: userOptions.animations.durationSmall,
         child: Box({
             vertical: true,
             children: [

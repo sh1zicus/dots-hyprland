@@ -97,7 +97,7 @@ export default (monitor = 0) => {
     });
     const stack = Stack({
         transition: 'crossfade',
-        transitionDuration: userOptions.asyncGet().animations.durationLarge,
+        transitionDuration: userOptions.animations.durationLarge,
         children: {
             'disabled': Box({}),
             'image': wallpaperImage,
