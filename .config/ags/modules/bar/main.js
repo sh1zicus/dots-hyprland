@@ -3,6 +3,7 @@ import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import Battery from 'resource:///com/github/Aylur/ags/service/battery.js';
 
 import WindowTitle from "./normal/spaceleft.js";
+import RecordingIndicator from "./normal/recording.js";
 import Indicators from "./normal/spaceright.js";
 import Music from "./normal/music.js";
 import System from "./normal/system.js";
@@ -58,7 +59,10 @@ export const Bar = async (monitor = 0) => {
                 SideModule([System()]),
             ]
         }),
-        endWidget: Indicators(monitor),
+        // endWidget: Indicators(monitor),
+        endWidget: Widget.Box({
+            children: [RecordingIndicator(), Indicators()],
+        }),
     });
     const focusedBarContent = Widget.CenterBox({
         className: 'bar-bg-focus',
