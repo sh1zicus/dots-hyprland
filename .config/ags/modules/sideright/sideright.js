@@ -8,6 +8,7 @@ import {
     HyprToggleIcon,
     ModuleNightLight,
     ModuleIdleInhibitor,
+    ModuleGameMode,
     ModuleReloadIcon,
     ModuleSettingsIcon,
     ModulePowerIcon,
@@ -139,6 +140,7 @@ const togglesBox = Widget.Box({
         // await HyprToggleIcon('touchpad_mouse', 'No touchpad while typing', 'input:touchpad:disable_while_typing', {}),
         await ModuleNightLight(),
         ModuleIdleInhibitor(),
+        await ModuleGameMode(),
         await ModuleCloudflareWarp(),
     ]
 })
