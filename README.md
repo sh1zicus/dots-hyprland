@@ -7,9 +7,9 @@
 
 <div align="center"> 
 
-![](https://img.shields.io/github/last-commit/sh1zicus/dots-hyprland?&style=for-the-badge&color=FFB1C8&logoColor=D9E0EE&labelColor=292324)
-[![](https://img.shields.io/github/repo-size/sh1zicus/dots-hyprland?color=CAC992&label=SIZE&logo=googledrive&style=for-the-badge&logoColor=D9E0EE&labelColor=292324)](https://github.com/sh1zicus/dots-hyprland)
-![](https://img.shields.io/github/stars/sh1zicus/dots-hyprland?style=for-the-badge&logo=andela&color=FFB686&logoColor=D9E0EE&labelColor=292324)
+![](https://sh1zicus.github.io/dots-hyprland-wiki/screenshots/i-i.1.png)
+[![](https://sh1zicus.github.io/dots-hyprland-wiki/screenshots/i-i.2.png)
+![](https://sh1zicus.github.io/dots-hyprland-wiki/screenshots/i-i.4.png)
 </a>
 
 </div>
