@@ -7,6 +7,11 @@
 
 <div align="center"> 
 
+<div align="center">
+    <h2>• screenshots •</h2>
+    <h3></h3>
+</div>
+
 ![](https://sh1zicus.github.io/dots-hyprland-wiki/screenshots/i-i.1.png)
 [![](https://sh1zicus.github.io/dots-hyprland-wiki/screenshots/i-i.2.png)
 ![](https://sh1zicus.github.io/dots-hyprland-wiki/screenshots/i-i.4.png)
@@ -71,21 +76,6 @@
    - If you'd like to suggest fixes or a new widget, feel free to [open an issue](https://github.com/sh1zicus/dots-hyprland/issues/new/choose)
 </details>
 
-<div align="center">
-    <h2>• screenshots •</h2>
-    <h3></h3>
-</div>
-
-### Main branch (*illogical-impulse*)
-
-**AI, on-screen indicators**
-![image](https://github.com/sh1zicus/dots-hyprland/assets/97237370/5e081770-0f1e-45c4-ad9c-3d19f488cd85)
-
-**Fancy notifications, music controls, system, calendar**
-![image](https://github.com/sh1zicus/dots-hyprland/assets/97237370/406b72b6-fa38-4f0d-a6c4-4d7d5d5ddcb7)
-
-**Easy window management**
-![image](https://github.com/sh1zicus/dots-hyprland/assets/97237370/14e9725c-789f-4412-87b6-cce9504db109)
 
 <div align="center">
     <h2>• thank you •</h2>
