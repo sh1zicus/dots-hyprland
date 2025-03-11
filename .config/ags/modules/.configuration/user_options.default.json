@@ -94,6 +94,15 @@
           "key_get_url": "https://openrouter.ai/keys",
           "key_file": "openrouter_key.txt",
           "model": "meta-llama/llama-3-8b-instruct:free"
+        },
+        "ollama-deepseek": {
+          "name": "Ollama (DeepSeek-R1)",
+          "logo_name": "ollama-symbolic",
+          "description": "Official Ollama API.\nPricing: Free.",
+          "base_url": "http://localhost:11434/v1/chat/completions",
+          "key_get_url": "it's just ollama",
+          "key_file": "ollama_key.txt",
+          "model": "deepseek-r1:7b"
         }
       },
       "initMessages": []
