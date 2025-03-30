@@ -898,6 +898,20 @@ $skeleton-accent: mix($secondary, $onSecondary, 50%);
     background-color: $layer2Active;
 }
 
+.sidebar-wifinetworks-network-button {
+    @include full-rounding;
+    @include element_decel;
+    min-width: 6.818rem;
+    min-height: 2.25rem;
+    background-color: $layer2Hover;
+    color: $onLayer2;
+}
+
+.sidebar-wifinetworks-network-button:hover,
+.sidebar-wifinetworks-network-button:focus {
+    background-color: $layer2Active;
+}
+
 .sidebar-wifinetworks-signal {
     @include symbolic-icon;
     font-size: 2.045rem;

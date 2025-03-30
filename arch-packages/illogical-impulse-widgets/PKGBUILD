@@ -15,5 +15,6 @@ depends=(
 	wl-clipboard
 	hyprpicker-git
 	anyrun-git
+	nm-connection-editor
 )
 
