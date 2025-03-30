@@ -24,11 +24,19 @@ else
         wf-recorder -c h264_vaapi -d /dev/dri/renderD128 \
             -o "$(getactivemonitor)" \
             -f "$output_file" \
+            --framerate=60 \
+            --bitrate=2000k \
+            --compression-level=6 \
+            --qp=28 \
             --audio="$(getaudiooutput)" & disown
     else
         wf-recorder -c h264_vaapi -d /dev/dri/renderD128 \
             -g "$(slurp)" \
             -f "$output_file" \
+            --framerate=60 \
+            --bitrate=2000k \
+            --compression-level=6 \
+            --qp=28 \
             --audio="$(getaudiooutput)" & disown
     fi
 fi
