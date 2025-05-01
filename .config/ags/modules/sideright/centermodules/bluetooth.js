@@ -1,4 +1,3 @@
-const { Pango } = imports.gi;
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import Bluetooth from 'resource:///com/github/Aylur/ags/service/bluetooth.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
@@ -36,7 +35,6 @@ const BluetoothDevice = (device) => {
                 setup: (self) => self.hook(device, (self) => {
                     self.label = device.name;
                 }),
-                wrapMode: Pango.WrapMode.WORD_CHAR,
             }),
             Label({
                 xalign: 0,
@@ -47,7 +45,6 @@ const BluetoothDevice = (device) => {
                 setup: (self) => self.hook(device, (self) => {
                     self.label = device.connected ? getString('Connected') : (device.paired ? getString('Paired') : '');
                 }),
-                wrapMode: Pango.WrapMode.WORD_CHAR,
             }),
         ]
     });
@@ -59,9 +56,13 @@ const BluetoothDevice = (device) => {
         onChange: (self, newValue) => {
             device.setConnection(newValue);
         },
-        extraSetup: (self) => self.hook(device, (self) => {
-            Utils.timeout(200, () => self.enabled.value = device.connected);
-        }),
+        extraSetup: (self) => {
+            self.hook(device, () => {
+                const enabledState = self.attribute.enabled;
+                if (enabledState.value !== device.connected)
+                    enabledState.value = device.connected;
+            });
+        },
     })
     const deviceRemoveButton = Button({
         vpack: 'center',
@@ -100,7 +101,7 @@ export default (props) => {
                     className: 'spacing-v-5 txt-subtext',
                     children: [
                         MaterialIcon('bluetooth_disabled', 'gigantic'),
-                        Label({ label: 'No Bluetooth devices', className: 'txt-small', wrapMode: Pango.WrapMode.WORD_CHAR, }),
+                        Label({ label: 'No Bluetooth devices', className: 'txt-small' }),
                     ]
                 }),
             ]
@@ -144,7 +145,7 @@ export default (props) => {
             hpack: 'center',
             className: 'txt-small txt sidebar-centermodules-bottombar-button',
             onClicked: () => {
-                execAsync(['bash', '-c', userOptions.asyncGet().apps.bluetooth]).catch(print);
+                execAsync(['bash', '-c', userOptions.apps.bluetooth]).catch(print);
                 closeEverything();
             },
             label: getString('More'),
