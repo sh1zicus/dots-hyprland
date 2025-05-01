@@ -344,6 +344,16 @@ const BarClock = () => Widget.Box({
     ],
 });
 
+const VPNIndicator = () => Widget.Revealer({
+    child: MaterialIcon('key', 'norm'),
+    transition: 'slide_left',
+    revealChild: false,
+    transitionDuration: userOptions.asyncGet().animations.durationSmall,
+    setup: (self) => self.hook(Network.vpn, (self) => {
+        self.revealChild = (Network.vpn.activatedConnections.length > 0);
+    })
+})
+
 export const StatusIcons = (props = {}, monitor = 0) => Widget.Box({
     ...props,
     child: Widget.Box({
@@ -358,6 +368,7 @@ export const StatusIcons = (props = {}, monitor = 0) => Widget.Box({
                     NetworkIndicator(),
                     BluetoothIndicator(),
                     NotificationIndicator(),
+                    VPNIndicator(),
                     Widget.Box({
                         className: 'time-with-margin',
                         child: Widget.Label({

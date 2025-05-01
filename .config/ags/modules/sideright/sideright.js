@@ -21,6 +21,7 @@ import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
 import ModulePowerProfiles from './centermodules/powerprofiles.js';
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 import ModuleConfigure from "./centermodules/configure.js";
+import ModuleVPN from "./centermodules/vpn.js";
 import ModuleTaskManager from "./centermodules/taskmanager.js";
 import { ModuleCalendar } from "./calendar.js";
 import { getDistroIcon } from '../.miscutils/system.js';
@@ -59,15 +60,20 @@ const centerWidgets = [
         onFocus: () => execAsync('nmcli dev wifi list').catch(print),
     },
     {
+        name: "VPN",
+        materialIcon: 'key',
+        contentWidget: ModuleVPN,
+    },
+    {
         name: getString('Live config'),
         materialIcon: 'tune',
         contentWidget: ModuleConfigure,
-    },
-    {
-        name: getString("Task Manager"),
-        materialIcon: "monitor_heart",
-        contentWidget: ModuleTaskManager,
     }
+    // {
+    //     name: getString("Task Manager"),
+    //     materialIcon: "monitor_heart",
+    //     contentWidget: ModuleTaskManager,
+    // }
 ];
 
 const timeRow = Box({
