@@ -27,7 +27,6 @@
     "The model's temperature value.\n  Precise = 0\n  Balanced = 0.5\n  Creative = 1": "Valore di temperatura del modello.\n  Preciso = 0\n  Bilanciato = 0.5\n  Creativo = 1",
     "An API key is required\nYou can grab one <u>here</u>, then enter it below": "È necessaria una chiave API\nPuoi ottenerne una <u>qui</u>, quindi inserirla qui sotto",
     "Tells the model:\n- It's a Linux sidebar assistant\n- Be brief and use bullet points": "Dice al modello:\n- È un assistente laterale per Linux\n- Sii breve e usa punti elenco",
-    "Powered by waifu.im + other APIs": "Offerto da waifu.im + altre API",
     "Type tags for a random pic.\nNSFW content will not be returned unless\nyou explicitly request such a tag.\n\nDisclaimer: Not affiliated with the providers\nnor responsible for any of their content.": "Digita i tag per un'immagine casuale.\nIl contenuto NSFW non verrà restituito a meno che\nnon richiedi esplicitamente un tale tag.\n\nDisclaimer: Non affiliato ai provider\nné responsabile per alcun loro contenuto.",
     "Tags →": "Tag →",
     "Invalid command.": "Comando non valido.",

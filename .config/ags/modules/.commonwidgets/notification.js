@@ -21,9 +21,6 @@ function guessMessageType(summary) {
     return 'chat';
 }
 
-function exists(widget) {
-    return widget !== null;
-}
 
 const getFriendlyNotifTimeString = (timeObject) => {
     const messageTime = GLib.DateTime.new_from_unix_local(timeObject);

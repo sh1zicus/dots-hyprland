@@ -29,6 +29,7 @@
   "apps": {
     "bluetooth": "blueberry",
     "imageViewer": "loupe",
+    "vpn": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center network",
     "network": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center wifi",
     "settings": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center",
     "taskManager": "foot -e btop",
@@ -58,7 +59,7 @@
   },
   "gaming": {
     "crosshair": {
-      "size": 20,
+      "size": 15,
       "color": "rgba(113,227,32,0.9)"
     }
   },
